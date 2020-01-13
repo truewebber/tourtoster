@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"tourtoster/token"
 
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -15,6 +14,7 @@ import (
 
 	"tourtoster/handler"
 	"tourtoster/middleware"
+	"tourtoster/token"
 	tokenRepo "tourtoster/token/repository"
 	userRepo "tourtoster/user/repository"
 )
@@ -47,7 +47,7 @@ func main() {
 	//	return
 	//}
 	// ----------------------------------------------------------------
-	db, err := sql.Open("sqlite3", "/Users/truewebber/tourtoster/db.sqlite")
+	db, err := sql.Open("sqlite3", "/Users/truewebber/tourtoster/ttdb.sqlite")
 	if err != nil {
 		log.Fatal("error connect to db", "error", err.Error())
 	}

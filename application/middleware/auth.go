@@ -13,11 +13,11 @@ import (
 
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/authorization" {
-			next.ServeHTTP(w, r)
-
-			return
-		}
+		//if r.URL.Path == "/authorization" {
+		//	next.ServeHTTP(w, r)
+		//
+		//	return
+		//}
 
 		u, err := m.authUser(r)
 		if err != nil {
