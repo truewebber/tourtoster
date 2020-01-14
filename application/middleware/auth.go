@@ -70,6 +70,18 @@ func (m *Middleware) authUser(r *http.Request) (*user.User, error) {
 		return nil, nil
 	}
 
+	if u.Hotel.ID != 0 {
+		h, err := m.hotel.Hotel(u.Hotel.ID)
+		if err != nil || h != nil {
+			if err != nil {
+				return nil, errors.Wrapf(userErr, "hotel repo error")
+			}
+
+			return nil, nil
+		}
+		u.Hotel = h
+	}
+
 	u.Token = t
 
 	return u, nil

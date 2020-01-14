@@ -5,9 +5,11 @@
         <title>Tourtoster</title>
     </head>
     <body>
-    <center>
-        <p>Hey!</p>
-    </center>
+    <p>Hey!</p>
+    <p>{{ .User.ID }}</p>
+    <p>{{ .User.FirstName }} {{ .User.LastName }}</p>
+    <p>{{ .User.Hotel.ID }}</p>
+    <p>{{ .User.Hotel.Name }}</p>
     </body>
     </html>
 {{ end }}

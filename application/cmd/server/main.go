@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 
 	"tourtoster/handler"
+	hotelRepo "tourtoster/hotel/repository"
 	"tourtoster/middleware"
 	"tourtoster/token"
 	tokenRepo "tourtoster/token/repository"
@@ -59,20 +60,19 @@ func main() {
 	log.Debug("templates init")
 	// ----------------------------------------------------------------
 	tokenR := tokenRepo.NewMemory()
-	tokenR.Save(&token.Token{
+	_ = tokenR.Save(&token.Token{
 		Token:  "blah",
 		UserID: 1,
 	})
 	userR := userRepo.NewPostgres(db)
-	//serviceR := serviceRepo.NewPostgres(db)
-	//projectR := projectRepo.NewPostgres(db)
+	hotelR := hotelRepo.NewPostgres(db)
 	//
 	handlers := handler.New(&handler.Config{
 		User:      userR,
 		Token:     tokenR,
 		Templates: templates,
 	})
-	middlewares := middleware.New(tokenR, userR)
+	middlewares := middleware.New(tokenR, userR, hotelR)
 	// ----------------------------------------------------------------
 
 	// ---------------------------- ROUTER ----------------------------

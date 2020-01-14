@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
+	"tourtoster/hotel"
 	"tourtoster/user"
 )
 
@@ -15,8 +16,12 @@ type (
 )
 
 const (
-	selectUserByID    = "SELECT email, status, role FROM users WHERE id=$1;"
-	selectUserByEmail = "SELECT id, password_hash, status, role FROM users WHERE email=$1;"
+	selectUserByID = `SELECT first_name, second_name, last_name, hotel_name, hotel_id,
+       						note, email, phone, password_hash, status, role
+					FROM users WHERE id=$1;`
+	selectUserByEmail = `SELECT id, first_name, second_name, last_name, hotel_name, hotel_id,
+       						note, phone, password_hash, status, role
+						FROM users WHERE email=$1;`
 )
 
 func NewPostgres(db *sql.DB) *Postgres {
@@ -27,7 +32,12 @@ func NewPostgres(db *sql.DB) *Postgres {
 
 func (p *Postgres) User(ID int64) (*user.User, error) {
 	u := new(user.User)
-	if err := p.db.QueryRow(selectUserByID, ID).Scan(&u.Email, &u.Status, &u.Role); err != nil {
+	u.Hotel = new(hotel.Hotel)
+
+	if err := p.db.QueryRow(selectUserByID, ID).Scan(
+		&u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
+		&u.Note, &u.Email, &u.Phone, &u.PasswordHash, &u.Status, &u.Role,
+	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -41,7 +51,10 @@ func (p *Postgres) User(ID int64) (*user.User, error) {
 
 func (p *Postgres) UserWithEmail(email string) (*user.User, error) {
 	u := new(user.User)
-	if err := p.db.QueryRow(selectUserByEmail, email).Scan(&u.ID, &u.PasswordHash, &u.Status, &u.Role); err != nil {
+	if err := p.db.QueryRow(selectUserByEmail, email).Scan(
+		&u.ID, &u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
+		&u.Note, &u.Phone, &u.PasswordHash, &u.Status, &u.Role,
+	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
