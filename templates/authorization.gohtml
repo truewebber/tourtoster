@@ -1,13 +1,46 @@
 {{ define "main-authorization" }}
-    <!doctype html>
-    <html>
-    <head>
-        <title>Tourtoster</title>
-    </head>
-    <body>
-    <center>
-        <p>Auth!</p>
-    </center>
-    </body>
-    </html>
+    {{ template "header" .}}
+    <div style="width: 400px; background: white; border-radius: 3px; margin:200px auto 0; padding: 30px 5px; font-family: Arial;">
+        <form class="auth-tw-form" action="#" method="post" style="width: 300px; margin: 0 auto;">
+            <div style="margin-bottom: 6px;">
+                <span style="font-size: 20px; display: inline-block;">Login</span>
+                <input name="login" type="text" style="float: right; width: 200px; line-height: 24px;"/>
+            </div>
+            <div style="margin-bottom: 6px;">
+                <span style="font-size: 20px; display: inline-block;">Password</span>
+                <input name="password" type="password" style="float: right; width: 200px; line-height: 24px;"/>
+            </div>
+            <div style="margin-top: 20px; text-align: center;">
+                <input type="submit" value="Log In"
+                       style="border: none; width: 80px; background-color: #007bff; font-size: 20px; color: white;"/>
+            </div>
+        </form>
+    </div>
+    {{ template "footer" .}}
+    <script type="text/javascript">
+        $(function () {
+            $('.auth-tw-form').submit(function (e) {
+                var $form = $(this);
+                $.ajax({
+                    type: $form.attr('method'),
+                    url: "/tw-admin/api/authorization",
+                    data: $form.serialize(),
+                    success: function (data) {
+                        resp = $.parseJSON(data);
+
+                        setCookie("token", resp.token, 7);
+
+                        location.reload();
+                    },
+                    error: function (err) {
+                        resp = $.parseJSON(err.responseText);
+
+                        alert(resp.error);
+                    }
+                });
+
+                e.preventDefault();
+            });
+        });
+    </script>
 {{ end }}

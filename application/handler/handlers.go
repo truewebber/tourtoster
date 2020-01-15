@@ -35,6 +35,10 @@ var (
 	}
 )
 
+const (
+	AdminPathPrefix = "/admin"
+)
+
 func New(cfg *Config) *Handlers {
 	return &Handlers{
 		user:      cfg.User,

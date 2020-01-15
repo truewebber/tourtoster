@@ -1,0 +1,74 @@
+{{ define "sidebar" }}
+    <!-- ============================================================== -->
+    <!-- left sidebar -->
+    <!-- ============================================================== -->
+    <div class="nav-left-sidebar sidebar-dark">
+        <div class="menu-list">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav flex-column" style="padding-bottom: 100px;">
+                        <li class="nav-divider">
+                            Menu
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="/admin/"><i class="fas fa-fw fa-inbox"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false"
+                               data-target="#submenu-1" aria-controls="submenu-1">
+                                <i class="fas fa-fw fa-file"></i>Services
+                            </a>
+                            <div id="submenu-1" class="collapse submenu show">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/admin/services?new_service">
+                                            <i class="fas fa-fw fa-plus-square"></i>New service
+                                        </a>
+                                    </li>
+                                    {{/*                                    {{ with .Services }}*/}}
+                                    {{/*                                        {{ range . }}*/}}
+                                    {{/*                                            <li class="nav-item">*/}}
+                                    {{/*                                                <a class="nav-link"*/}}
+                                    {{/*                                                   href="/admin/services?service_id={{ .ID }}">*/}}
+                                    {{/*                                                    <i class="fas fa-fw"></i>{{ .Title }}*/}}
+                                    {{/*                                                </a>*/}}
+                                    {{/*                                            </li>*/}}
+                                    {{/*                                        {{ end }}*/}}
+                                    {{/*                                    {{ end }}*/}}
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false"
+                               data-target="#submenu-2" aria-controls="submenu-2">
+                                <i class="fas fa-fw fa-file"></i>Projects
+                            </a>
+                            <div id="submenu-2" class="collapse submenu show">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/admin/projects?new_project">
+                                            <i class="fas fa-fw fa-plus-square"></i>New project
+                                        </a>
+                                    </li>
+                                    {{/*                                    {{ with .Projects }}*/}}
+                                    {{/*                                        {{ range . }}*/}}
+                                    {{/*                                            <li class="nav-item">*/}}
+                                    {{/*                                                <a class="nav-link"*/}}
+                                    {{/*                                                   href="/admin/projects?project_id={{ .ID }}">*/}}
+                                    {{/*                                                    <i class="fas fa-fw"></i>{{ .Title }}*/}}
+                                    {{/*                                                </a>*/}}
+                                    {{/*                                            </li>*/}}
+                                    {{/*                                        {{ end }}*/}}
+                                    {{/*                                    {{ end }}*/}}
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end left sidebar -->
+    <!-- ============================================================== -->
+{{end}}

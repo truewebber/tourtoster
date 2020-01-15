@@ -82,34 +82,20 @@ func main() {
 		http.Redirect(w, r, newPath, http.StatusMovedPermanently)
 	})
 	// ----------------------------- MAIN -----------------------------
-	r.HandleFunc(handler.MainAuthorizationPagePath, handlers.MainAuthorizationPage).Methods(http.MethodGet)
-	r.HandleFunc(handler.MainPagePath, handlers.MainPage).Methods(http.MethodGet)
+	r.HandleFunc(handler.MainPageAuthorizationPath, handlers.MainAuthorizationPage).Methods(http.MethodGet)
+	r.HandleFunc(handler.MainPageIndexPath, handlers.MainIndexPage).Methods(http.MethodGet)
+	r.HandleFunc(handler.MainPageLogoutPath, handlers.MainLogoutPage).Methods(http.MethodGet)
+	// --------------------------- MAIN API ---------------------------
+
+	// ----------------------------------------------------------------
+	ra := r.PathPrefix(handler.AdminPathPrefix).Subrouter()
 	// ---------------------------- ADMIN -----------------------------
-	//ra := r.PathPrefix(handler.AdminPathPrefix).Subrouter()
-	// ----------------------------- PAGE -----------------------------
-	//tw.HandleFunc(handler.AuthorizationAdminPagePath, handlers.AuthorizationAdminPage).Methods(http.MethodGet)
-	//tw.HandleFunc(handler.LogoutAdminPagePath, handlers.LogoutAdminPage).Methods(http.MethodGet)
-	//tw.HandleFunc(handler.MainAdminPagePath, handlers.MainAdminPage).Methods(http.MethodGet)
-	//tw.HandleFunc(handler.ServicesAdminPagePath, handlers.ServicesAdminPage).Methods(http.MethodGet)
-	//tw.HandleFunc(handler.ProjectsAdminPagePath, handlers.ProjectsAdminPage).Methods(http.MethodGet)
-	//// ----------------------------- API ------------------------------
-	//tw.HandleFunc(handler.AuthorizationAdminApiPath, handlers.AuthorizationAdminApi).Methods(http.MethodPost)
-	////
-	//tw.HandleFunc(handler.LanguageAdminApiPath, handlers.LanguageAdminApiPost).Methods(http.MethodPost)
-	//tw.HandleFunc(handler.LanguageAdminApiPath, handlers.LanguageAdminApiDelete).Methods(http.MethodDelete)
-	////
-	//tw.HandleFunc(handler.ServiceAdminApiPath, handlers.ServiceAdminApiPost).Methods(http.MethodPost)
-	//tw.HandleFunc(handler.ServiceAdminApiPath, handlers.ServiceAdminApiDelete).Methods(http.MethodDelete)
-	////
-	//tw.HandleFunc(handler.ProjectAdminApiPath, handlers.ProjectAdminApiPost).Methods(http.MethodPost)
-	//tw.HandleFunc(handler.ProjectAdminApiPath, handlers.ProjectAdminApiDelete).Methods(http.MethodDelete)
-	////
-	//tw.HandleFunc(handler.LocalizationAdminApiPath, handlers.LocalizationAdminApiGet).Methods(http.MethodGet)
-	//tw.HandleFunc(handler.LocalizationAdminApiPath, handlers.LocalizationAdminApiPost).Methods(http.MethodPost)
-	////
-	//tw.HandleFunc(handler.FilesAdminApiPath, handlers.FilesAdminApiPost).Methods(http.MethodPost)
-	//tw.HandleFunc(handler.FilesAdminApiPath, handlers.FilesAdminApiDelete).Methods(http.MethodDelete)
-	//// -------------------------- MIDDLEWARE --------------------------
+	//ra.HandleFunc(handler.AuthorizationAdminPagePath, handlers.AuthorizationAdminPage).Methods(http.MethodGet)
+	ra.HandleFunc(handler.AdminPageIndexPath, handlers.AdminIndexPage).Methods(http.MethodGet)
+	//ra.HandleFunc(handler.ServicesAdminPagePath, handlers.ServicesAdminPage).Methods(http.MethodGet)
+	//ra.HandleFunc(handler.ProjectsAdminPagePath, handlers.ProjectsAdminPage).Methods(http.MethodGet)
+	// -------------------------- ADMIN API ---------------------------
+	// -------------------------- MIDDLEWARE --------------------------
 	r.Use(middlewares.AuthMiddleware)
 	// ----------------------------------------------------------------
 
@@ -122,14 +108,15 @@ func main() {
 
 func templatesInit(templatePath string) error {
 	filesName := []string{
-		//"parts/footer.gohtml",
-		//"parts/bottom.gohtml",
-		//"parts/header.gohtml",
-		//"parts/sidebar.gohtml",
-		//"parts/top.gohtml",
+		"parts/footer.gohtml",
+		"parts/bottom.gohtml",
+		"parts/header.gohtml",
+		"parts/sidebar.gohtml",
+		"parts/top.gohtml",
 		// -- pages
 		// --
-		"index.gohtml",
+		"admin-index.gohtml",
+		"main-index.gohtml",
 		"authorization.gohtml",
 	}
 
@@ -144,8 +131,9 @@ func templatesInit(templatePath string) error {
 	}
 
 	templateNames := []string{
-		handler.MainTemplateName,
-		handler.MainAuthorizationTemplateName,
+		handler.MainIndexTemplateName,
+		handler.AdminIndexTemplateName,
+		handler.MainPageAuthorizationTemplateName,
 	}
 	for _, n := range templateNames {
 		t := tmpls.Lookup(n)

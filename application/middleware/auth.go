@@ -24,14 +24,14 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 			log.Error("auth error", "error", err.Error())
 		}
 
-		if u == nil && r.URL.Path != handler.MainAuthorizationPagePath {
-			http.Redirect(w, r, handler.MainAuthorizationPagePath, http.StatusFound)
+		if u == nil && r.URL.Path != handler.MainPageAuthorizationPath {
+			http.Redirect(w, r, handler.MainPageAuthorizationPath, http.StatusFound)
 
 			return
 		}
 
-		if u != nil && r.URL.Path == handler.MainAuthorizationPagePath {
-			http.Redirect(w, r, handler.MainPagePath, http.StatusFound)
+		if u != nil && r.URL.Path == handler.MainPageAuthorizationPath {
+			http.Redirect(w, r, handler.MainPageIndexPath, http.StatusFound)
 
 			return
 		}
