@@ -49,11 +49,13 @@ func main() {
 	//}
 	// ----------------------------------------------------------------
 	db, err := sql.Open("sqlite3", "/Users/truewebber/tourtoster/ttdb.sqlite")
+	//db, err := sql.Open("sqlite3", "/home/truewebber/web/tourtoster.truewebber.com/ttdb.sqlite")
 	if err != nil {
 		log.Fatal("error connect to db", "error", err.Error())
 	}
 	// ----------------------------------------------------------------
 	err = templatesInit("/Users/truewebber/tourtoster/templates")
+	//err = templatesInit("/home/truewebber/web/tourtoster.truewebber.com/app/templates")
 	if err != nil {
 		log.Fatal("Error start http server", "error", err.Error())
 	}

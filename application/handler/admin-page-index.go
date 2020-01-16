@@ -14,6 +14,7 @@ type (
 	AdminPage struct {
 		User         *user.User
 		AllowUserAdd bool
+		Hostname     string
 		Year         int
 	}
 )
@@ -29,6 +30,7 @@ func (h *Handlers) AdminIndexPage(w http.ResponseWriter, r *http.Request) {
 	data := AdminPage{
 		User:         u,
 		AllowUserAdd: true,
+		Hostname:     r.Host,
 		Year:         time.Now().Year(),
 	}
 
