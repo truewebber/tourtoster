@@ -36,7 +36,7 @@ var (
 )
 
 const (
-	AdminPathPrefix = "/admin"
+	ConsolePathPrefix = "/console"
 )
 
 func New(cfg *Config) *Handlers {

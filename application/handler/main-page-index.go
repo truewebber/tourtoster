@@ -18,7 +18,7 @@ type (
 )
 
 const (
-	MainPageIndexPath     = "/"
+	MainPageIndexPath     = ""
 	MainIndexTemplateName = "main-index"
 )
 
@@ -30,8 +30,7 @@ func (h *Handlers) MainIndexPage(w http.ResponseWriter, r *http.Request) {
 		Year: time.Now().Year(),
 	}
 
-	err := h.templates[MainIndexTemplateName].Execute(w, data)
-	if err != nil {
+	if err := h.templates[MainIndexTemplateName].Execute(w, data); err != nil {
 		log.Error("Error execute template", "template", MainIndexTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 

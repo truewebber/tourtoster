@@ -15,9 +15,17 @@ type (
 		Note         string       `json:"note"`
 		Email        string       `json:"email"`
 		Phone        string       `json:"phone"`
-		Status       Status       `json:"status"`
-		Role         Permission   `json:"role"`
+		Status       Status       `json:"-"`
+		Permissions  Permission   `json:"-"`
 		PasswordHash string       `json:"-"`
 		Token        *token.Token `json:"-"`
 	}
 )
+
+func (u *User) HasPermission(p Permission) bool {
+	return u.Permissions&p > 0
+}
+
+func (u *User) AdminPage() bool {
+	return u.HasPermission(CreateNewUserPermission) || u.HasPermission(EditToursPermission) || u.HasPermission(EditAllBookingsPermission)
+}

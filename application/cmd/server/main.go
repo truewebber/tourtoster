@@ -21,45 +21,40 @@ import (
 )
 
 var (
-	port       string
-	host       string
-	configPath string
+	port         string
+	host         string
+	templatePath string
+	dbFilePath   string
 
 	templates = make(map[string]*template.Template)
-)
-
-const (
-	defaultConfigPath = ""
 )
 
 func init() {
 	flag.StringVar(&port, "port", "9000", "")
 	flag.StringVar(&host, "host", "localhost", "")
-	flag.StringVar(&configPath, "config-path", defaultConfigPath, "")
+	flag.StringVar(&templatePath, "template-path", "/Users/truewebber/tourtoster/templates", "")
+	flag.StringVar(&dbFilePath, "db", "/Users/truewebber/tourtoster/ttdb.sqlite", "")
 
 	flag.Parse()
 }
 
 func main() {
-	//cfg, err := config.New("prod", configPath)
-	//if err != nil {
-	//	log.Error("Error get config", "error", err.Error())
-	//
-	//	return
-	//}
-	// ----------------------------------------------------------------
-	db, err := sql.Open("sqlite3", "/Users/truewebber/tourtoster/ttdb.sqlite")
-	//db, err := sql.Open("sqlite3", "/home/truewebber/web/tourtoster.truewebber.com/ttdb.sqlite")
+	db, err := sql.Open("sqlite3", dbFilePath)
 	if err != nil {
-		log.Fatal("error connect to db", "error", err.Error())
+		println("error connect to db")
+		panic(err)
 	}
+	if err := db.Ping(); err != nil {
+		println("ping error")
+		panic(err)
+	}
+	log.Debug("connection to db established", "db", dbFilePath)
 	// ----------------------------------------------------------------
-	err = templatesInit("/Users/truewebber/tourtoster/templates")
-	//err = templatesInit("/home/truewebber/web/tourtoster.truewebber.com/app/templates")
-	if err != nil {
-		log.Fatal("Error start http server", "error", err.Error())
+	if err := templatesInit(templatePath); err != nil {
+		println("error init template")
+		panic(err)
 	}
-	log.Debug("templates init")
+	log.Debug("templates init", "path", templatePath)
 	// ----------------------------------------------------------------
 	tokenR := tokenRepo.NewMemory()
 	_ = tokenR.Save(&token.Token{
@@ -83,22 +78,26 @@ func main() {
 		newPath := r.URL.Path[:len(r.URL.Path)-1]
 		http.Redirect(w, r, newPath, http.StatusMovedPermanently)
 	})
-	// ----------------------------- MAIN -----------------------------
-	r.HandleFunc(handler.MainPageAuthorizationPath, handlers.MainAuthorizationPage).Methods(http.MethodGet)
-	r.HandleFunc(handler.MainPageIndexPath, handlers.MainIndexPage).Methods(http.MethodGet)
-	r.HandleFunc(handler.MainPageLogoutPath, handlers.MainLogoutPage).Methods(http.MethodGet)
-	// --------------------------- MAIN API ---------------------------
+	r.HandleFunc(handler.LandingPageIndexPath, handlers.LandingIndexPage).Methods(http.MethodGet)
 
 	// ----------------------------------------------------------------
-	ra := r.PathPrefix(handler.AdminPathPrefix).Subrouter()
-	// ---------------------------- ADMIN -----------------------------
-	//ra.HandleFunc(handler.AuthorizationAdminPagePath, handlers.AuthorizationAdminPage).Methods(http.MethodGet)
-	ra.HandleFunc(handler.AdminPageIndexPath, handlers.AdminIndexPage).Methods(http.MethodGet)
-	//ra.HandleFunc(handler.ServicesAdminPagePath, handlers.ServicesAdminPage).Methods(http.MethodGet)
-	//ra.HandleFunc(handler.ProjectsAdminPagePath, handlers.ProjectsAdminPage).Methods(http.MethodGet)
-	// -------------------------- ADMIN API ---------------------------
-	// -------------------------- MIDDLEWARE --------------------------
-	r.Use(middlewares.AuthMiddleware)
+	rc := r.PathPrefix(handler.ConsolePathPrefix).Subrouter()
+	// ----------------------------- MAIN -----------------------------
+	rc.HandleFunc(handler.MainPageAuthorizationPath, handlers.MainAuthorizationPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.MainPageIndexPath, handlers.MainIndexPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.MainPageLogoutPath, handlers.MainLogoutPage).Methods(http.MethodGet)
+	// --------------------------- MAIN API ---------------------------
+
+	//// ----------------------------------------------------------------
+	//ra := r.PathPrefix(handler.AdminPathPrefix).Subrouter()
+	//// ---------------------------- ADMIN -----------------------------
+	////ra.HandleFunc(handler.AuthorizationAdminPagePath, handlers.AuthorizationAdminPage).Methods(http.MethodGet)
+	//ra.HandleFunc(handler.AdminPageIndexPath, handlers.AdminIndexPage).Methods(http.MethodGet)
+	////ra.HandleFunc(handler.ServicesAdminPagePath, handlers.ServicesAdminPage).Methods(http.MethodGet)
+	////ra.HandleFunc(handler.ProjectsAdminPagePath, handlers.ProjectsAdminPage).Methods(http.MethodGet)
+	//// -------------------------- ADMIN API ---------------------------
+	//// -------------------------- MIDDLEWARE --------------------------
+	rc.Use(middlewares.AuthMiddleware)
 	// ----------------------------------------------------------------
 
 	log.Debug("Starting server", host, port)
@@ -115,11 +114,11 @@ func templatesInit(templatePath string) error {
 		"parts/header.gohtml",
 		"parts/sidebar.gohtml",
 		"parts/top.gohtml",
-		// -- pages
 		// --
-		"admin-index.gohtml",
-		"main-index.gohtml",
+		//"admin-index.gohtml",
+		"landing-index.gohtml",
 		"authorization.gohtml",
+		"main-index.gohtml",
 	}
 
 	pathes := make([]string, 0, len(filesName))
@@ -133,9 +132,9 @@ func templatesInit(templatePath string) error {
 	}
 
 	templateNames := []string{
-		handler.MainIndexTemplateName,
-		handler.AdminIndexTemplateName,
+		handler.LandingIndexTemplateName,
 		handler.MainPageAuthorizationTemplateName,
+		handler.MainIndexTemplateName,
 	}
 	for _, n := range templateNames {
 		t := tmpls.Lookup(n)

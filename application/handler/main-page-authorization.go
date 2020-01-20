@@ -12,8 +12,7 @@ const (
 )
 
 func (h *Handlers) MainAuthorizationPage(w http.ResponseWriter, _ *http.Request) {
-	err := h.templates[MainPageAuthorizationTemplateName].Execute(w, nil)
-	if err != nil {
+	if err := h.templates[MainPageAuthorizationTemplateName].Execute(w, nil); err != nil {
 		log.Error("Error execute template", "template", MainPageAuthorizationTemplateName,
 			"error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)

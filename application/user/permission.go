@@ -5,15 +5,15 @@ type (
 )
 
 const (
-	CreateNewUserPermission      Permission = 2
-	EditToursPermission          Permission = 4
-	EditAllNewBookingsPermission Permission = 8
-	EditUserBookingsPermission   Permission = 16
+	CreateNewUserPermission    Permission = 2
+	EditToursPermission        Permission = 4
+	EditAllBookingsPermission  Permission = 8
+	EditUserBookingsPermission Permission = 16
 
-	CreateNewUserPermissionName      = "Create Users"
-	EditToursPermissionName          = "Edit Tours"
-	EditAllNewBookingsPermissionName = "Edit All Bookings"
-	EditUserBookingsPermissionName   = "Edit User Bookings"
+	CreateNewUserPermissionName    = "Create Users"
+	EditToursPermissionName        = "Edit Tours"
+	EditAllBookingsPermissionName  = "Edit All Bookings"
+	EditUserBookingsPermissionName = "Edit User Bookings"
 )
 
 func (p Permission) String() string {
@@ -22,8 +22,8 @@ func (p Permission) String() string {
 		return CreateNewUserPermissionName
 	case EditToursPermission:
 		return EditToursPermissionName
-	case EditAllNewBookingsPermission:
-		return EditAllNewBookingsPermissionName
+	case EditAllBookingsPermission:
+		return EditAllBookingsPermissionName
 	case EditUserBookingsPermission:
 		return EditUserBookingsPermissionName
 	default:

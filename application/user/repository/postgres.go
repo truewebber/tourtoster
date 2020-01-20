@@ -36,7 +36,7 @@ func (p *Postgres) User(ID int64) (*user.User, error) {
 
 	if err := p.db.QueryRow(selectUserByID, ID).Scan(
 		&u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
-		&u.Note, &u.Email, &u.Phone, &u.PasswordHash, &u.Status, &u.Role,
+		&u.Note, &u.Email, &u.Phone, &u.PasswordHash, &u.Status, &u.Permissions,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -53,7 +53,7 @@ func (p *Postgres) UserWithEmail(email string) (*user.User, error) {
 	u := new(user.User)
 	if err := p.db.QueryRow(selectUserByEmail, email).Scan(
 		&u.ID, &u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
-		&u.Note, &u.Phone, &u.PasswordHash, &u.Status, &u.Role,
+		&u.Note, &u.Phone, &u.PasswordHash, &u.Status, &u.Permissions,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

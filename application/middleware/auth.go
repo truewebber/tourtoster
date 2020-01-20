@@ -13,25 +13,19 @@ import (
 
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//if r.URL.Path == "/authorization" {
-		//	next.ServeHTTP(w, r)
-		//
-		//	return
-		//}
-
 		u, err := m.authUser(r)
 		if err != nil {
 			log.Error("auth error", "error", err.Error())
 		}
 
-		if u == nil && r.URL.Path != handler.MainPageAuthorizationPath {
-			http.Redirect(w, r, handler.MainPageAuthorizationPath, http.StatusFound)
+		if u == nil && r.URL.Path != handler.ConsolePathPrefix+handler.MainPageAuthorizationPath {
+			http.Redirect(w, r, handler.ConsolePathPrefix+handler.MainPageAuthorizationPath, http.StatusFound)
 
 			return
 		}
 
-		if u != nil && r.URL.Path == handler.MainPageAuthorizationPath {
-			http.Redirect(w, r, handler.MainPageIndexPath, http.StatusFound)
+		if u != nil && r.URL.Path == handler.ConsolePathPrefix+handler.MainPageAuthorizationPath {
+			http.Redirect(w, r, handler.ConsolePathPrefix+handler.MainPageIndexPath, http.StatusFound)
 
 			return
 		}

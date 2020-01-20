@@ -17,8 +17,7 @@ const (
 func (h *Handlers) MainLogoutPage(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 
-	err := h.token.Delete(u.Token.Token)
-	if err != nil {
+	if err := h.token.Delete(u.Token.Token); err != nil {
 		log.Error("Error delete token", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		write(w, "internal error")

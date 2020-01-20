@@ -27,6 +27,12 @@ const (
 func (h *Handlers) AdminIndexPage(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 
+	if !u.AdminPage() {
+		http.Redirect(w, r, MainPageIndexPath, http.StatusFound)
+
+		return
+	}
+
 	data := AdminPage{
 		User:         u,
 		AllowUserAdd: true,
@@ -34,8 +40,7 @@ func (h *Handlers) AdminIndexPage(w http.ResponseWriter, r *http.Request) {
 		Year:         time.Now().Year(),
 	}
 
-	err := h.templates[AdminIndexTemplateName].Execute(w, data)
-	if err != nil {
+	if err := h.templates[AdminIndexTemplateName].Execute(w, data); err != nil {
 		log.Error("Error execute template", "template", AdminIndexTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
