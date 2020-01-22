@@ -1,33 +1,41 @@
 #!/usr/bin/env bash
 
-DOCKER_TLS_VERIFY=${DOCKER_TLS_VERIFY:-0}
-
 function rand() {
   LC_CTYPE=C tr -dc 'a-zA-Z0-9' </dev/urandom | fold -w 10 | head -n 1
 }
 
-function build() {
-  TlsAppendArg=""
-  if [ "$DOCKER_TLS_VERIFY" == "1" ]; then
-    TlsAppendArg="--tls"
-  fi
-
-  docker $TlsAppendArg run --rm --net=host -v "$(pwd)":/project -w /project \
-    admin-docker.artifactory.semrush.net/golang:1.13 \
+function build_backend() {
+  docker run --rm --net=host -v "$(pwd)":/project -w /project \
+    tourtoster/builder:latest \
     /bin/bash -c "cd application && go build -o ../bin/server_lx ./cmd/server" || exit 1
+}
+
+function build_frontend() {
+  docker run --rm --net=host -v "$(pwd)":/project -w /project \
+    tourtoster/builder:latest \
+    /bin/bash -c "cd front/tools && npm install && ./node_modules/gulp/bin/gulp.js" || exit 1
 }
 
 function pack() {
   mkdir -p ./build
   mkdir -p ./build/bin
+  mkdir -p ./build/static
 
-  cp -R ./static ./build/static
+  cp -R ./front/dist/assets/css ./build/static/css
+  cp -R ./front/dist/assets/js ./build/static/js
+  cp -R ./front/dist/assets/media ./build/static/media
+  cp -R ./front/dist/assets/plugins ./build/static/plugins
+
   cp -R ./templates ./build/templates
   cp ./bin/server_lx ./build/bin/server
 
   tar -cvzf ./tourtoster.tar.gz ./build
 
   rm -rf ./build
+
+  rm -f ./bin/server_lx
+  rm -rf ./front/tools/node_modules
+  rm -rf ./front/dist
 }
 
 function deploy() {
@@ -48,14 +56,17 @@ function deploy() {
 
 case "$1" in
 build)
-  build
+  build_backend
+  build_frontend
   ;;
 pack)
-  build
+  build_backend
+  build_frontend
   pack
   ;;
 deploy)
-  build
+  build_backend
+  build_frontend
   pack
   deploy
   ;;

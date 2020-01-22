@@ -2,3 +2,6 @@
 bin/
 *.sqlite
 .DS_Store
+static/
+front/dist/
+front/tools/node_modules/
