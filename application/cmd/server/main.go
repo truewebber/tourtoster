@@ -83,9 +83,9 @@ func main() {
 	// ----------------------------------------------------------------
 	rc := r.PathPrefix(handler.ConsolePathPrefix).Subrouter()
 	// ----------------------------- MAIN -----------------------------
-	rc.HandleFunc(handler.MainPageAuthorizationPath, handlers.MainAuthorizationPage).Methods(http.MethodGet)
-	rc.HandleFunc(handler.MainPageIndexPath, handlers.MainIndexPage).Methods(http.MethodGet)
-	rc.HandleFunc(handler.MainPageLogoutPath, handlers.MainLogoutPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleAuthorizationPath, handlers.ConsoleAuthorizationPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleLogoutPath, handlers.ConsoleLogoutPage).Methods(http.MethodGet)
 	// --------------------------- MAIN API ---------------------------
 
 	//// ----------------------------------------------------------------
@@ -109,16 +109,15 @@ func main() {
 
 func templatesInit(templatePath string) error {
 	filesName := []string{
-		"parts/footer.gohtml",
-		"parts/bottom.gohtml",
-		"parts/header.gohtml",
-		"parts/sidebar.gohtml",
-		"parts/top.gohtml",
+		//"parts/footer.gohtml",
+		//"parts/bottom.gohtml",
+		//"parts/header.gohtml",
+		//"parts/sidebar.gohtml",
+		//"parts/top.gohtml",
 		// --
-		//"admin-index.gohtml",
 		"landing-index.gohtml",
-		"authorization.gohtml",
-		"main-index.gohtml",
+		"console-authorization.gohtml",
+		"console-index.gohtml",
 	}
 
 	pathes := make([]string, 0, len(filesName))
@@ -133,8 +132,8 @@ func templatesInit(templatePath string) error {
 
 	templateNames := []string{
 		handler.LandingIndexTemplateName,
-		handler.MainPageAuthorizationTemplateName,
-		handler.MainIndexTemplateName,
+		handler.ConsoleAuthorizationTemplateName,
+		handler.ConsoleIndexTemplateName,
 	}
 	for _, n := range templateNames {
 		t := tmpls.Lookup(n)

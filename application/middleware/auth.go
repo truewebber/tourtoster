@@ -18,14 +18,14 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 			log.Error("auth error", "error", err.Error())
 		}
 
-		if u == nil && r.URL.Path != handler.ConsolePathPrefix+handler.MainPageAuthorizationPath {
-			http.Redirect(w, r, handler.ConsolePathPrefix+handler.MainPageAuthorizationPath, http.StatusFound)
+		if u == nil && r.URL.Path != handler.ConsolePathPrefix+handler.ConsoleAuthorizationPath {
+			http.Redirect(w, r, handler.ConsolePathPrefix+handler.ConsoleAuthorizationPath, http.StatusFound)
 
 			return
 		}
 
-		if u != nil && r.URL.Path == handler.ConsolePathPrefix+handler.MainPageAuthorizationPath {
-			http.Redirect(w, r, handler.ConsolePathPrefix+handler.MainPageIndexPath, http.StatusFound)
+		if u != nil && r.URL.Path == handler.ConsolePathPrefix+handler.ConsoleAuthorizationPath {
+			http.Redirect(w, r, handler.ConsolePathPrefix+handler.ConsoleIndexPath, http.StatusFound)
 
 			return
 		}

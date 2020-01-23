@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	MainPageLogoutPath = "/logout"
+	ConsoleLogoutPath = "/logout"
 )
 
-func (h *Handlers) MainLogoutPage(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) ConsoleLogoutPage(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 
 	if err := h.token.Delete(u.Token.Token); err != nil {
@@ -34,5 +34,5 @@ func (h *Handlers) MainLogoutPage(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 
-	http.Redirect(w, r, MainPageIndexPath, http.StatusFound)
+	http.Redirect(w, r, ConsoleIndexPath, http.StatusFound)
 }

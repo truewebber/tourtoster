@@ -1,6 +1,6 @@
 "use strict";
 
-var KTLayout = function() {
+var KTLayout = function () {
     var body;
 
     var header;
@@ -16,7 +16,7 @@ var KTLayout = function() {
     var pageStickyPortlet;
 
     // Header
-    var initHeader = function() {
+    var initHeader = function () {
         var tmp;
         var headerEl = KTUtil.get('kt_header');
         var headerMobileEl = KTUtil.get('kt_header_mobile');
@@ -43,18 +43,18 @@ var KTLayout = function() {
         header = new KTHeader('kt_header', options);
 
         if (asideMenu) {
-            header.on('minimizeOn', function() {
+            header.on('minimizeOn', function () {
                 asideMenu.scrollReInit();
             });
 
-            header.on('minimizeOff', function() {
+            header.on('minimizeOff', function () {
                 asideMenu.scrollReInit();
             });
         }
     }
 
     // Header Menu
-    var initHeaderMenu = function() {
+    var initHeaderMenu = function () {
         // init aside left offcanvas
         headerMenuOffcanvas = new KTOffcanvas('kt_header_menu_wrapper', {
             overlay: true,
@@ -80,7 +80,7 @@ var KTLayout = function() {
     }
 
     // Header Topbar
-    var initHeaderTopbar = function() {
+    var initHeaderTopbar = function () {
         mobileHeaderTopbarToggle = new KTToggle('kt_header_mobile_topbar_toggler', {
             target: 'body',
             targetState: 'kt-header__topbar--mobile-on',
@@ -89,7 +89,7 @@ var KTLayout = function() {
     }
 
     // Aside
-    var initAside = function() {
+    var initAside = function () {
         // init aside left offcanvas
         var asidBrandHover = false;
         var aside = KTUtil.get('kt_aside');
@@ -111,7 +111,7 @@ var KTLayout = function() {
             var insideTm;
             var outsideTm;
 
-            KTUtil.addEvent(aside, 'mouseenter', function(e) {
+            KTUtil.addEvent(aside, 'mouseenter', function (e) {
                 e.preventDefault();
 
                 if (KTUtil.isInResponsiveRange('desktop') === false) {
@@ -123,13 +123,13 @@ var KTLayout = function() {
                     outsideTm = null;
                 }
 
-                insideTm = setTimeout(function() {
+                insideTm = setTimeout(function () {
                     if (KTUtil.hasClass(body, 'kt-aside--minimize') && KTUtil.isInResponsiveRange('desktop')) {
                         KTUtil.removeClass(body, 'kt-aside--minimize');
 
                         // Minimizing class
                         KTUtil.addClass(body, 'kt-aside--minimizing');
-                        KTUtil.transitionEnd(body, function() {
+                        KTUtil.transitionEnd(body, function () {
                             KTUtil.removeClass(body, 'kt-aside--minimizing');
                         });
 
@@ -141,7 +141,7 @@ var KTLayout = function() {
                 }, 50);
             });
 
-            KTUtil.addEvent(aside, 'mouseleave', function(e) {
+            KTUtil.addEvent(aside, 'mouseleave', function (e) {
                 e.preventDefault();
 
                 if (KTUtil.isInResponsiveRange('desktop') === false) {
@@ -153,14 +153,14 @@ var KTLayout = function() {
                     insideTm = null;
                 }
 
-                outsideTm = setTimeout(function() {
+                outsideTm = setTimeout(function () {
                     if (KTUtil.hasClass(body, 'kt-aside--minimize-hover') && KTUtil.isInResponsiveRange('desktop')) {
                         KTUtil.removeClass(body, 'kt-aside--minimize-hover');
                         KTUtil.addClass(body, 'kt-aside--minimize');
 
                         // Minimizing class
                         KTUtil.addClass(body, 'kt-aside--minimizing');
-                        KTUtil.transitionEnd(body, function() {
+                        KTUtil.transitionEnd(body, function () {
                             KTUtil.removeClass(body, 'kt-aside--minimizing');
                         });
 
@@ -174,7 +174,7 @@ var KTLayout = function() {
     }
 
     // Aside menu
-    var initAsideMenu = function() {
+    var initAsideMenu = function () {
         // Init aside menu
         var menu = KTUtil.get('kt_aside_menu');
         var menuDesktopMode = (KTUtil.attr(menu, 'data-ktmenu-dropdown') === '1' ? 'dropdown' : 'accordion');
@@ -184,7 +184,7 @@ var KTLayout = function() {
         if (KTUtil.attr(menu, 'data-ktmenu-scroll') === '1') {
             scroll = {
                 rememberPosition: true, // remember position on page reload
-                height: function() {  // calculate available scrollable area height
+                height: function () {  // calculate available scrollable area height
                     var height;
 
                     if (KTUtil.isInResponsiveRange('desktop')) {
@@ -219,7 +219,7 @@ var KTLayout = function() {
     }
 
     // Scrolltop
-    var initScrolltop = function() {
+    var initScrolltop = function () {
         var scrolltop = new KTScrolltop('kt_scrolltop', {
             offset: 200,
             speed: 400
@@ -227,69 +227,69 @@ var KTLayout = function() {
     }
 
     // Init page sticky portlet
-    var initPageStickyPortlet = function() {
+    var initPageStickyPortlet = function () {
         return new KTPortlet('kt_page_portlet', {
             sticky: {
-                offset: parseInt(KTUtil.css( KTUtil.get('kt_header'), 'height')) + 200,
+                offset: parseInt(KTUtil.css(KTUtil.get('kt_header'), 'height')) + 200,
                 zIndex: 90,
                 position: {
-                    top: function() {
+                    top: function () {
                         if (KTUtil.isInResponsiveRange('desktop')) {
                             return 60; //parseInt(KTUtil.actualHeight( KTUtil.get('kt_header'), 'height') );
                         } else {
-                            return parseInt(KTUtil.css( KTUtil.get('kt_header_mobile'), 'height') );
+                            return parseInt(KTUtil.css(KTUtil.get('kt_header_mobile'), 'height'));
                         }
                     },
-                    left: function(portlet) {
-						var porletEl = portlet.getSelf();
+                    left: function (portlet) {
+                        var porletEl = portlet.getSelf();
 
-						return KTUtil.offset(porletEl).left;
-					},
-					right: function(portlet) {
+                        return KTUtil.offset(porletEl).left;
+                    },
+                    right: function (portlet) {
                         var porletEl = portlet.getSelf();
 
                         var portletWidth = parseInt(KTUtil.css(porletEl, 'width'));
-						var bodyWidth = parseInt(KTUtil.css(KTUtil.get('body'), 'width'));
-						var portletOffsetLeft = KTUtil.offset(porletEl).left;
+                        var bodyWidth = parseInt(KTUtil.css(KTUtil.get('body'), 'width'));
+                        var portletOffsetLeft = KTUtil.offset(porletEl).left;
 
-						return bodyWidth - portletWidth - portletOffsetLeft;
-					}
+                        return bodyWidth - portletWidth - portletOffsetLeft;
+                    }
                 }
             }
         });
     }
 
-	// Calculate content available full height
-	var getContentHeight = function() {
-		var height;
+    // Calculate content available full height
+    var getContentHeight = function () {
+        var height;
 
-		height = KTUtil.getViewPort().height;
+        height = KTUtil.getViewPort().height;
 
-		if (KTUtil.getByID('kt_header')) {
+        if (KTUtil.getByID('kt_header')) {
             height = height - KTUtil.actualHeight('kt_header');
-		}
+        }
 
-		if (KTUtil.getByID('kt_subheader')) {
+        if (KTUtil.getByID('kt_subheader')) {
             height = height - KTUtil.actualHeight('kt_subheader');
-		}
+        }
 
-		if (KTUtil.getByID('kt_footer')) {
-			height = height - parseInt(KTUtil.css('kt_footer', 'height'));
-		}
+        if (KTUtil.getByID('kt_footer')) {
+            height = height - parseInt(KTUtil.css('kt_footer', 'height'));
+        }
 
-		if (KTUtil.getByID('kt_body')) {
-			height = height - parseInt(KTUtil.css('kt_body', 'padding-top')) - parseInt(KTUtil.css('kt_body', 'padding-bottom'));
+        if (KTUtil.getByID('kt_body')) {
+            height = height - parseInt(KTUtil.css('kt_body', 'padding-top')) - parseInt(KTUtil.css('kt_body', 'padding-bottom'));
         }
 
         if (KTUtil.getByID('kt_content')) {
-			height = height - parseInt(KTUtil.css('kt_content', 'padding-top')) - parseInt(KTUtil.css('kt_content', 'padding-bottom'));
-		}
+            height = height - parseInt(KTUtil.css('kt_content', 'padding-top')) - parseInt(KTUtil.css('kt_content', 'padding-bottom'));
+        }
 
-		return height;
-	}
+        return height;
+    }
 
     return {
-        init: function() {
+        init: function () {
             body = KTUtil.get('body');
 
             this.initHeader();
@@ -297,30 +297,30 @@ var KTLayout = function() {
             this.initPageStickyPortlet();
 
             // Non functional links notice(can be removed in production)
-			$('#kt_aside_menu, #kt_header_menu').on('click', '.kt-menu__link[href="#"]', function(e) {
-				swal.fire("", "You have clicked on a non-functional dummy link!");
+            $('#kt_aside_menu, #kt_header_menu').on('click', '.kt-menu__link[href="#"]', function (e) {
+                swal.fire("", "You have clicked on a non-functional dummy link!");
 
-				e.preventDefault();
-			});
+                e.preventDefault();
+            });
         },
 
-        initHeader: function() {
+        initHeader: function () {
             initHeader();
             initHeaderMenu();
             initHeaderTopbar();
             initScrolltop();
         },
 
-        initAside: function() {
+        initAside: function () {
             initAside();
             initAsideMenu();
         },
 
-        getAsideMenu: function() {
+        getAsideMenu: function () {
             return asideMenu;
         },
 
-        initPageStickyPortlet: function() {
+        initPageStickyPortlet: function () {
             if (!KTUtil.get('kt_page_portlet')) {
                 return;
             }
@@ -328,28 +328,28 @@ var KTLayout = function() {
             pageStickyPortlet = initPageStickyPortlet();
             pageStickyPortlet.initSticky();
 
-            KTUtil.addResizeHandler(function(){
+            KTUtil.addResizeHandler(function () {
                 pageStickyPortlet.updateSticky();
             });
 
             initPageStickyPortlet();
         },
 
-        closeMobileAsideMenuOffcanvas: function() {
+        closeMobileAsideMenuOffcanvas: function () {
             if (KTUtil.isMobileDevice()) {
                 asideMenuOffcanvas.hide();
             }
         },
 
-        closeMobileHeaderMenuOffcanvas: function() {
+        closeMobileHeaderMenuOffcanvas: function () {
             if (KTUtil.isMobileDevice()) {
                 headerMenuOffcanvas.hide();
             }
         },
 
-        getContentHeight: function() {
-			return getContentHeight();
-		}
+        getContentHeight: function () {
+            return getContentHeight();
+        }
     };
 }();
 
@@ -358,6 +358,6 @@ if (typeof module !== 'undefined') {
     module.exports = KTLayout;
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
     KTLayout.init();
 });

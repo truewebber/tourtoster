@@ -16,6 +16,11 @@ function build_frontend() {
     /bin/bash -c "cd front/tools && npm install && ./node_modules/gulp/bin/gulp.js" || exit 1
 }
 
+function move_static() {
+  rm -rf ./static
+  cp -r ./front/dist/assets ./static
+}
+
 function pack() {
   mkdir -p ./build
   mkdir -p ./build/bin
@@ -55,6 +60,10 @@ function deploy() {
 }
 
 case "$1" in
+static)
+  build_frontend
+  move_static
+  ;;
 build)
   build_backend
   build_frontend
@@ -73,6 +82,7 @@ deploy)
 *)
   echo $"Usage: $0 {action}"
   echo "Actions: "
+  echo "	- static"
   echo "	- build"
   echo "	- pack"
   echo "	- deploy"

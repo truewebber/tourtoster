@@ -18,7 +18,7 @@ var KTLoginGeneral = function () {
         //alert.animateClass('fadeIn animated');
         KTUtil.animateClass(alert[0], 'fadeIn animated');
         alert.find('span').html(msg);
-    }
+    };
 
     // Private Functions
     var displaySignInForm = function () {
@@ -26,9 +26,9 @@ var KTLoginGeneral = function () {
         login.removeClass('kt-login--signup');
 
         login.addClass('kt-login--signin');
-        KTUtil.animateClass(login.find('.kt-login__signin')[0], 'flipInX animated');
+        KTUtil.animateClass(login.find('.kt-login__signin')[0], 'fadeIn animated');
         //login.find('.kt-login__signin').animateClass('flipInX animated');
-    }
+    };
 
     var displayForgotForm = function () {
         login.removeClass('kt-login--signin');
@@ -36,9 +36,9 @@ var KTLoginGeneral = function () {
 
         login.addClass('kt-login--forgot');
         //login.find('.kt-login--forgot').animateClass('flipInX animated');
-        KTUtil.animateClass(login.find('.kt-login__forgot')[0], 'flipInX animated');
+        KTUtil.animateClass(login.find('.kt-login__forgot')[0], 'fadeIn animated');
 
-    }
+    };
 
     var handleFormSwitch = function () {
         $('#kt_login_forgot').click(function (e) {
@@ -50,7 +50,7 @@ var KTLoginGeneral = function () {
             e.preventDefault();
             displaySignInForm();
         });
-    }
+    };
 
     var handleSignInFormSubmit = function () {
         $('#kt_login_signin_submit').click(function (e) {
@@ -87,7 +87,7 @@ var KTLoginGeneral = function () {
                 }
             });
         });
-    }
+    };
 
     var handleForgotFormSubmit = function () {
         $('#kt_login_forgot_submit').click(function (e) {
@@ -131,7 +131,7 @@ var KTLoginGeneral = function () {
                 }
             });
         });
-    }
+    };
 
     // Public Functions
     return {
