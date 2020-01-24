@@ -36,7 +36,7 @@
     <!-- begin:: Page -->
 
     <!-- begin:: Header Mobile -->
-    <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed ">
+    <div id="kt_header_mobile" class="kt-header-mobile kt-header-mobile--fixed">
         <div class="kt-header-mobile__logo">
             <a href="/console"><img alt="Logo" src="/static/media/logos/logo-8-sm.png"/></a>
         </div>
@@ -44,8 +44,49 @@
             <button class="kt-header-mobile__toolbar-toggler" id="kt_header_mobile_toggler">
                 <span></span>
             </button>
-            <button class="kt-header-mobile__toolbar-topbar-toggler" id="kt_header_mobile_topbar_toggler">
-                <i class="flaticon-more-1"></i>
+            <button class="kt-header-mobile__toolbar-user">
+                <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,10px">
+                    <img alt="Pic" src="/static/media/users/300_21.jpg"/>
+                </div>
+                <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+                    <!--begin: Navigation -->
+                    <div class="kt-notification">
+                        <a href="custom/apps/user/profile-1/personal-information.html"
+                           class="kt-notification__item">
+                            <div class="kt-notification__item-icon">
+                                <i class="flaticon2-calendar-3 kt-font-success"></i>
+                            </div>
+                            <div class="kt-notification__item-details">
+                                <div class="kt-notification__item-title kt-font-bold">
+                                    My Profile
+                                </div>
+                                <div class="kt-notification__item-time">
+                                    Account settings and more
+                                </div>
+                            </div>
+                        </a>
+                        <a href="custom/apps/user/profile-1/overview.html"
+                           class="kt-notification__item">
+                            <div class="kt-notification__item-icon">
+                                <i class="flaticon2-cardiogram kt-font-warning"></i>
+                            </div>
+                            <div class="kt-notification__item-details">
+                                <div class="kt-notification__item-title kt-font-bold">
+                                    Billing
+                                </div>
+                                <div class="kt-notification__item-time">
+                                    billing & statements <span
+                                            class="kt-badge kt-badge--danger kt-badge--inline kt-badge--pill kt-badge--rounded">2 pending</span>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="kt-notification__custom kt-space-between">
+                            <a href="custom/user/login-v2.html"
+                               class="btn btn-label btn-sm btn-bold btn-label-brand">Sign Out</a>
+                        </div>
+                    </div>
+                    <!--end: Navigation -->
+                </div>
             </button>
         </div>
     </div>
@@ -83,8 +124,9 @@
                                         <span class="kt-header__topbar-username kt-visible-desktop">Nick</span>
                                         <img alt="Pic" src="/static/media/users/300_21.jpg"/>
                                         <span class="kt-header__topbar-icon kt-bg-brand kt-font-lg kt-font-bold kt-font-light kt-hidden">S</span>
-                                        <span class="kt-header__topbar-icon kt-hidden"><i
-                                                    class="flaticon2-user-outline-symbol"></i></span>
+                                        <span class="kt-header__topbar-icon kt-hidden">
+                                            <i class="flaticon2-user-outline-symbol"></i>
+                                        </span>
                                     </div>
                                     <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
                                         <!--begin: Navigation -->

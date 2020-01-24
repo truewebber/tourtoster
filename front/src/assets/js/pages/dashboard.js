@@ -2115,9 +2115,9 @@ var KTDashboard = function() {
             // var loading = new KTDialog({'type': 'loader', 'placement': 'top center', 'message': 'Loading ...'});
             // loading.show();
 
-            setTimeout(function() {
-                loading.hide();
-            }, 3000);
+            // setTimeout(function() {
+            //     loading.hide();
+            // }, 3000);
         }
     };
 }();
