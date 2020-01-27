@@ -19,7 +19,7 @@ function build_frontend() {
 function build_frontend_local() {
   cd front/tools || exit 1
   npm install || exit 1
-  ./node_modules/gulp/bin/gulp.js build || exit 1
+  ./node_modules/gulp/bin/gulp.js || exit 1
   cd ../../ || exit 1
 }
 
