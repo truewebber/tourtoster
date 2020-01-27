@@ -14,4 +14,5 @@ require (
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab
 	github.com/pkg/errors v0.9.0
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 )

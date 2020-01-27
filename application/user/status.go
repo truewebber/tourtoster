@@ -1,5 +1,7 @@
 package user
 
+import "github.com/pkg/errors"
+
 type (
 	Status int
 )
@@ -14,6 +16,14 @@ const (
 	StatusDisabledName = "disabled"
 )
 
+var (
+	allowedStatuses = map[Status]struct{}{
+		StatusNew:      {},
+		StatusEnabled:  {},
+		StatusDisabled: {},
+	}
+)
+
 func (s Status) String() string {
 	switch s {
 	case StatusNew:
@@ -25,4 +35,12 @@ func (s Status) String() string {
 	}
 
 	return ""
+}
+
+func ValidationStatus(s Status) error {
+	if _, ok := allowedStatuses[s]; !ok {
+		return errors.New("status invalid")
+	}
+
+	return nil
 }

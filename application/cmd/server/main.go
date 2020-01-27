@@ -86,17 +86,13 @@ func main() {
 	rc.HandleFunc(handler.ConsoleAuthorizationPath, handlers.ConsoleAuthorizationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleLogoutPath, handlers.ConsoleLogoutPage).Methods(http.MethodGet)
+	// ----------------------------------------------------------------
+	rca := r.PathPrefix(handler.ApiPathPrefix).Subrouter()
 	// --------------------------- MAIN API ---------------------------
-
-	//// ----------------------------------------------------------------
-	//ra := r.PathPrefix(handler.AdminPathPrefix).Subrouter()
-	//// ---------------------------- ADMIN -----------------------------
-	////ra.HandleFunc(handler.AuthorizationAdminPagePath, handlers.AuthorizationAdminPage).Methods(http.MethodGet)
-	//ra.HandleFunc(handler.AdminPageIndexPath, handlers.AdminIndexPage).Methods(http.MethodGet)
-	////ra.HandleFunc(handler.ServicesAdminPagePath, handlers.ServicesAdminPage).Methods(http.MethodGet)
-	////ra.HandleFunc(handler.ProjectsAdminPagePath, handlers.ProjectsAdminPage).Methods(http.MethodGet)
-	//// -------------------------- ADMIN API ---------------------------
-	//// -------------------------- MIDDLEWARE --------------------------
+	rca.HandleFunc(handler.AuthorizationAdminApiPath, handlers.AuthorizationAdminApi).Methods(http.MethodPost)
+	rca.HandleFunc(handler.UserApiPath, handlers.ApiUserCreate).Methods(http.MethodPost)
+	rca.HandleFunc(handler.UserApiPath, handlers.ApiUseDelete).Methods(http.MethodDelete)
+	// -------------------------- MIDDLEWARE --------------------------
 	rc.Use(middlewares.AuthMiddleware)
 	// ----------------------------------------------------------------
 
@@ -109,11 +105,10 @@ func main() {
 
 func templatesInit(templatePath string) error {
 	filesName := []string{
-		//"parts/footer.gohtml",
-		//"parts/bottom.gohtml",
-		//"parts/header.gohtml",
-		//"parts/sidebar.gohtml",
-		//"parts/top.gohtml",
+		"parts/footer.gohtml",
+		"parts/header.gohtml",
+		"parts/header-mobile.gohtml",
+		"parts/header-dropdown-user-menu.gohtml",
 		// --
 		"landing-index.gohtml",
 		"console-authorization.gohtml",

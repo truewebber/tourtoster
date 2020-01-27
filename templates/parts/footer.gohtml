@@ -1,58 +1,15 @@
 {{ define "footer" }}
+    <div class="kt-footer  kt-grid__item" id="kt_footer">
+        <div class="kt-container  kt-container--fluid ">
+            <div class="kt-footer__wrapper">
+                <div class="kt-footer__copyright">
+                    {{.Year}}&nbsp;&copy;&nbsp;<a href="//truewebber.com" target="_blank" class="kt-link">Truewebber</a>
+                </div>
+                <div class="kt-footer__menu">
+                    <a href="/about" target="_blank" class="kt-link">About</a>
+                    <a href="/contact" target="_blank" class="kt-link">Contact</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- end main wrapper  -->
-    <!-- ============================================================== -->
-    <!-- Optional JavaScript -->
-    <!-- jquery 3.3.1 -->
-    <script src="/static/vendor/jquery/jquery-3.3.1.min.js"></script>
-    <!-- main js -->
-    <script src="/static/libs/js/main-js.js"></script>
-    <!-- bootstap bundle js -->
-    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <!-- slimscroll js -->
-    <script src="/static/vendor/slimscroll/jquery.slimscroll.js"></script>
-    <!-- sparkline js -->
-    <script src="/static/vendor/charts/sparkline/jquery.sparkline.js"></script>
-    <!-- morris js -->
-    <script src="/static/vendor/charts/morris-bundle/raphael.min.js"></script>
-    <script src="/static/vendor/charts/morris-bundle/morris.js"></script>
-    <!-- chart chartist js -->
-    <script src="/static/vendor/charts/chartist-bundle/chartist.min.js"></script>
-    <!-- chart c3 js -->
-    <script src="/static/vendor/charts/c3charts/c3.min.js"></script>
-    <script src="/static/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
-    <script src="/static/vendor/charts/c3charts/C3chartjs.js"></script>
-    {{/*<script src="/static/libs/js/dashboard-ecommerce.js"></script>*/}}
-
-    <script>
-        function setCookie(name, value, days) {
-            var expires = "";
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        }
-
-        function getCookie(name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        function eraseCookie(name) {
-            document.cookie = name + '=; Max-Age=-99999999;';
-        }
-    </script>
-
-    </body>
-
-    </html>
 {{ end }}

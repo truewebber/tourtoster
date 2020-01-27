@@ -1,0 +1,18 @@
+{{ define "header_mobile" }}
+    <div id="kt_header_mobile" class="kt-header-mobile kt-header-mobile--fixed">
+        <div class="kt-header-mobile__logo">
+            <a href="/console"><img alt="Logo" src="/static/media/logos/logo-8-sm.png"/></a>
+        </div>
+        <div class="kt-header-mobile__toolbar">
+            <button class="kt-header-mobile__toolbar-toggler" id="kt_header_mobile_toggler">
+                <span></span>
+            </button>
+            <button class="kt-header-mobile__toolbar-user">
+                <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,10px">
+                    <img alt="Pic" src="/static/media/users/300_21.jpg"/>
+                </div>
+                {{template "header_dropdown_user_menu"}}
+            </button>
+        </div>
+    </div>
+{{ end }}

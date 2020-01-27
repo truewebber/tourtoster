@@ -1,5 +1,9 @@
 package user
 
+import (
+	"github.com/pkg/errors"
+)
+
 type (
 	Permission int
 )
@@ -16,6 +20,15 @@ const (
 	EditUserBookingsPermissionName = "Edit User Bookings"
 )
 
+var (
+	allowedPermissions = map[Permission]struct{}{
+		CreateNewUserPermission:    {},
+		EditToursPermission:        {},
+		EditAllBookingsPermission:  {},
+		EditUserBookingsPermission: {},
+	}
+)
+
 func (p Permission) String() string {
 	switch p {
 	case CreateNewUserPermission:
@@ -29,4 +42,12 @@ func (p Permission) String() string {
 	default:
 		return ""
 	}
+}
+
+func ValidationPermission(p Permission) error {
+	if _, ok := allowedPermissions[p]; !ok {
+		return errors.New("permission invalid")
+	}
+
+	return nil
 }

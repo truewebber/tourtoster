@@ -48,6 +48,21 @@ func (mr *MockRepositoryMockRecorder) Hotel(ID interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Hotel", reflect.TypeOf((*MockRepository)(nil).Hotel), ID)
 }
 
+// HotelByName mocks base method
+func (m *MockRepository) HotelByName(name string) (*hotel.Hotel, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HotelByName", name)
+	ret0, _ := ret[0].(*hotel.Hotel)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HotelByName indicates an expected call of HotelByName
+func (mr *MockRepositoryMockRecorder) HotelByName(name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HotelByName", reflect.TypeOf((*MockRepository)(nil).HotelByName), name)
+}
+
 // Save mocks base method
 func (m *MockRepository) Save(h *hotel.Hotel) error {
 	m.ctrl.T.Helper()

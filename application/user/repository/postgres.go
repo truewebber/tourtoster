@@ -51,6 +51,7 @@ func (p *Postgres) User(ID int64) (*user.User, error) {
 
 func (p *Postgres) UserWithEmail(email string) (*user.User, error) {
 	u := new(user.User)
+	u.Hotel = new(hotel.Hotel)
 	if err := p.db.QueryRow(selectUserByEmail, email).Scan(
 		&u.ID, &u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
 		&u.Note, &u.Phone, &u.PasswordHash, &u.Status, &u.Permissions,

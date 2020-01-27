@@ -4,6 +4,7 @@ package hotel
 type (
 	Repository interface {
 		Hotel(ID int64) (*Hotel, error)
+		HotelByName(name string) (*Hotel, error)
 		Save(h *Hotel) error
 		Delete(ID int64) error
 	}

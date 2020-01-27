@@ -16,6 +16,13 @@ function build_frontend() {
     /bin/bash -c "cd front/tools && npm install && ./node_modules/gulp/bin/gulp.js" || exit 1
 }
 
+function build_frontend_local() {
+  cd front/tools || exit 1
+  npm install || exit 1
+  ./node_modules/gulp/bin/gulp.js build || exit 1
+  cd ../../ || exit 1
+}
+
 function move_static() {
   rm -rf ./static
   cp -r ./front/dist/assets ./static
@@ -61,7 +68,7 @@ function deploy() {
 
 case "$1" in
 static)
-  build_frontend
+  build_frontend_local
   move_static
   ;;
 build)

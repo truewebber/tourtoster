@@ -1,0 +1,41 @@
+{{ define "header_dropdown_user_menu" }}
+    <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-xl">
+        <!--begin: Navigation -->
+        <div class="kt-notification">
+            <a href="/console/profile"
+               class="kt-notification__item">
+                <div class="kt-notification__item-icon">
+                    <i class="flaticon2-calendar-3 kt-font-success"></i>
+                </div>
+                <div class="kt-notification__item-details">
+                    <div class="kt-notification__item-title kt-font-bold">
+                        My Profile
+                    </div>
+                    <div class="kt-notification__item-time">
+                        Account settings and more
+                    </div>
+                </div>
+            </a>
+            <a href="/console/billing"
+               class="kt-notification__item">
+                <div class="kt-notification__item-icon">
+                    <i class="flaticon2-cardiogram kt-font-warning"></i>
+                </div>
+                <div class="kt-notification__item-details">
+                    <div class="kt-notification__item-title kt-font-bold">
+                        Billing
+                    </div>
+                    <div class="kt-notification__item-time">
+                        billing & statements <span
+                                class="kt-badge kt-badge--danger kt-badge--inline kt-badge--pill kt-badge--rounded">2 pending</span>
+                    </div>
+                </div>
+            </a>
+            <div class="kt-notification__custom kt-space-between">
+                <a href="/console/signout"
+                   class="btn btn-label btn-sm btn-bold btn-label-brand">Sign Out</a>
+            </div>
+        </div>
+        <!--end: Navigation -->
+    </div>
+{{ end }}

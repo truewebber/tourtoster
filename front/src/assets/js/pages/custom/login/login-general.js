@@ -77,13 +77,17 @@ var KTLoginGeneral = function () {
             btn.addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
 
             form.ajaxSubmit({
-                url: '',
+                method: "post",
+                url: '/console/api/authorization',
+                dataType: "json",
                 success: function (response, status, xhr, $form) {
-                    // similate 2s delay
-                    setTimeout(function () {
-                        btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
-                        showErrorMsg(form, 'danger', 'Incorrect username or password. Please try again.');
-                    }, 2000);
+                    setCookie("token", response.token, 1000);
+
+                    window.location = "/console"
+                },
+                error: function (response, status, xhr, $form) {
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false);
+                    showErrorMsg(form, 'danger', response.responseJSON.error);
                 }
             });
         });
@@ -131,6 +135,13 @@ var KTLoginGeneral = function () {
                 }
             });
         });
+    };
+
+    var setCookie = function (cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     };
 
     // Public Functions

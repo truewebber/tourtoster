@@ -1,67 +1,69 @@
 {{ define "header" }}
-<!doctype html>
-<html lang="en">
+    <div id="kt_header" class="kt-header kt-grid__item kt-header--fixed" data-ktheader-minimize="off">
+        <div class="kt-header__top">
+            <div class="kt-container kt-container--fluid ">
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/vendor/fonts/circular-std/style.css">
-    <link rel="stylesheet" href="/static/libs/css/style.css">
-    <link rel="stylesheet" href="/static/libs/css/images.css">
-    <link rel="stylesheet" href="/static/vendor/fonts/fontawesome/css/fontawesome-all.css">
-    <link rel="stylesheet" href="/static/vendor/charts/chartist-bundle/chartist.css">
-    <link rel="stylesheet" href="/static/vendor/charts/morris-bundle/morris.css">
-    <link rel="stylesheet" href="/static/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="/static/vendor/charts/c3charts/c3.css">
-    <link rel="stylesheet" href="/static/vendor/fonts/flag-icon-css/flag-icon.min.css">
-    <title>ADMINPANEL | TOURTOSTER</title>
-</head>
+                <!-- begin:: Brand -->
+                <div class="kt-header__brand kt-grid__item" id="kt_header_brand">
+                    <div class="kt-header__brand-logo">
+                        <a href="/console">
+                            <img alt="Logo" src="/static/media/logos/logo-8.png" class="kt-header__brand-logo-default"/>
+                            <img alt="Logo" src="/static/media/logos/logo-8-inverse.png"
+                                 class="kt-header__brand-logo-sticky"/>
+                        </a>
+                    </div>
+                </div>
+                <!-- end:: Brand -->
 
-<body>
-<!-- ============================================================== -->
-<!-- main wrapper -->
-<!-- ============================================================== -->
-<div class="dashboard-main-wrapper">
-    <!-- ============================================================== -->
-    <!-- navbar -->
-    <!-- ============================================================== -->
-    <div class="dashboard-header">
-        <nav class="navbar navbar-expand-lg bg-white fixed-top">
-            <a class="navbar-brand" href="/console">ADMINPANEL</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                {{ if .User }}
-                    <ul class="navbar-nav ml-auto navbar-right-top">
-                        <li class="nav-item dropdown nav-user">
-                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="/static/images/avatar-forrest.jpeg" alt=""
-                                     class="user-avatar-md rounded-circle">
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown"
-                                 aria-labelledby="navbarDropdownMenuLink2">
-                                <div class="nav-user-info">
-                                    <h5 class="mb-0 text-white nav-user-name">{{ .User.FirstName }} {{ .User.LastName }}</h5>
-                                    <span class="status"></span><span class="ml-2"></span>
-                                </div>
-                                <!--<a class="dropdown-item" href="#"><i class="fas fa-user mr-2"></i>Account</a>-->
-                                <!--<a class="dropdown-item" href="/admin/settings"><i class="fas fa-cog mr-2"></i>Setting</a>-->
-                                <a class="dropdown-item" href="/console/logout"><i class="fas fa-power-off mr-2"></i>Logout</a>
-                            </div>
-                        </li>
-                    </ul>
-                {{ end }}
+                <!-- begin:: Header Topbar -->
+                <div class="kt-header__topbar">
+                    <!--begin: User bar -->
+                    <div class="kt-header__topbar-item kt-header__topbar-item--user">
+                        <div class="kt-header__topbar-wrapper" data-toggle="dropdown"
+                             data-offset="0px,10px">
+                            <span class="kt-header__topbar-welcome kt-visible-desktop">Hi,</span>
+                            <span class="kt-header__topbar-username kt-visible-desktop">Nick</span>
+                            <img alt="Pic" src="/static/media/users/300_21.jpg"/>
+                            <span class="kt-header__topbar-icon kt-bg-brand kt-font-lg kt-font-bold kt-font-light kt-hidden">S</span>
+                            <span class="kt-header__topbar-icon kt-hidden"><i class="flaticon2-user-outline-symbol"></i></span>
+                        </div>
+                        {{template "header_dropdown_user_menu"}}
+                    </div>
+                    <!--end: User bar -->
+                </div>
+                <!-- end:: Header Topbar -->
             </div>
-        </nav>
+        </div>
+        <div class="kt-header__bottom">
+            <div class="kt-container  kt-container--fluid ">
+
+                <!-- begin: Header Menu -->
+                <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn">
+                    <i class="la la-close"></i>
+                </button>
+                <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
+                    <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
+                        <ul class="kt-menu__nav ">
+                            <li class="kt-menu__item kt-menu__item--rel kt-menu__item--here">
+                                <a href="/console/" class="kt-menu__link">
+                                    <span class="kt-menu__link-text">Dashboards</span>
+                                </a>
+                            </li>
+                            <li class="kt-menu__item kt-menu__item--rel">
+                                <a href="/console/group_tours/" class="kt-menu__link">
+                                    <span class="kt-menu__link-text">Group Tours</span>
+                                </a>
+                            </li>
+                            <li class="kt-menu__item kt-menu__item--rel">
+                                <a href="/console/private_tours" class="kt-menu__link">
+                                    <span class="kt-menu__link-text">Private Tours</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- end: Header Menu -->
+            </div>
+        </div>
     </div>
-    <!-- ============================================================== -->
-    <!-- end navbar -->
-    <!-- ============================================================== -->
-    {{ end }}
+{{ end }}
