@@ -1,7 +1,11 @@
-.idea/
-bin/
+.idea
+bin
+
+static
+front/dist
+node_modules
+
 *.sqlite
 .DS_Store
-static/
-front/dist/
-front/tools/node_modules/
+
+*.tar.gz

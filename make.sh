@@ -13,19 +13,25 @@ function build_backend() {
 function build_frontend() {
   docker run --rm --net=host -v "$(pwd)":/project -w /project \
     tourtoster/builder:latest \
-    /bin/bash -c "cd front/tools && npm install && ./node_modules/gulp/bin/gulp.js" || exit 1
+    /bin/bash -c "cd front/tools && yarn install && yarn build" || exit 1
+}
+
+function front_watcher() {
+  cd front/tools || exit 1
+  yarn watch
 }
 
 function build_frontend_local() {
   cd front/tools || exit 1
-  npm install || exit 1
-  ./node_modules/gulp/bin/gulp.js || exit 1
+  yarn install || exit 1
+  yarn build || exit 1
   cd ../../ || exit 1
 }
 
 function move_static() {
-  rm -rf ./static
-  cp -r ./front/dist/assets ./static
+  if [ ! -d "./static" ]; then
+    ln -s ./front/dist/assets ./static
+  fi
 }
 
 function pack() {
@@ -67,6 +73,9 @@ function deploy() {
 }
 
 case "$1" in
+watch)
+  front_watcher
+  ;;
 static)
   build_frontend_local
   move_static

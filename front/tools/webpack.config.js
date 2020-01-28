@@ -134,14 +134,6 @@ pageScripts.forEach(function (jsPath) {
     entries["js/" + matched[1]] = jsPath;
 });
 
-if (release) {
-    // copy html by demo
-    extraPlugins.push(new CopyWebpackPlugin([{
-        from: rootPath + "/src",
-        to: distPath,
-    }]));
-}
-
 if ((/true/i).test(rtl)) {
     // enable rtl for css
     extraPlugins.push(new WebpackRTLPlugin({
