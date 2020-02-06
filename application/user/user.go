@@ -15,11 +15,15 @@ type (
 		Note         string       `json:"note"`
 		Email        string       `json:"email"`
 		Phone        string       `json:"phone"`
-		Status       Status       `json:"-"`
-		Permissions  Permission   `json:"-"`
+		Status       Status       `json:"status"`
+		Permissions  Permission   `json:"permissions"`
 		PasswordHash string       `json:"-"`
 		Token        *token.Token `json:"-"`
 	}
+)
+
+const (
+	dotLetter = rune('.')
 )
 
 func (u *User) HasPermission(p Permission) bool {
@@ -29,4 +33,14 @@ func (u *User) HasPermission(p Permission) bool {
 func (u *User) AdminPage() bool {
 	return u.HasPermission(CreateNewUserPermission) || u.HasPermission(EditToursPermission) ||
 		u.HasPermission(EditAllBookingsPermission)
+}
+
+func ShortName(u *User) string {
+	value := make([]rune, 0, 2)
+	value = append(value, []rune(u.FirstName)[0], dotLetter)
+	if u.SecondName != "" {
+		value = append(value, []rune(u.SecondName)[0], dotLetter)
+	}
+
+	return string(value)
 }

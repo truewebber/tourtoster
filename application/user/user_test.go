@@ -151,3 +151,45 @@ func TestUser_AdminPage(t *testing.T) {
 		})
 	}
 }
+
+func TestShortName(t *testing.T) {
+	type args struct {
+		u *User
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "test1",
+			args: args{u: &User{
+				FirstName: "Alex",
+			}},
+			want: "A.",
+		},
+		{
+			name: "test2",
+			args: args{u: &User{
+				FirstName:  "Alex",
+				SecondName: "Moshi",
+			}},
+			want: "A.M.",
+		},
+		{
+			name: "test3",
+			args: args{u: &User{
+				FirstName:  "anna",
+				SecondName: "maria",
+			}},
+			want: "a.m.",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ShortName(tt.args.u); got != tt.want {
+				t.Errorf("ShortName() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

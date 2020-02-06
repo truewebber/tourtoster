@@ -7,5 +7,6 @@ type (
 		UserWithEmail(email string) (*User, error)
 		Save(u *User) error
 		Delete(ID int64) error
+		List() ([]User, error)
 	}
 )

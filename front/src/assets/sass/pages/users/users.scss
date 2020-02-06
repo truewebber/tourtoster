@@ -1,0 +1,125 @@
+//
+// users
+//
+
+// Global config
+@import "../../config";
+
+// Layout config
+@import "../../global/layout/config.scss";
+
+$format: screen;
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+@media #{$format} {
+  .users_wrapper {
+    @media (max-width: $mobile) {
+      padding: 0 10px;
+      width: 100%;
+    }
+    @media (min-width: $mobile+1px) and (max-width: $tablet) {
+      width: 480px;
+    }
+    @media (min-width: $tablet+1px) and (max-width: $desktop) {
+      width: 768px;
+    }
+
+    width: 1024px;
+    padding: 0;
+    margin: 0 auto;
+
+    .table {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .list_wrapper {
+        padding-right: 10px;
+        flex-direction: column;
+        flex: 1;
+
+        .list {
+          padding-top: 20px;
+
+          p {
+            padding: 0 0 0 10px;
+            margin: 0;
+            line-height: 24pt;
+            font-size: 12pt;
+            vertical-align: center;
+            color: rgba(50, 50, 50, 0.75);
+            cursor: pointer;
+          }
+
+          p.active, p:hover {
+            color: rgba(0, 0, 0, 1);
+          }
+
+          p:hover {
+            background-color: #EEEEEE;
+          }
+
+          p.active {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .edit_wrapper {
+        padding-left: 10px;
+        flex-direction: column;
+        flex: 3;
+        border-left: 1px solid #eeeeee;
+
+        .input_wrapper {
+          //
+
+          .line {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+
+            .input_title {
+              flex-direction: column;
+              flex: 1;
+              padding-left: 10px;
+              line-height: 24pt;
+              font-weight: 400;
+              font-size: 15pt;
+            }
+
+            .input_container {
+              flex-direction: column;
+              flex: 2;
+
+              input, select {
+                width: 100%;
+                padding: 5px;
+                border: 1px solid #bbbbbb;
+              }
+            }
+          }
+        }
+      }
+
+      // -----------------
+
+      .header {
+        font-size: 16pt;
+        font-weight: 600;
+        padding-bottom: 10px
+      }
+
+      .header_underline {
+        border-bottom: 1px solid #000000;
+      }
+
+      .header_center {
+        text-align: center;
+      }
+    }
+  }
+}

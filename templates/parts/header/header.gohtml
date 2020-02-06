@@ -22,7 +22,7 @@
                         <div class="kt-header__topbar-wrapper" data-toggle="dropdown"
                              data-offset="0px,10px">
                             <span class="kt-header__topbar-welcome kt-visible-desktop">Hi,</span>
-                            <span class="kt-header__topbar-username kt-visible-desktop">{{ .User.FirstName }}</span>
+                            <span class="kt-header__topbar-username kt-visible-desktop">{{ .Me.FirstName }}</span>
                             <img alt="Pic" src="/static/media/users/default.jpg"/>
                             <span class="kt-header__topbar-icon kt-bg-brand kt-font-lg kt-font-bold kt-font-light kt-hidden">S</span>
                             <span class="kt-header__topbar-icon kt-hidden"><i class="flaticon2-user-outline-symbol"></i></span>
@@ -59,7 +59,7 @@
                                     <span class="kt-menu__link-text">Private Tours</span>
                                 </a>
                             </li>
-                            {{ if .User.Allow.CreateNewUser }}
+                            {{ if .Me.Allow.CreateNewUser }}
                                 <li class="kt-menu__item kt-menu__item--rel {{ if .Menu.Users }}kt-menu__item--here{{ end }}">
                                     <a href="/console/users" class="kt-menu__link">
                                         <span class="kt-menu__link-text">Users</span>

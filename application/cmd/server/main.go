@@ -17,6 +17,7 @@ import (
 	"tourtoster/middleware"
 	"tourtoster/token"
 	tokenRepo "tourtoster/token/repository"
+	"tourtoster/user"
 	userRepo "tourtoster/user/repository"
 )
 
@@ -125,7 +126,15 @@ func templatesInit(templatePath string) error {
 		pathes = append(pathes, templatePath+"/"+fileName)
 	}
 
-	tmpls, err := template.New("blah").ParseFiles(pathes...)
+	//tmpls, err := template.New("blah").ParseFiles(pathes...)
+	//if err != nil {
+	//	return err
+	//}
+
+	tmpls, err := template.New("blah").Funcs(template.FuncMap{
+		"UserShortName": user.ShortName,
+		//"FullLangName": FullLangName,
+	}).ParseFiles(pathes...)
 	if err != nil {
 		return err
 	}

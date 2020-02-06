@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	htmlUser struct {
+	me struct {
 		FirstName  string
 		SecondName string
 		LastName   string
@@ -19,8 +19,8 @@ type (
 	}
 )
 
-func templateUser(u *user.User) *htmlUser {
-	return &htmlUser{
+func templateMe(u *user.User) *me {
+	return &me{
 		FirstName:  u.FirstName,
 		SecondName: u.SecondName,
 		LastName:   u.LastName,

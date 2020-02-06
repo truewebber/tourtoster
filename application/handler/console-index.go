@@ -13,7 +13,7 @@ import (
 type (
 	MainPage struct {
 		Menu menu
-		User *htmlUser
+		Me   *me
 		Year int
 	}
 )
@@ -28,7 +28,7 @@ func (h *Handlers) ConsoleIndexPage(w http.ResponseWriter, r *http.Request) {
 
 	data := MainPage{
 		Menu: menu{Dashboard: true},
-		User: templateUser(u),
+		Me:   templateMe(u),
 		Year: time.Now().Year(),
 	}
 

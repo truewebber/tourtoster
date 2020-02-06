@@ -23,7 +23,6 @@ func (h *Handlers) ConsoleSignoutPage(w http.ResponseWriter, r *http.Request) {
 		write(w, "internal error")
 
 		return
-
 	}
 
 	http.SetCookie(w, &http.Cookie{
