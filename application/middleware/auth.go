@@ -11,22 +11,46 @@ import (
 	"tourtoster/user"
 )
 
-func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
+func (m *Middleware) PageAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		u, err := m.authUser(r)
 		if err != nil {
 			log.Error("auth error", "error", err.Error())
 		}
 
-		if u == nil && r.URL.Path != handler.ConsolePathPrefix+handler.ConsoleAuthorizationPath {
+		path1 := handler.ConsolePathPrefix + handler.ConsoleAuthorizationPath
+		path2 := handler.ConsolePathPrefix + handler.ConsoleRegistrationPath
+
+		// unauthorized and page except auth -> redirect to auth
+		if u == nil && !(r.URL.Path == path1 || r.URL.Path == path2) {
 			http.Redirect(w, r, handler.ConsolePathPrefix+handler.ConsoleAuthorizationPath, http.StatusFound)
 
 			return
 		}
 
-		if u != nil && r.URL.Path == handler.ConsolePathPrefix+handler.ConsoleAuthorizationPath {
+		// authorized and page auth -> redirect to dashboard
+		if u != nil && (r.URL.Path == path1 || r.URL.Path == path2) {
 			http.Redirect(w, r, handler.ConsolePathPrefix+handler.ConsoleIndexPath, http.StatusFound)
 
+			return
+		}
+
+		context.Set(r, "user", u)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (m *Middleware) APIAuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		u, err := m.authUser(r)
+		if err != nil {
+			log.Error("auth error", "error", err.Error())
+		}
+
+		path := handler.ApiPathPrefix + handler.AuthorizationAdminApiPath
+		if u == nil && r.URL.Path != path {
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 

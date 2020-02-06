@@ -1,0 +1,76 @@
+{{ define "header" }}
+    <div id="kt_header" class="kt-header kt-grid__item kt-header--fixed" data-ktheader-minimize="off">
+        <div class="kt-header__top">
+            <div class="kt-container kt-container--fluid ">
+
+                <!-- begin:: Brand -->
+                <div class="kt-header__brand kt-grid__item" id="kt_header_brand">
+                    <div class="kt-header__brand-logo">
+                        <a href="/console">
+                            <img alt="Logo" src="/static/media/logos/logo-8.png" class="kt-header__brand-logo-default"/>
+                            <img alt="Logo" src="/static/media/logos/logo-8-inverse.png"
+                                 class="kt-header__brand-logo-sticky"/>
+                        </a>
+                    </div>
+                </div>
+                <!-- end:: Brand -->
+
+                <!-- begin:: Header Topbar -->
+                <div class="kt-header__topbar">
+                    <!--begin: User bar -->
+                    <div class="kt-header__topbar-item kt-header__topbar-item--user">
+                        <div class="kt-header__topbar-wrapper" data-toggle="dropdown"
+                             data-offset="0px,10px">
+                            <span class="kt-header__topbar-welcome kt-visible-desktop">Hi,</span>
+                            <span class="kt-header__topbar-username kt-visible-desktop">{{ .User.FirstName }}</span>
+                            <img alt="Pic" src="/static/media/users/default.jpg"/>
+                            <span class="kt-header__topbar-icon kt-bg-brand kt-font-lg kt-font-bold kt-font-light kt-hidden">S</span>
+                            <span class="kt-header__topbar-icon kt-hidden"><i class="flaticon2-user-outline-symbol"></i></span>
+                        </div>
+                        {{template "header_dropdown_user_menu" .}}
+                    </div>
+                    <!--end: User bar -->
+                </div>
+                <!-- end:: Header Topbar -->
+            </div>
+        </div>
+        <div class="kt-header__bottom">
+            <div class="kt-container  kt-container--fluid ">
+
+                <!-- begin: Header Menu -->
+                <button class="kt-header-menu-wrapper-close" id="kt_header_menu_mobile_close_btn">
+                    <i class="la la-close"></i>
+                </button>
+                <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
+                    <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile ">
+                        <ul class="kt-menu__nav ">
+                            <li class="kt-menu__item kt-menu__item--rel {{ if .Menu.Dashboard }}kt-menu__item--here{{ end }}">
+                                <a href="/console/" class="kt-menu__link">
+                                    <span class="kt-menu__link-text">Dashboards</span>
+                                </a>
+                            </li>
+                            <li class="kt-menu__item kt-menu__item--rel {{ if .Menu.GroupTours }}kt-menu__item--here{{ end }}">
+                                <a href="/console/group_tours/" class="kt-menu__link">
+                                    <span class="kt-menu__link-text">Group Tours</span>
+                                </a>
+                            </li>
+                            <li class="kt-menu__item kt-menu__item--rel {{ if .Menu.PrivateTours }}kt-menu__item--here{{ end }}">
+                                <a href="/console/private_tours" class="kt-menu__link">
+                                    <span class="kt-menu__link-text">Private Tours</span>
+                                </a>
+                            </li>
+                            {{ if .User.Allow.CreateNewUser }}
+                                <li class="kt-menu__item kt-menu__item--rel {{ if .Menu.Users }}kt-menu__item--here{{ end }}">
+                                    <a href="/console/users" class="kt-menu__link">
+                                        <span class="kt-menu__link-text">Users</span>
+                                    </a>
+                                </li>
+                            {{ end }}
+                        </ul>
+                    </div>
+                </div>
+                <!-- end: Header Menu -->
+            </div>
+        </div>
+    </div>
+{{ end }}

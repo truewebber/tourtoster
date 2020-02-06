@@ -12,7 +12,8 @@ import (
 
 type (
 	MainPage struct {
-		User *user.User
+		Menu menu
+		User *htmlUser
 		Year int
 	}
 )
@@ -26,7 +27,8 @@ func (h *Handlers) ConsoleIndexPage(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 
 	data := MainPage{
-		User: u,
+		Menu: menu{Dashboard: true},
+		User: templateUser(u),
 		Year: time.Now().Year(),
 	}
 

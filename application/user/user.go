@@ -27,5 +27,6 @@ func (u *User) HasPermission(p Permission) bool {
 }
 
 func (u *User) AdminPage() bool {
-	return u.HasPermission(CreateNewUserPermission) || u.HasPermission(EditToursPermission) || u.HasPermission(EditAllBookingsPermission)
+	return u.HasPermission(CreateNewUserPermission) || u.HasPermission(EditToursPermission) ||
+		u.HasPermission(EditAllBookingsPermission)
 }

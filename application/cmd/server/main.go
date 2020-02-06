@@ -83,9 +83,11 @@ func main() {
 	// ----------------------------------------------------------------
 	rc := r.PathPrefix(handler.ConsolePathPrefix).Subrouter()
 	// ----------------------------- MAIN -----------------------------
+	rc.HandleFunc(handler.ConsoleRegistrationPath, handlers.ConsoleRegistrationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleAuthorizationPath, handlers.ConsoleAuthorizationPage).Methods(http.MethodGet)
-	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleLogoutPath, handlers.ConsoleLogoutPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleUserPath, handlers.ConsoleUserPage).Methods(http.MethodGet)
 	// ----------------------------------------------------------------
 	rca := r.PathPrefix(handler.ApiPathPrefix).Subrouter()
 	// --------------------------- MAIN API ---------------------------
@@ -93,7 +95,8 @@ func main() {
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUserCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUseDelete).Methods(http.MethodDelete)
 	// -------------------------- MIDDLEWARE --------------------------
-	rc.Use(middlewares.AuthMiddleware)
+	rc.Use(middlewares.PageAuthMiddleware)
+	rca.Use(middlewares.APIAuthMiddleware)
 	// ----------------------------------------------------------------
 
 	log.Debug("Starting server", host, port)
@@ -106,13 +109,15 @@ func main() {
 func templatesInit(templatePath string) error {
 	filesName := []string{
 		"parts/footer.gohtml",
-		"parts/header.gohtml",
-		"parts/header-mobile.gohtml",
-		"parts/header-dropdown-user-menu.gohtml",
+		"parts/header/header.gohtml",
+		"parts/header/header-mobile.gohtml",
+		"parts/header/header-dropdown-user-menu.gohtml",
 		// --
 		"landing-index.gohtml",
 		"console-authorization.gohtml",
+		"console-registration.gohtml",
 		"console-index.gohtml",
+		"console-user.gohtml",
 	}
 
 	pathes := make([]string, 0, len(filesName))
@@ -128,7 +133,9 @@ func templatesInit(templatePath string) error {
 	templateNames := []string{
 		handler.LandingIndexTemplateName,
 		handler.ConsoleAuthorizationTemplateName,
+		handler.ConsoleRegistrationTemplateName,
 		handler.ConsoleIndexTemplateName,
+		handler.ConsoleUserTemplateName,
 	}
 	for _, n := range templateNames {
 		t := tmpls.Lookup(n)
