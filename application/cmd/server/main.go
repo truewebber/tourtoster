@@ -85,7 +85,7 @@ func main() {
 	// ----------------------------- MAIN -----------------------------
 	rc.HandleFunc(handler.ConsoleRegistrationPath, handlers.ConsoleRegistrationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleAuthorizationPath, handlers.ConsoleAuthorizationPage).Methods(http.MethodGet)
-	rc.HandleFunc(handler.ConsoleLogoutPath, handlers.ConsoleLogoutPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleSignoutPath, handlers.ConsoleSignoutPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserPath, handlers.ConsoleUserPage).Methods(http.MethodGet)
 	// ----------------------------------------------------------------
