@@ -28,6 +28,12 @@
       .kt-login__logo {
         text-align: center;
         margin: 1rem auto 4rem auto;
+
+        span {
+          font-size: 30pt;
+          color: #595d6e;
+          font-family: 'Asap Condensed', monospace;
+        }
       }
 
       .kt-login__container {

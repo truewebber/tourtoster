@@ -43,6 +43,12 @@ $kt-topbar-mobile-icon-size: 34px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
+
+      span {
+        font-size: 20pt;
+        color: white;
+        font-family: 'Asap Condensed', monospace;
+      }
     }
 
     // Toolbar
