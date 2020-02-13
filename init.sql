@@ -15,13 +15,14 @@ CREATE TABLE users
     password_hash TEXT,
     status        TINYINT   DEFAULT 1,
     role          INTEGER,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE UNIQUE INDEX idx_users_email ON users (email);
 CREATE UNIQUE INDEX idx_users_phone ON users (phone);
 
 insert into users (first_name, second_name, last_name, hotel_name, note, email, phone, password_hash, role)
-VALUES ('', '', '', '', '', 'kish94@mail.ru', '+79643896032', '', 0);
+VALUES ('Aleksey', '', 'Kish', 'Blahotel', '', 'kish94@mail.ru', '+79643896032', '', 0);
 
 CREATE TABLE hotel
 (

@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/mgutz/logxi/v1"
+	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
 	"tourtoster/user"
@@ -18,6 +19,32 @@ import (
 
 const (
 	UserApiPath = "/user"
+)
+
+var (
+	userEmailInvalidError = respError{
+		Error: "E-mail empty or invalid",
+	}
+
+	userPhoneInvalidError = respError{
+		Error: "Phone number empty or invalid",
+	}
+
+	userEmailPhoneUniqueError = respError{
+		Error: "Phone number or E-mail is not unique",
+	}
+
+	userFNameInvalidError = respError{
+		Error: "First name empty or invalid",
+	}
+
+	userLNameInvalidError = respError{
+		Error: "Last name empty or invalid",
+	}
+
+	userHotelInvalidError = respError{
+		Error: "Select user hotel",
+	}
 )
 
 func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
@@ -38,91 +65,73 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	values := r.Form
 
-	var ID int64
-	if stringID := strings.TrimSpace(values.Get("id")); len(stringID) > 0 {
-		var err error
-		ID, err = strconv.ParseInt(stringID, 10, 64)
-		if err != nil {
-			log.Error("Error parse project id", "error", err.Error(), "id", stringID)
-			w.WriteHeader(http.StatusBadRequest)
-			write(w, inputInvalidError)
-
-			return
-		}
-	}
-
-	email := html.EscapeString(strings.TrimSpace(values.Get("email")))
-
-	firstName := html.EscapeString(strings.TrimSpace(values.Get("first_name")))
-	secondName := html.EscapeString(strings.TrimSpace(values.Get("second_name")))
-	lastName := html.EscapeString(strings.TrimSpace(values.Get("last_name")))
-
-	phone := html.EscapeString(strings.TrimSpace(values.Get("phone")))
-	note := html.EscapeString(strings.TrimSpace(values.Get("note")))
-
-	// hotel:start
-	hotelName := html.EscapeString(strings.TrimSpace(values.Get("hotel_name")))
-	hotelIDStr := html.EscapeString(strings.TrimSpace(values.Get("hotel_id")))
-	hotelID, parseHotelIDErr := strconv.ParseInt(hotelIDStr, 10, 64)
-	if parseHotelIDErr != nil {
-		log.Error("Error parse hotel id", "error", parseHotelIDErr.Error(), "hotel_id", hotelIDStr)
+	ID, IDErr := toInt64(strings.TrimSpace(values.Get("id")))
+	if IDErr != nil {
+		log.Error("Error parse project id", "error", IDErr.Error(), "id", values.Get("id"))
 		w.WriteHeader(http.StatusBadRequest)
 		write(w, inputInvalidError)
 
 		return
 	}
 
-	var (
-		hotelObj *hotel.Hotel
-		hotelErr error
-	)
-	if hotelID == 0 {
-		hotelObj, hotelErr = h.hotel.Hotel(hotelID)
-	} else if hotelName != "" {
-		hotelObj = &hotel.Hotel{
-			Name: hotelName,
-		}
-		hotelErr = h.hotel.Save(hotelObj)
+	firstName := html.EscapeString(strings.TrimSpace(values.Get("first_name")))
+	if firstName == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		write(w, userFNameInvalidError)
+		return
 	}
-	if hotelErr != nil {
-		log.Error("Error get hotel object", "error", hotelErr.Error(),
-			"hotel_id", hotelIDStr, "hotel_name", hotelName)
+	secondName := html.EscapeString(strings.TrimSpace(values.Get("second_name")))
+	lastName := html.EscapeString(strings.TrimSpace(values.Get("last_name")))
+	if lastName == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		write(w, userLNameInvalidError)
+		return
+	}
+
+	email := html.EscapeString(strings.TrimSpace(values.Get("email")))
+	if email == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		write(w, userEmailInvalidError)
+		return
+	}
+	phone := html.EscapeString(strings.TrimSpace(values.Get("phone")))
+	if phone == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		write(w, userPhoneInvalidError)
+		return
+	}
+
+	note := html.EscapeString(strings.TrimSpace(values.Get("note")))
+
+	// hotel:start
+	saveAsNewHotel := checkbox(html.EscapeString(strings.TrimSpace(values.Get("save_new_hotel"))))
+	hotelName := html.EscapeString(strings.TrimSpace(values.Get("hotel_name")))
+	hotelID, hotelIDErr := toInt64(html.EscapeString(strings.TrimSpace(values.Get("hotel_id"))))
+	if hotelIDErr != nil {
+		log.Error("hotel_id is not int value", "error", hotelIDErr.Error(),
+			"hotel_id", values.Get("hotel_id"))
 		w.WriteHeader(http.StatusBadRequest)
 		write(w, inputInvalidError)
+
+		return
+	}
+
+	htl, hotelErr := h.newHotel(hotelID, hotelName, saveAsNewHotel)
+	if hotelErr != nil {
+		log.Error("user save hotel error", "error", hotelErr.Error(),
+			"hotel_id", hotelID, "hotel_name", hotelName)
+		w.WriteHeader(http.StatusInternalServerError)
+		write(w, internalError)
+
+		return
+	}
+	if htl == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		write(w, userHotelInvalidError)
 
 		return
 	}
 	// hotel:end
-
-	// permissions:start
-	var permissions user.Permission
-	for _, p := range values["permission[]"] {
-		p := html.EscapeString(strings.TrimSpace(p))
-		if p == "" {
-			continue
-		}
-
-		pInt, err := strconv.Atoi(p)
-		if err != nil {
-			log.Error("Error parse permission id", "error", err.Error(), "permission", p)
-			w.WriteHeader(http.StatusBadRequest)
-			write(w, inputInvalidError)
-
-			return
-		}
-		permission := user.Permission(pInt)
-
-		if err := user.ValidationPermission(permission); err != nil {
-			log.Error("Permission invalid", "error", err.Error(), "permission", p)
-			w.WriteHeader(http.StatusBadRequest)
-			write(w, inputInvalidError)
-
-			return
-		}
-
-		permissions = permissions | permission
-	}
-	// permissions:end
 
 	// status:start
 	statusStr := html.EscapeString(strings.TrimSpace(values.Get("status")))
@@ -145,6 +154,37 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	// status:end
 
+	// permissions:start
+	var pp user.Permission
+	for _, str := range values["permission[]"] {
+		str := strings.TrimSpace(str)
+		if str == "" {
+			continue
+		}
+
+		strInt, err := strconv.Atoi(str)
+		if err != nil {
+			log.Error("Error parse permission id", "error", err.Error(), "permission", str)
+			w.WriteHeader(http.StatusBadRequest)
+			write(w, inputInvalidError)
+
+			return
+		}
+		p := user.Permission(strInt)
+
+		if err := user.ValidationPermission(p); err != nil {
+			log.Error("Permission invalid", "error", err.Error(), "permission", p)
+			w.WriteHeader(http.StatusBadRequest)
+			write(w, inputInvalidError)
+
+			return
+		}
+
+		pp = pp | p
+	}
+	// permissions:end
+
+	// password:start
 	password := html.EscapeString(strings.TrimSpace(values.Get("password")))
 	if password == "" {
 		password = RandString(10)
@@ -157,8 +197,9 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+	// password:end
 
-	if values.Get("send_mail") == "1" {
+	if checkbox(values.Get("send_mail")) {
 		body := []byte(
 			"Welcome to Tourtoster! \n" +
 				fmt.Sprintf("Your new password: `%s`", password),
@@ -174,23 +215,33 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 		FirstName:    firstName,
 		SecondName:   secondName,
 		LastName:     lastName,
-		Hotel:        hotelObj,
+		Hotel:        htl,
 		Note:         note,
 		Email:        email,
 		Phone:        phone,
 		Status:       status,
-		Permissions:  permissions,
+		Permissions:  pp,
 		PasswordHash: passwordHash,
-		Token:        nil,
 	}
 
 	if err := h.user.Save(newUser); err != nil {
-		log.Error("Error create/save user", "error", err.Error(), "id", ID)
-		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		code := http.StatusBadRequest
+		e := userEmailPhoneUniqueError
+
+		if errors.Cause(err) != user.PhoneEmailUniqueError {
+			log.Error("Error create/save user", "error", err.Error(), "id", ID)
+			code = http.StatusInternalServerError
+			e = internalError
+		}
+
+		w.WriteHeader(code)
+		write(w, e)
 
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	write(w, u)
 }
 
 func (h *Handlers) ApiUseDelete(w http.ResponseWriter, r *http.Request) {
@@ -239,4 +290,39 @@ func (h *Handlers) ApiUseDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *Handlers) newHotel(hotelID int64, hotelName string, new bool) (*hotel.Hotel, error) {
+	if hotelID != 0 {
+		return h.hotel.Hotel(hotelID)
+	}
+
+	if hotelName == "" {
+		return nil, nil
+	}
+
+	htl := &hotel.Hotel{Name: hotelName}
+	if new {
+		if err := h.hotel.Save(htl); err != nil {
+			return nil, err
+		}
+	}
+
+	return htl, nil
+}
+
+func checkbox(s string) bool {
+	if s != "" {
+		return true
+	}
+
+	return false
+}
+
+func toInt64(s string) (int64, error) {
+	if s == "" {
+		return 0, nil
+	}
+
+	return strconv.ParseInt(s, 10, 64)
 }

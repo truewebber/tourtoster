@@ -43,25 +43,21 @@ $desktop: 1024px;
         .list {
           padding-top: 20px;
 
-          p {
+          a {
             padding: 0 0 0 10px;
             margin: 0;
             line-height: 24pt;
             font-size: 12pt;
             vertical-align: center;
             color: rgba(50, 50, 50, 0.75);
-            cursor: pointer;
+            text-decoration: none;
           }
 
-          p.active, p:hover {
+          a.active, a:hover {
             color: rgba(0, 0, 0, 1);
           }
 
-          p:hover {
-            background-color: #EEEEEE;
-          }
-
-          p.active {
+          a.active {
             text-decoration: underline;
           }
         }
@@ -86,6 +82,13 @@ $desktop: 1024px;
               flex-direction: column;
               flex: 1;
               padding-left: 10px;
+            }
+
+            .input_title__edit_hotels {
+              line-height: 24pt;
+            }
+
+            .input_main_title {
               line-height: 24pt;
               font-weight: 400;
               font-size: 15pt;
@@ -95,14 +98,38 @@ $desktop: 1024px;
               flex-direction: column;
               flex: 2;
 
-              input, select {
+              input:not([type="checkbox"]), select, textarea {
                 width: 100%;
                 padding: 5px;
                 border: 1px solid #bbbbbb;
+                height: 36px;
+              }
+
+              textarea {
+                height: auto;
+              }
+
+              input:not([type="checkbox"]) {
+                line-height: 18pt;
+              }
+
+              .left_column_wrapper {
+                padding-left: 5px;
+                padding-bottom: 0;
               }
             }
           }
         }
+      }
+
+      .sub_title {
+        color: grey;
+        padding-left: 20px;
+      }
+
+      .input_title__grey {
+        color: grey;
+        font-size: 12pt
       }
 
       // -----------------

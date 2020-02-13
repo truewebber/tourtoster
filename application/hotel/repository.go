@@ -7,5 +7,6 @@ type (
 		HotelByName(name string) (*Hotel, error)
 		Save(h *Hotel) error
 		Delete(ID int64) error
+		List() ([]Hotel, error)
 	}
 )

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/mgutz/logxi/v1"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 
 	"tourtoster/hotel"
@@ -24,13 +25,15 @@ type (
 	}
 
 	Config struct {
-		User      user.Repository
-		Token     token.Repository
-		Hotel     hotel.Repository
-		Templates map[string]*template.Template
-		Mailer    mail.Mailer
+		User          user.Repository
+		Token         token.Repository
+		Hotel         hotel.Repository
+		Mailer        mail.Mailer
+		TemplatesPath string
 	}
+)
 
+type (
 	respError struct {
 		Error string `json:"error"`
 	}
@@ -55,15 +58,67 @@ const (
 	ApiPathPrefix     = ConsolePathPrefix + "/api"
 )
 
-func New(cfg *Config) *Handlers {
+func New(cfg *Config) (*Handlers, error) {
+	templates, err := templatesInit(cfg.TemplatesPath)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Handlers{
 		user:      cfg.User,
 		token:     cfg.Token,
 		hotel:     cfg.Hotel,
-		templates: cfg.Templates,
+		templates: templates,
 		mailer:    cfg.Mailer,
-	}
+	}, nil
 }
+
+func templatesInit(templatePath string) (map[string]*template.Template, error) {
+	filesName := []string{
+		"parts/footer.gohtml",
+		"parts/header/header.gohtml",
+		"parts/header/header-mobile.gohtml",
+		"parts/header/header-dropdown-user-menu.gohtml",
+		// --
+		"landing-index.gohtml",
+		"console-authorization.gohtml",
+		"console-registration.gohtml",
+		"console-index.gohtml",
+		"console-user.gohtml",
+	}
+
+	pathes := make([]string, 0, len(filesName))
+	for _, fileName := range filesName {
+		pathes = append(pathes, templatePath+"/"+fileName)
+	}
+
+	tmpls, err := template.New("blah").Funcs(template.FuncMap{
+		"UserShortName": user.ShortName,
+	}).ParseFiles(pathes...)
+	if err != nil {
+		return nil, err
+	}
+
+	templateNames := []string{
+		LandingIndexTemplateName,
+		ConsoleAuthorizationTemplateName,
+		ConsoleRegistrationTemplateName,
+		ConsoleIndexTemplateName,
+		ConsoleUserTemplateName,
+	}
+	templates := make(map[string]*template.Template)
+	for _, n := range templateNames {
+		t := tmpls.Lookup(n)
+		if t == nil {
+			return nil, errors.Errorf("Template `%s` not found", n)
+		}
+		templates[n] = t
+	}
+
+	return templates, nil
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
 
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 13)

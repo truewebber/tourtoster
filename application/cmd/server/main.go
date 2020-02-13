@@ -4,20 +4,20 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"html/template"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mgutz/logxi/v1"
-	"github.com/pkg/errors"
 
 	"tourtoster/handler"
 	hotelRepo "tourtoster/hotel/repository"
+	"tourtoster/mail"
+	mailRepo "tourtoster/mail/repository"
 	"tourtoster/middleware"
 	"tourtoster/token"
 	tokenRepo "tourtoster/token/repository"
-	"tourtoster/user"
 	userRepo "tourtoster/user/repository"
 )
 
@@ -26,8 +26,6 @@ var (
 	host         string
 	templatePath string
 	dbFilePath   string
-
-	templates = make(map[string]*template.Template)
 )
 
 func init() {
@@ -50,13 +48,7 @@ func main() {
 		panic(err)
 	}
 	log.Debug("connection to db established", "db", dbFilePath)
-	// ----------------------------------------------------------------
-	if err := templatesInit(templatePath); err != nil {
-		println("error init template")
-		panic(err)
-	}
-	log.Debug("templates init", "path", templatePath)
-	// ----------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
 	tokenR := tokenRepo.NewMemory()
 	_ = tokenR.Save(&token.Token{
 		Token:  "blah",
@@ -64,95 +56,72 @@ func main() {
 	})
 	userR := userRepo.NewPostgres(db)
 	hotelR := hotelRepo.NewPostgres(db)
-	//
-	handlers := handler.New(&handler.Config{
-		User:      userR,
-		Token:     tokenR,
-		Templates: templates,
+	// -----------------------------------------------------------------------------------------------------------------
+	mailer := newMailer()
+	log.Debug("Init mailer", "_", mailer.Name())
+	// -----------------------------------------------------------------------------------------------------------------
+	handlers, handlersErr := handler.New(&handler.Config{
+		User:          userR,
+		Token:         tokenR,
+		Hotel:         hotelR,
+		TemplatesPath: templatePath,
+		Mailer:        mailer,
 	})
+	if handlersErr != nil {
+		println("error init handlers")
+		panic(handlersErr)
+	}
+	log.Debug("templates init", "path", templatePath)
+	// -----------------------------------------------------------------------------------------------------------------
 	middlewares := middleware.New(tokenR, userR, hotelR)
-	// ----------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
 
-	// ---------------------------- ROUTER ----------------------------
+	// ---------------------------------------------------- ROUTER -----------------------------------------------------
 	r := mux.NewRouter()
 	r.HandleFunc("/{path:.*}/", func(w http.ResponseWriter, r *http.Request) {
 		newPath := r.URL.Path[:len(r.URL.Path)-1]
 		http.Redirect(w, r, newPath, http.StatusMovedPermanently)
 	})
 	r.HandleFunc(handler.LandingPageIndexPath, handlers.LandingIndexPage).Methods(http.MethodGet)
-
-	// ----------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
 	rc := r.PathPrefix(handler.ConsolePathPrefix).Subrouter()
-	// ----------------------------- MAIN -----------------------------
+	// ----------------------------------------------------- MAIN ------------------------------------------------------
 	rc.HandleFunc(handler.ConsoleRegistrationPath, handlers.ConsoleRegistrationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleAuthorizationPath, handlers.ConsoleAuthorizationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleSignoutPath, handlers.ConsoleSignoutPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserPath, handlers.ConsoleUserPage).Methods(http.MethodGet)
-	// ----------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
 	rca := r.PathPrefix(handler.ApiPathPrefix).Subrouter()
-	// --------------------------- MAIN API ---------------------------
+	// --------------------------------------------------- MAIN API ----------------------------------------------------
 	rca.HandleFunc(handler.AuthorizationAdminApiPath, handlers.AuthorizationAdminApi).Methods(http.MethodPost)
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUserCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUseDelete).Methods(http.MethodDelete)
-	// -------------------------- MIDDLEWARE --------------------------
+	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelCreate).Methods(http.MethodPost)
+	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelDelete).Methods(http.MethodDelete)
+	// -------------------------------------------------- MIDDLEWARE ---------------------------------------------------
 	rc.Use(middlewares.PageAuthMiddleware)
 	rca.Use(middlewares.APIAuthMiddleware)
-	// ----------------------------------------------------------------
+	// -----------------------------------------------------------------------------------------------------------------
 
+	// ---------------------------------------------------- SERVER -----------------------------------------------------
 	log.Debug("Starting server", host, port)
-
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), r); err != nil {
 		log.Error("Error start http server", "error", err.Error())
 	}
+	// -----------------------------------------------------------------------------------------------------------------
 }
 
-func templatesInit(templatePath string) error {
-	filesName := []string{
-		"parts/footer.gohtml",
-		"parts/header/header.gohtml",
-		"parts/header/header-mobile.gohtml",
-		"parts/header/header-dropdown-user-menu.gohtml",
-		// --
-		"landing-index.gohtml",
-		"console-authorization.gohtml",
-		"console-registration.gohtml",
-		"console-index.gohtml",
-		"console-user.gohtml",
+func newMailer() mail.Mailer {
+	host := os.Getenv("MAIL_HOST")
+	port := os.Getenv("MAIL_PORT")
+
+	if host == "" || port == "" {
+		return mailRepo.NewNull()
 	}
 
-	pathes := make([]string, 0, len(filesName))
-	for _, fileName := range filesName {
-		pathes = append(pathes, templatePath+"/"+fileName)
-	}
+	u := os.Getenv("MAIL_USER")
+	pass := os.Getenv("MAIL_PASSWORD")
 
-	//tmpls, err := template.New("blah").ParseFiles(pathes...)
-	//if err != nil {
-	//	return err
-	//}
-
-	tmpls, err := template.New("blah").Funcs(template.FuncMap{
-		"UserShortName": user.ShortName,
-		//"FullLangName": FullLangName,
-	}).ParseFiles(pathes...)
-	if err != nil {
-		return err
-	}
-
-	templateNames := []string{
-		handler.LandingIndexTemplateName,
-		handler.ConsoleAuthorizationTemplateName,
-		handler.ConsoleRegistrationTemplateName,
-		handler.ConsoleIndexTemplateName,
-		handler.ConsoleUserTemplateName,
-	}
-	for _, n := range templateNames {
-		t := tmpls.Lookup(n)
-		if t == nil {
-			return errors.Errorf("Template `%s` not found", n)
-		}
-		templates[n] = t
-	}
-
-	return nil
+	return mailRepo.NewGMail(u, pass, host, port)
 }

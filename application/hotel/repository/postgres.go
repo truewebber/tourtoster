@@ -2,9 +2,9 @@ package repository
 
 import (
 	"database/sql"
-	"github.com/pkg/errors"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
 )
@@ -16,10 +16,13 @@ type (
 )
 
 const (
-	selectHotelByName = `SELECT id FROM hotel WHERE name=$1;`
-	selectHotelByID   = `SELECT name FROM hotel WHERE id=$1;`
-	insertHotel       = `INSERT INTO hotel (id, name) VALUES ($1, $2);`
-	deleteHotelByID   = `DELETE FROM hotel WHERE id=$1;`
+	insertHotel     = "INSERT INTO hotel (id, name) VALUES ($1, $2);"
+	updateHotel     = "UPDATE hotel SET name=$1 WHERE id=$2;"
+	deleteHotelByID = "DELETE FROM hotel WHERE id=$1;"
+
+	selectHotelByName = "SELECT id FROM hotel WHERE name=$1;"
+	selectHotelByID   = "SELECT name FROM hotel WHERE id=$1;"
+	selectHotels      = "SELECT id,name FROM hotel ORDER BY name;"
 )
 
 func NewPostgres(db *sql.DB) *Postgres {
@@ -58,8 +61,36 @@ func (p *Postgres) Hotel(ID int64) (*hotel.Hotel, error) {
 	return h, nil
 }
 
+func (p *Postgres) List() ([]hotel.Hotel, error) {
+	rows, err := p.db.Query(selectHotels)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	hh := make([]hotel.Hotel, 0)
+	for rows.Next() {
+		h := hotel.Hotel{}
+		if err := rows.Scan(&h.ID, &h.Name); err != nil {
+			return nil, errors.Wrap(err, "error scan hotel")
+		}
+
+		hh = append(hh, h)
+	}
+
+	return hh, nil
+}
+
 func (p *Postgres) Save(h *hotel.Hotel) error {
-	_, err := p.db.Exec(insertHotel, h.ID, h.Name)
+	query := insertHotel
+	args := []interface{}{h.Name}
+
+	if h.ID != 0 {
+		query = updateHotel
+		args = []interface{}{h.Name, h.ID}
+	}
+
+	_, err := p.db.Exec(query, args)
 	if err != nil {
 		return errors.Wrap(err, "error insert hotel")
 	}

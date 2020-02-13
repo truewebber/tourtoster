@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
@@ -11,7 +11,7 @@ import (
 )
 
 type (
-	Postgres struct {
+	postgres struct {
 		db *sql.DB
 	}
 )
@@ -26,15 +26,23 @@ const (
 	selectUsers = `SELECT id, first_name, second_name, last_name, hotel_name, hotel_id,
        						note, email, phone, password_hash, status, role
 					FROM users;`
+	insertUser = `INSERT INTO users (first_name, second_name, last_name, hotel_name, 
+									hotel_id, note, email, phone, password_hash, status, role)
+					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`
+	updateUser = `UPDATE users SET first_name=$1, second_name=$2, last_name=$3, hotel_name=$4,
+									hotel_id=$5, note=$6, email=$7, phone=$8, password_hash=$9,
+									status=$10, role=$11, updated_at=current_timestamp
+					WHERE id=$12;`
+	deleteUser = `DELETE FROM users WHERE id=$1;`
 )
 
-func NewPostgres(db *sql.DB) *Postgres {
-	return &Postgres{
+func NewPostgres(db *sql.DB) *postgres {
+	return &postgres{
 		db: db,
 	}
 }
 
-func (p *Postgres) User(ID int64) (*user.User, error) {
+func (p *postgres) User(ID int64) (*user.User, error) {
 	u := new(user.User)
 	u.Hotel = new(hotel.Hotel)
 
@@ -53,7 +61,7 @@ func (p *Postgres) User(ID int64) (*user.User, error) {
 	return u, nil
 }
 
-func (p *Postgres) UserWithEmail(email string) (*user.User, error) {
+func (p *postgres) UserWithEmail(email string) (*user.User, error) {
 	u := new(user.User)
 	u.Hotel = new(hotel.Hotel)
 	if err := p.db.QueryRow(selectUserByEmail, email).Scan(
@@ -71,12 +79,12 @@ func (p *Postgres) UserWithEmail(email string) (*user.User, error) {
 	return u, nil
 }
 
-func (p *Postgres) List() ([]user.User, error) {
+func (p *postgres) List() ([]user.User, error) {
 	rows, err := p.db.Query(selectUsers)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	uu := make([]user.User, 0)
 	for rows.Next() {
@@ -96,10 +104,69 @@ func (p *Postgres) List() ([]user.User, error) {
 	return uu, nil
 }
 
-func (p *Postgres) Save(_ *user.User) error {
+func (p *postgres) Save(u *user.User) error {
+	if u.ID == 0 {
+		return p.insert(u)
+	}
+
+	return p.update(u)
+}
+
+func (p *postgres) Delete(ID int64) error {
+	_, err := p.db.Exec(deleteUser, ID)
+	if err != nil {
+		return errors.Wrap(err, "error delete user")
+	}
+
 	return nil
 }
 
-func (p *Postgres) Delete(_ int64) error {
+func (p *postgres) insert(u *user.User) error {
+	tx, txErr := p.db.Begin()
+	if txErr != nil {
+		return errors.Wrap(txErr, "error create tx insert user")
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	result, err := tx.Exec(insertUser, u.FirstName, u.SecondName, u.LastName, insertHotelName(u.Hotel), u.Hotel.ID,
+		u.Note, u.Email, u.Phone, u.PasswordHash, u.Status, u.Permissions)
+	if err != nil {
+		sqliteErr := err.(sqlite3.Error)
+		if sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+			return errors.Wrap(user.PhoneEmailUniqueError, "error insert user")
+		}
+
+		return errors.Wrap(err, "error insert user")
+	}
+
+	var IDErr error
+	u.ID, IDErr = result.LastInsertId()
+	if IDErr != nil {
+		return errors.Wrap(IDErr, "error get last insert user id")
+	}
+
+	if err := tx.Commit(); err != nil {
+		return errors.Wrap(err, "error commit tx insert user")
+	}
+
 	return nil
+}
+
+func (p *postgres) update(u *user.User) error {
+	_, err := p.db.Exec(updateUser, u.FirstName, u.SecondName, u.LastName, insertHotelName(u.Hotel), u.Hotel.ID,
+		u.Note, u.Email, u.Phone, u.PasswordHash, u.Status, u.Permissions, u.ID)
+	if err != nil {
+		return errors.Wrap(err, "error update user")
+	}
+
+	return nil
+}
+
+func insertHotelName(h *hotel.Hotel) string {
+	if h.ID != 0 {
+		return ""
+	}
+
+	return h.Name
+
 }

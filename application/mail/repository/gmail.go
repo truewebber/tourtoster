@@ -29,6 +29,10 @@ func NewGMail(user, password, host, port string) *gMail {
 	}
 }
 
+func (g *gMail) Name() string {
+	return "GMail"
+}
+
 func (g *gMail) Send(to string, body []byte) error {
 	if err := smtp.SendMail(g.addr, g.auth, g.from, []string{to}, body); err != nil {
 		return errors.Wrap(err, "error send mail")

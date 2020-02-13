@@ -27,7 +27,6 @@ var KTLoginGeneral = function () {
 
         login.addClass('kt-login--signin');
         KTUtil.animateClass(login.find('.kt-login__signin')[0], 'fadeIn animated');
-        //login.find('.kt-login__signin').animateClass('flipInX animated');
     };
 
     var displayForgotForm = function () {
@@ -35,7 +34,6 @@ var KTLoginGeneral = function () {
         login.removeClass('kt-login--signup');
 
         login.addClass('kt-login--forgot');
-        //login.find('.kt-login--forgot').animateClass('flipInX animated');
         KTUtil.animateClass(login.find('.kt-login__forgot')[0], 'fadeIn animated');
 
     };

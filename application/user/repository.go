@@ -1,5 +1,13 @@
 package user
 
+import (
+	"github.com/pkg/errors"
+)
+
+var (
+	PhoneEmailUniqueError = errors.New("phone or e-mail is not unique")
+)
+
 //go:generate mockgen -source=repository.go -destination=repository/mock.go -package=repository
 type (
 	Repository interface {

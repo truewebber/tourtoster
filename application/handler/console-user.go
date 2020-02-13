@@ -2,12 +2,13 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/context"
 	"github.com/mgutz/logxi/v1"
+	"github.com/pkg/errors"
 
+	"tourtoster/hotel"
 	"tourtoster/user"
 )
 
@@ -18,6 +19,7 @@ type (
 		Year int
 		//
 		Users    []user.User
+		Hotels   []hotel.Hotel
 		EditUser *user.User
 	}
 )
@@ -36,32 +38,13 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var editUser *user.User
-	val := r.URL.Query().Get("edit_user")
-	if val != "" {
-		editUserID, err := strconv.ParseInt(val, 10, 64)
-		if err != nil {
-			log.Warn("Error parse edit user ID", "value", val, "error", err.Error())
-			w.WriteHeader(http.StatusBadRequest)
+	editUserStr := r.URL.Query().Get("edit_id")
+	editUser, editUserErr := h.editUser(editUserStr)
+	if editUserErr != nil {
+		log.Warn("Error get user to edit", "value", editUserStr, "error", editUserErr.Error())
+		w.WriteHeader(http.StatusBadRequest)
 
-			return
-		}
-
-		var errUser error
-		editUser, errUser = h.user.User(editUserID)
-		if errUser != nil {
-			log.Error("Error get edit user", "error", errUser.Error())
-			w.WriteHeader(http.StatusInternalServerError)
-
-			return
-		}
-
-		if editUser == nil {
-			log.Warn("no user with such ID", "value", val)
-			w.WriteHeader(http.StatusBadRequest)
-
-			return
-		}
+		return
 	}
 
 	users, errUsers := h.user.List()
@@ -72,11 +55,20 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hotels, errHotels := h.hotel.List()
+	if errHotels != nil {
+		log.Error("Error get hotel list", "error", errHotels.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
 	data := UserPage{
 		Menu:     menu{Users: true},
 		Me:       templateMe(u),
 		Year:     time.Now().Year(),
 		Users:    users,
+		Hotels:   hotels,
 		EditUser: editUser,
 	}
 
@@ -86,4 +78,28 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+}
+
+func (h *Handlers) editUser(idStr string) (*user.User, error) {
+	if idStr == "" {
+		return &user.User{
+			Hotel: &hotel.Hotel{},
+		}, nil
+	}
+
+	editUserID, parseErr := toInt64(idStr)
+	if parseErr != nil {
+		return nil, errors.Wrap(parseErr, "error parse toInt64")
+	}
+
+	u, err := h.user.User(editUserID)
+	if err != nil {
+		return nil, errors.Wrap(err, "error find user")
+	}
+
+	if u == nil {
+		return nil, errors.New("user not found")
+	}
+
+	return u, nil
 }
