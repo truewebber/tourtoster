@@ -59,13 +59,17 @@
                                 <div class="users_wrapper">
                                     <div class="table">
                                         <div class="list_wrapper">
-                                            <div class="header header_underline">List</div>
+                                            <div class="header header_underline">
+                                                <p>List</p>
+                                                <p><a href="/console/users">+</a></p>
+                                            </div>
                                             <div class="list">
                                                 {{ with .Users }}
                                                     {{ range . }}
                                                         {{ $user := . }}
                                                         <a href="/console/users?edit_id={{ $user.ID }}"
-                                                           class="user-item">{{ $user.LastName}} {{$user | UserShortName }}</a>
+                                                           class="user-item {{if eq $.EditUser.ID $user.ID}}active{{end}}">
+                                                            {{ $user.LastName}} {{$user | UserShortName }}</a>
                                                     {{ end }}
                                                 {{ end }}
                                             </div>
@@ -139,7 +143,8 @@
                                                             or input your name
                                                         </div>
                                                         <div class="input_container">
-                                                            <input type="text" name="hotel_name"
+                                                            <input name="hotel_name" type="text"
+                                                                   value="{{ .EditUser.Hotel.Name }}"
                                                                    placeholder="Four Seasons Hotel Lion Palace">
                                                             <br/>
                                                             <input id="save_new_hotel" type="checkbox"
@@ -168,7 +173,8 @@
                                                         <div class="input_title input_main_title">Note</div>
                                                         <div class="input_container">
                                                             <textarea name="note" rows="5"
-                                                                      placeholder="Fill free to use it for your custom records"></textarea>
+                                                                      placeholder="Fill free to use it for your custom records"
+                                                            >{{ .EditUser.Note }}</textarea>
                                                         </div>
                                                     </div>
 
@@ -176,9 +182,18 @@
                                                         <div class="input_title input_main_title">Status</div>
                                                         <div class="input_container">
                                                             <select name="status">
-                                                                <option value="1" selected disabled>New</option>
-                                                                <option value="2">Enabled</option>
-                                                                <option value="3">Disabled</option>
+                                                                <option value="1"
+                                                                        {{if eq $.EditUser.Status 1}}selected{{end}}
+                                                                        hidden>New (not confirmed)
+                                                                </option>
+                                                                <option value="2"
+                                                                        {{if eq $.EditUser.Status 2}}selected{{end}}>
+                                                                    Enabled
+                                                                </option>
+                                                                <option value="3"
+                                                                        {{if eq $.EditUser.Status 3}}selected{{end}}>
+                                                                    Disabled
+                                                                </option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -187,22 +202,26 @@
                                                         <div class="input_title input_main_title">Permissions</div>
                                                         <div class="input_container">
                                                             <input type="checkbox" id="create_new_user_permission"
-                                                                   name="create_new_user_permission" value="zbs">
+                                                                   name="permission[]" value="2"
+                                                                   {{if .EditUser.HasPermission 2}}checked{{end}}>
                                                             <label for="create_new_user_permission">
                                                                 <span class="sub_title">Create new user</span>
                                                             </label><br/>
                                                             <input type="checkbox" id="edit_tours_permission"
-                                                                   name="edit_tours_permission" value="zbs">
+                                                                   name="permission[]" value="4"
+                                                                   {{if .EditUser.HasPermission 4}}checked{{end}}>
                                                             <label for="edit_tours_permission">
                                                                 <span class="sub_title">Edit tours</span>
                                                             </label><br/>
                                                             <input type="checkbox" id="edit_all_bookings_permission"
-                                                                   name="edit_all_bookings_permission" value="zbs">
+                                                                   name="permission[]" value="8"
+                                                                   {{if .EditUser.HasPermission 8}}checked{{end}}>
                                                             <label for="edit_all_bookings_permission">
                                                                 <span class="sub_title">Edit all bookings</span>
                                                             </label><br/>
                                                             <input type="checkbox" id="edit_user_bookings_permission"
-                                                                   name="edit_user_bookings_permission" value="zbs">
+                                                                   name="permission[]" value="16"
+                                                                   {{if .EditUser.HasPermission 16}}checked{{end}}>
                                                             <label for="edit_user_bookings_permission">
                                                                 <span class="sub_title">Edit user bookings</span>
                                                             </label>
@@ -214,6 +233,7 @@
                                                             <input type="submit" value="Send">
                                                         </div>
                                                     </div>
+                                                    <input type="hidden" name="id" value="{{ .EditUser.ID }}">
                                                 </form>
                                             </div>
                                         </div>

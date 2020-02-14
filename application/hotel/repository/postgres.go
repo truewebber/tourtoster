@@ -10,13 +10,13 @@ import (
 )
 
 type (
-	Postgres struct {
+	postgres struct {
 		db *sql.DB
 	}
 )
 
 const (
-	insertHotel     = "INSERT INTO hotel (id, name) VALUES ($1, $2);"
+	insertHotel     = "INSERT INTO hotel (name) VALUES ($1);"
 	updateHotel     = "UPDATE hotel SET name=$1 WHERE id=$2;"
 	deleteHotelByID = "DELETE FROM hotel WHERE id=$1;"
 
@@ -25,13 +25,13 @@ const (
 	selectHotels      = "SELECT id,name FROM hotel ORDER BY name;"
 )
 
-func NewPostgres(db *sql.DB) *Postgres {
-	return &Postgres{
+func NewPostgres(db *sql.DB) *postgres {
+	return &postgres{
 		db: db,
 	}
 }
 
-func (p *Postgres) HotelByName(name string) (*hotel.Hotel, error) {
+func (p *postgres) HotelByName(name string) (*hotel.Hotel, error) {
 	h := new(hotel.Hotel)
 
 	if err := p.db.QueryRow(selectHotelByName, name).Scan(&h.ID); err != nil {
@@ -46,7 +46,7 @@ func (p *Postgres) HotelByName(name string) (*hotel.Hotel, error) {
 	return h, nil
 }
 
-func (p *Postgres) Hotel(ID int64) (*hotel.Hotel, error) {
+func (p *postgres) Hotel(ID int64) (*hotel.Hotel, error) {
 	h := new(hotel.Hotel)
 
 	if err := p.db.QueryRow(selectHotelByID, ID).Scan(&h.Name); err != nil {
@@ -61,12 +61,14 @@ func (p *Postgres) Hotel(ID int64) (*hotel.Hotel, error) {
 	return h, nil
 }
 
-func (p *Postgres) List() ([]hotel.Hotel, error) {
+func (p *postgres) List() ([]hotel.Hotel, error) {
 	rows, err := p.db.Query(selectHotels)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	hh := make([]hotel.Hotel, 0)
 	for rows.Next() {
@@ -81,27 +83,54 @@ func (p *Postgres) List() ([]hotel.Hotel, error) {
 	return hh, nil
 }
 
-func (p *Postgres) Save(h *hotel.Hotel) error {
-	query := insertHotel
-	args := []interface{}{h.Name}
-
-	if h.ID != 0 {
-		query = updateHotel
-		args = []interface{}{h.Name, h.ID}
+func (p *postgres) Save(h *hotel.Hotel) error {
+	if h.ID == 0 {
+		return p.insert(h)
 	}
 
-	_, err := p.db.Exec(query, args)
+	return p.update(h)
+}
+
+func (p *postgres) Delete(ID int64) error {
+	_, err := p.db.Exec(deleteHotelByID, ID)
 	if err != nil {
-		return errors.Wrap(err, "error insert hotel")
+		return errors.Wrap(err, "error delete hotel")
 	}
 
 	return nil
 }
 
-func (p *Postgres) Delete(ID int64) error {
-	_, err := p.db.Exec(deleteHotelByID, ID)
+func (p *postgres) insert(h *hotel.Hotel) error {
+	tx, txErr := p.db.Begin()
+	if txErr != nil {
+		return errors.Wrap(txErr, "error create transaction")
+	}
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
+	r, execErr := tx.Exec(insertHotel, h.Name)
+	if execErr != nil {
+		return errors.Wrap(execErr, "error insert hotel")
+	}
+
+	var err error
+	h.ID, err = r.LastInsertId()
 	if err != nil {
-		return errors.Wrap(err, "error delete hotel")
+		return errors.Wrap(err, "error get last insert hotel ID")
+	}
+
+	if err := tx.Commit(); err != nil {
+		return errors.Wrap(err, "error commit transaction")
+	}
+
+	return nil
+}
+
+func (p *postgres) update(h *hotel.Hotel) error {
+	_, err := p.db.Exec(updateHotel, h.Name, h.ID)
+	if err != nil {
+		return errors.Wrap(err, "error update hotel")
 	}
 
 	return nil

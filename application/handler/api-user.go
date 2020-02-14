@@ -134,10 +134,9 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	// hotel:end
 
 	// status:start
-	statusStr := html.EscapeString(strings.TrimSpace(values.Get("status")))
-	statusInt, parseStatusErr := strconv.Atoi(statusStr)
+	statusInt, parseStatusErr := toInt(strings.TrimSpace(values.Get("status")))
 	if parseStatusErr != nil {
-		log.Error("Error parse status id", "error", parseStatusErr.Error(), "status", statusStr)
+		log.Error("Error parse status id", "error", parseStatusErr.Error(), "status", values.Get("status"))
 		w.WriteHeader(http.StatusBadRequest)
 		write(w, inputInvalidError)
 
@@ -146,7 +145,7 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	status := user.Status(statusInt)
 
 	if err := user.ValidationStatus(status); err != nil {
-		log.Error("Status invalid", "error", err.Error(), "status", statusStr)
+		log.Error("Status invalid", "error", err.Error(), "status", values.Get("status"))
 		w.WriteHeader(http.StatusBadRequest)
 		write(w, inputInvalidError)
 
@@ -156,21 +155,16 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	// permissions:start
 	var pp user.Permission
-	for _, str := range values["permission[]"] {
-		str := strings.TrimSpace(str)
-		if str == "" {
-			continue
-		}
-
-		strInt, err := strconv.Atoi(str)
+	for _, pStr := range values["permission[]"] {
+		pInt, err := toInt(strings.TrimSpace(pStr))
 		if err != nil {
-			log.Error("Error parse permission id", "error", err.Error(), "permission", str)
+			log.Error("Error parse permission id", "error", err.Error(), "permission", pStr)
 			w.WriteHeader(http.StatusBadRequest)
 			write(w, inputInvalidError)
 
 			return
 		}
-		p := user.Permission(strInt)
+		p := user.Permission(pInt)
 
 		if err := user.ValidationPermission(p); err != nil {
 			log.Error("Permission invalid", "error", err.Error(), "permission", p)
@@ -325,4 +319,12 @@ func toInt64(s string) (int64, error) {
 	}
 
 	return strconv.ParseInt(s, 10, 64)
+}
+
+func toInt(s string) (int, error) {
+	if s == "" {
+		return 0, nil
+	}
+
+	return strconv.Atoi(s)
 }
