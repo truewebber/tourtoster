@@ -128,8 +128,7 @@ func (p *postgres) insert(h *hotel.Hotel) error {
 }
 
 func (p *postgres) update(h *hotel.Hotel) error {
-	_, err := p.db.Exec(updateHotel, h.Name, h.ID)
-	if err != nil {
+	if _, err := p.db.Exec(updateHotel, h.Name, h.ID); err != nil {
 		return errors.Wrap(err, "error update hotel")
 	}
 

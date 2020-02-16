@@ -180,16 +180,21 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	// password:start
 	password := html.EscapeString(strings.TrimSpace(values.Get("password")))
-	if password == "" {
+	if password == "" && ID == 0 {
 		password = RandString(10)
 	}
-	passwordHash, hashErr := HashPassword(password)
-	if hashErr != nil {
-		log.Error("Error hash password", "error", hashErr.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
 
-		return
+	passwordHash := ""
+	if password != "" {
+		var hashErr error
+		passwordHash, hashErr = HashPassword(password)
+		if hashErr != nil {
+			log.Error("Error hash password", "error", hashErr.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			write(w, internalError)
+
+			return
+		}
 	}
 	// password:end
 

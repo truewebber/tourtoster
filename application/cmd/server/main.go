@@ -64,8 +64,8 @@ func main() {
 		User:          userR,
 		Token:         tokenR,
 		Hotel:         hotelR,
-		TemplatesPath: templatePath,
 		Mailer:        mailer,
+		TemplatesPath: templatePath,
 	})
 	if handlersErr != nil {
 		println("error init handlers")

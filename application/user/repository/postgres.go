@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"strconv"
 
 	"github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
@@ -29,10 +30,6 @@ const (
 	insertUser = `INSERT INTO users (first_name, second_name, last_name, hotel_name, 
 									hotel_id, note, email, phone, password_hash, status, role)
 					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`
-	updateUser = `UPDATE users SET first_name=$1, second_name=$2, last_name=$3, hotel_name=$4,
-									hotel_id=$5, note=$6, email=$7, phone=$8, password_hash=$9,
-									status=$10, role=$11, updated_at=current_timestamp
-					WHERE id=$12;`
 	deleteUser = `DELETE FROM users WHERE id=$1;`
 )
 
@@ -153,13 +150,45 @@ func (p *postgres) insert(u *user.User) error {
 }
 
 func (p *postgres) update(u *user.User) error {
-	_, err := p.db.Exec(updateUser, u.FirstName, u.SecondName, u.LastName, insertHotelName(u.Hotel), u.Hotel.ID,
-		u.Note, u.Email, u.Phone, u.PasswordHash, u.Status, u.Permissions, u.ID)
-	if err != nil {
+	q := buildUpdateQuery(u.PasswordHash != "")
+	params := buildUpdateParams(u)
+
+	if _, err := p.db.Exec(q, params...); err != nil {
 		return errors.Wrap(err, "error update user")
 	}
 
 	return nil
+}
+
+func buildUpdateQuery(password bool) string {
+	params := []string{
+		"first_name", "second_name", "last_name", "hotel_name",
+		"hotel_id", "note", "email", "phone", "status", "role",
+	}
+	if password {
+		params = append(params, "password_hash")
+	}
+
+	query := "UPDATE users SET "
+	for i := 1; i <= len(params); i++ {
+		query += params[i-1] + "=$" + strconv.Itoa(i) + ", "
+	}
+	query += "updated_at=CURRENT_TIMESTAMP WHERE id=$" + strconv.Itoa(len(params)+1)
+
+	return query
+}
+
+func buildUpdateParams(u *user.User) []interface{} {
+	params := []interface{}{
+		u.FirstName, u.SecondName, u.LastName, insertHotelName(u.Hotel),
+		u.Hotel.ID, u.Note, u.Email, u.Phone, u.Status, u.Permissions,
+	}
+	if u.PasswordHash != "" {
+		params = append(params, u.PasswordHash)
+	}
+	params = append(params, u.ID)
+
+	return params
 }
 
 func insertHotelName(h *hotel.Hotel) string {

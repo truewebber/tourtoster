@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"tourtoster/token"
+	"tourtoster/user"
 )
 
 type (
@@ -21,6 +22,14 @@ type (
 var (
 	authError = respError{
 		Error: "login or password is invalid",
+	}
+
+	unconfirmedError = respError{
+		Error: "user is unconfirmed yet",
+	}
+
+	disabledError = respError{
+		Error: "user is disabled",
 	}
 )
 
@@ -59,6 +68,19 @@ func (h *Handlers) AuthorizationAdminApi(w http.ResponseWriter, r *http.Request)
 	if u == nil || !checkPasswordHash(values.Get("password"), u.PasswordHash) {
 		w.WriteHeader(http.StatusUnauthorized)
 		write(w, authError)
+
+		return
+	}
+
+	switch u.Status {
+	case user.StatusNew:
+		w.WriteHeader(http.StatusUnauthorized)
+		write(w, unconfirmedError)
+
+		return
+	case user.StatusDisabled:
+		w.WriteHeader(http.StatusUnauthorized)
+		write(w, disabledError)
 
 		return
 	}
