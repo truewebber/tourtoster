@@ -51,6 +51,7 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
+		write(w, forbiddenError)
 
 		return
 	}
@@ -67,7 +68,7 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	ID, IDErr := toInt64(strings.TrimSpace(values.Get("id")))
 	if IDErr != nil {
-		log.Error("Error parse project id", "error", IDErr.Error(), "id", values.Get("id"))
+		log.Error("Error parse user id", "error", IDErr.Error(), "id", values.Get("id"))
 		w.WriteHeader(http.StatusBadRequest)
 		write(w, inputInvalidError)
 

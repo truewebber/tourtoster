@@ -37,6 +37,27 @@
 
     <!-- begin:: Page -->
 
+    <div class="popup-background" id="popup-hotel">
+        <div class="popup-wrapper">
+            <div class="popup-header">
+                <div class="close" id="popup-hotel-close">✕</div>
+            </div>
+            <div class="popup">
+                <div class="popup-input">
+                    <form class="hotel" action="/console/api/hotel">
+                        <input class="input" type="text" name="name" placeholder="New Hotel Name">
+                        <input class="submit" type="submit" value="Save">
+                        <input type="hidden" name="id" value="0">
+                    </form>
+                </div>
+                <div class="new-elem">
+                    <a href="javascript:void(0);">New Hotel</a>
+                </div>
+                <div class="list">Loading...</div>
+            </div>
+        </div>
+    </div>
+
     <!-- begin:: Header Mobile -->
     {{template "header_mobile" .}}
     <!-- end:: Header Mobile -->
@@ -112,7 +133,6 @@
                                                         <div class="input_title input_main_title">Phone</div>
                                                         <div class="input_container">
                                                             <input type="tel" name="phone" value="{{ .EditUser.Phone }}"
-                                                                   pattern="+[0-9]{1,3}[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                                                    placeholder="+79994561122">
                                                         </div>
                                                     </div>
@@ -122,8 +142,9 @@
                                                         <div class="input_container">
                                                             <div class="line left_column_wrapper">
                                                                 <div class="input_title input_title__edit_hotels">
-                                                                    <a href="javascript:openEditHotels()">edit
-                                                                        hotels</a></div>
+                                                                    <a id="popup-hotel-open" href="javascript:void(0);">edit
+                                                                        hotels</a>
+                                                                </div>
                                                                 <div class="input_container">
                                                                     <select name="hotel_id">
                                                                         <option></option>

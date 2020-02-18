@@ -89,14 +89,19 @@ func main() {
 	rc.HandleFunc(handler.ConsoleRegistrationPath, handlers.ConsoleRegistrationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleAuthorizationPath, handlers.ConsoleAuthorizationPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleSignoutPath, handlers.ConsoleSignoutPage).Methods(http.MethodGet)
-	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleIndexPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleIndexPath, handlers.ConsoleGTPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleGPPath, handlers.ConsoleGTPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsolePTPath, handlers.ConsolePTPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserPath, handlers.ConsoleUserPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleUserBillingPath, handlers.ConsoleUserBillingPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleUserProfilePath, handlers.ConsoleUserProfilePage).Methods(http.MethodGet)
 	// -----------------------------------------------------------------------------------------------------------------
 	rca := r.PathPrefix(handler.ApiPathPrefix).Subrouter()
 	// --------------------------------------------------- MAIN API ----------------------------------------------------
-	rca.HandleFunc(handler.AuthorizationAdminApiPath, handlers.AuthorizationAdminApi).Methods(http.MethodPost)
+	rca.HandleFunc(handler.AuthorizationApiPath, handlers.AuthorizationApi).Methods(http.MethodPost)
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUserCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUseDelete).Methods(http.MethodDelete)
+	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelList).Methods(http.MethodGet)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelDelete).Methods(http.MethodDelete)
 	// -------------------------------------------------- MIDDLEWARE ---------------------------------------------------

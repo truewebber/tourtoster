@@ -13,7 +13,161 @@ $mobile: 480px;
 $tablet: 768px;
 $desktop: 1024px;
 
+$h1: 568px;
+$h2: 720px;
+$h3: 1024px;
+
 @media #{$format} {
+  .body-popup-overflow {
+    overflow: hidden;
+  }
+
+  .popup-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .7);
+    z-index: 1000;
+    display: none;
+
+    .popup-wrapper {
+      @media (max-width: $mobile) {
+        width: 80%;
+      }
+      @media (min-width: $mobile+1px) and (max-width: $tablet) {
+        width: 70%;
+      }
+      @media (min-width: $tablet+1px) and (max-width: $desktop) {
+        width: 60%;
+      }
+
+      @media (max-height: $h1) {
+        margin: 50px auto 0;
+        height: 400px;
+      }
+      @media (min-height: $h1+1px) and (max-height: $h2) {
+        margin: 80px auto 0;
+        height: 460px;
+      }
+      @media (min-height: $h2+1px) and (max-height: $h3) {
+        margin: 120px auto 0;
+        height: 540px;
+      }
+
+      display: flex;
+      flex-direction: column;
+
+      width: 40%;
+      padding: 10px;
+      background-color: #FFFFFF;
+      border-radius: 5px;
+
+      margin: 200px auto 0;
+      height: 680px;
+
+      .popup-header {
+        height: 40px;
+
+        .close {
+          font-size: 20px;
+          line-height: 20px;
+          float: right;
+          cursor: pointer;
+        }
+
+        .close:hover {
+          color: #000000;
+        }
+
+        .close:active {
+          color: #a92222;
+        }
+      }
+
+      .popup {
+        padding: 0 20% 10px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+
+        /* for Firefox */
+        min-height: 0;
+
+        .popup-input {
+          padding-bottom: 10px;
+
+          .input {
+            float: left;
+            width: 85%;
+          }
+
+          .submit {
+            float: right;
+            width: 15%;
+          }
+        }
+
+        .popup-input:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        .new-elem {
+          text-align: center;
+
+          a {
+            color: #1a46da;
+            font-size: 14px;
+          }
+        }
+
+        .list {
+          margin-top: 10px;
+          flex-grow: 1;
+          overflow: auto;
+
+          /* for Firefox */
+          min-height: 0;
+
+          /* Hide scrollbar for IE and Edge */
+          -ms-overflow-style: none;
+
+          .elem {
+            display: flex;
+            background-color: #f9fefe;
+            padding: 5px;
+            margin: 10px 0;
+
+            .hotel_name {
+              flex: 1 1 auto;
+            }
+
+            .edit, .remove {
+              flex: 0 0 auto;
+              margin-left: 7px;
+            }
+
+            .edit {
+              color: green;
+            }
+
+            .remove {
+              color: red;
+            }
+          }
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .list::-webkit-scrollbar {
+          display: none;
+        }
+      }
+    }
+  }
+
   .users_wrapper {
     @media (max-width: $mobile) {
       padding: 0 10px;
@@ -137,13 +291,13 @@ $desktop: 1024px;
 
       .header {
         padding-bottom: 10px;
+        font-size: 16pt;
+        font-weight: 600;
 
         p {
           margin: 0;
           padding: 0;
-          font-size: 16pt;
           line-height: 20pt;
-          font-weight: 600;
         }
 
         p:first-child {
@@ -151,9 +305,9 @@ $desktop: 1024px;
         }
 
         p:last-child {
-          font-size: 24pt;
-          padding-right: 10px;
           float: right;
+          padding-right: 10px;
+          font-size: 24pt;
 
           a, a:visited {
             color: black;

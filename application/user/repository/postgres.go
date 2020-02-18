@@ -26,7 +26,7 @@ const (
 						FROM users WHERE email=$1;`
 	selectUsers = `SELECT id, first_name, second_name, last_name, hotel_name, hotel_id,
        						note, email, phone, password_hash, status, role
-					FROM users;`
+					FROM users ORDER BY last_name COLLATE NOCASE, first_name COLLATE NOCASE;`
 	insertUser = `INSERT INTO users (first_name, second_name, last_name, hotel_name, 
 									hotel_id, note, email, phone, password_hash, status, role)
 					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`

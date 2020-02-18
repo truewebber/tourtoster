@@ -84,6 +84,11 @@ func templatesInit(templatePath string) (map[string]*template.Template, error) {
 		"console-authorization.gohtml",
 		"console-registration.gohtml",
 		"console-index.gohtml",
+		"console-group_tours.gohtml",
+		"console-private_tours.gohtml",
+		"console-user-profile.gohtml",
+		"console-user-billing.gohtml",
+		"console-index.gohtml",
 		"console-user.gohtml",
 	}
 
@@ -104,7 +109,11 @@ func templatesInit(templatePath string) (map[string]*template.Template, error) {
 		ConsoleAuthorizationTemplateName,
 		ConsoleRegistrationTemplateName,
 		ConsoleIndexTemplateName,
+		ConsoleGPTemplateName,
+		ConsolePTTemplateName,
 		ConsoleUserTemplateName,
+		ConsoleUserBillingTemplateName,
+		ConsoleUserProfileTemplateName,
 	}
 	templates := make(map[string]*template.Template)
 	for _, n := range templateNames {

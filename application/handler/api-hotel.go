@@ -19,10 +19,32 @@ const (
 	HotelApiPath = "/hotel"
 )
 
+func (h *Handlers) ApiHotelList(w http.ResponseWriter, r *http.Request) {
+	u := context.Get(r, "user").(*user.User)
+	if !u.HasPermission(user.CreateNewUserPermission) {
+		w.WriteHeader(http.StatusForbidden)
+		write(w, forbiddenError)
+
+		return
+	}
+
+	hh, err := h.hotel.List()
+	if err != nil {
+		log.Error("Error list hotel", "error", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		write(w, internalError)
+
+		return
+	}
+
+	write(w, hh)
+}
+
 func (h *Handlers) ApiHotelCreate(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
+		write(w, forbiddenError)
 
 		return
 	}
@@ -37,10 +59,15 @@ func (h *Handlers) ApiHotelCreate(w http.ResponseWriter, r *http.Request) {
 	values := r.Form
 
 	name := html.EscapeString(strings.TrimSpace(values.Get("name")))
-	IDStr := html.EscapeString(strings.TrimSpace(values.Get("id")))
-	ID, parseHotelIDErr := strconv.ParseInt(IDStr, 10, 64)
-	if parseHotelIDErr != nil {
-		log.Error("Error parse hotel id", "error", parseHotelIDErr.Error(), "id", IDStr)
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		write(w, inputInvalidError)
+		return
+	}
+
+	ID, IDErr := toInt64(strings.TrimSpace(values.Get("id")))
+	if IDErr != nil {
+		log.Error("Error parse hotel id", "error", IDErr.Error(), "id", values.Get("id"))
 		w.WriteHeader(http.StatusBadRequest)
 		write(w, inputInvalidError)
 
@@ -59,6 +86,8 @@ func (h *Handlers) ApiHotelCreate(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	write(w, newHotel)
 }
 
 func (h *Handlers) ApiHotelDelete(w http.ResponseWriter, r *http.Request) {

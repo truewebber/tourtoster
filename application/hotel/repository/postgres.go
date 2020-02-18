@@ -16,13 +16,14 @@ type (
 )
 
 const (
-	insertHotel     = "INSERT INTO hotel (name) VALUES ($1);"
-	updateHotel     = "UPDATE hotel SET name=$1 WHERE id=$2;"
-	deleteHotelByID = "DELETE FROM hotel WHERE id=$1;"
+	insertHotel = "INSERT INTO hotel (name) VALUES ($1);"
+	updateHotel = "UPDATE hotel SET name=$1 WHERE id=$2;"
+	deleteHotel = "DELETE FROM hotel WHERE id=$1;"
+	updateUsers = "UPDATE users SET hotel_id=0, hotel_name=(SELECT name FROM hotel WHERE id=$1) WHERE hotel_id=$1;"
 
 	selectHotelByName = "SELECT id FROM hotel WHERE name=$1;"
 	selectHotelByID   = "SELECT name FROM hotel WHERE id=$1;"
-	selectHotels      = "SELECT id,name FROM hotel ORDER BY name;"
+	selectHotels      = "SELECT id,name FROM hotel ORDER BY name COLLATE NOCASE;"
 )
 
 func NewPostgres(db *sql.DB) *postgres {
@@ -92,9 +93,24 @@ func (p *postgres) Save(h *hotel.Hotel) error {
 }
 
 func (p *postgres) Delete(ID int64) error {
-	_, err := p.db.Exec(deleteHotelByID, ID)
-	if err != nil {
+	tx, txErr := p.db.Begin()
+	if txErr != nil {
+		return errors.Wrap(txErr, "error create transaction")
+	}
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
+	if _, err := tx.Exec(updateUsers, ID); err != nil {
+		return errors.Wrap(err, "error update users")
+	}
+
+	if _, err := tx.Exec(deleteHotel, ID); err != nil {
 		return errors.Wrap(err, "error delete hotel")
+	}
+
+	if err := tx.Commit(); err != nil {
+		return errors.Wrap(err, "error commit transaction")
 	}
 
 	return nil

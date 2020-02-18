@@ -34,10 +34,10 @@ var (
 )
 
 const (
-	AuthorizationAdminApiPath = "/authorization"
+	AuthorizationApiPath = "/authorization"
 )
 
-func (h *Handlers) AuthorizationAdminApi(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) AuthorizationApi(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Error("Error read body", "error", err.Error())

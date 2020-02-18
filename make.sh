@@ -10,11 +10,11 @@ function build_backend() {
     /bin/bash -c "cd application && go build -o ../bin/server_lx ./cmd/server" || exit 1
 }
 
-function build_frontend() {
-  docker run --rm --net=host -v "$(pwd)":/project -w /project \
-    tourtoster/builder:latest \
-    /bin/bash -c "cd front/tools && yarn install && yarn build" || exit 1
-}
+#function build_frontend() {
+#  docker run --rm --net=host -v "$(pwd)":/project -w /project \
+#    tourtoster/builder:latest \
+#    /bin/bash -c "cd front/tools && yarn install && yarn build" || exit 1
+#}
 
 function front_watcher() {
   cd front/tools || exit 1
@@ -52,8 +52,6 @@ function pack() {
   rm -rf ./build
 
   rm -f ./bin/server_lx
-  rm -rf ./front/tools/node_modules
-  rm -rf ./front/dist
 }
 
 function deploy() {
@@ -82,16 +80,16 @@ static)
   ;;
 build)
   build_backend
-  build_frontend
+  build_frontend_local
   ;;
 pack)
   build_backend
-  build_frontend
+  build_frontend_local
   pack
   ;;
 deploy)
   build_backend
-  build_frontend
+  build_frontend_local
   pack
   deploy
   ;;
