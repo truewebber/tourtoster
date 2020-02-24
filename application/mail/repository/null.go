@@ -1,17 +1,15 @@
 package repository
 
 import (
-	"net/smtp"
-
 	"github.com/mgutz/logxi/v1"
 )
 
 type (
-	null struct {
-		auth smtp.Auth
-		addr string
-		from string
-	}
+	null struct{}
+)
+
+const (
+	NullName = "Null"
 )
 
 func NewNull() *null {
@@ -19,10 +17,10 @@ func NewNull() *null {
 }
 
 func (n *null) Name() string {
-	return "Null"
+	return NullName
 }
 
-func (n *null) Send(to string, body []byte) error {
-	log.Debug("Null mailer send email", "to", to, "body", string(body))
+func (n *null) Send(to string, title, body string) error {
+	log.Debug("Null mailer send email", "to", to, title, "title", "body", body)
 	return nil
 }

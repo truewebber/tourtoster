@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	gMail struct {
+	yandex struct {
 		tlsConfig *tls.Config
 		auth      smtp.Auth
 		from      mail.Address
@@ -18,43 +18,43 @@ type (
 )
 
 const (
-	gMailHost = "smtp.gmail.com"
-	gMailPort = "465"
-	GMailName = "GMail"
+	yandexHost = "smtp.yandex.com"
+	yandexPort = "465"
+	YandexName = "Yandex"
 )
 
-func NewGMail(user, password string) *gMail {
+func NewYandex(user, password string) *yandex {
 	auth := smtp.PlainAuth(
 		"",
 		user,
 		password,
-		gMailHost,
+		yandexHost,
 	)
 
 	tlsConfig := &tls.Config{
 		InsecureSkipVerify: false,
-		ServerName:         gMailHost,
+		ServerName:         yandexHost,
 	}
 
-	return &gMail{
+	return &yandex{
 		tlsConfig: tlsConfig,
 		auth:      auth,
 		from:      mail.Address{Name: "Tourtoster", Address: user},
-		host:      gMailHost,
+		host:      yandexHost,
 	}
 }
 
-func (g *gMail) Name() string {
-	return GMailName
+func (g *yandex) Name() string {
+	return YandexName
 }
 
-func (g *gMail) Send(to string, title, body string) error {
+func (g *yandex) Send(to string, title, body string) error {
 	msg := "From: " + g.from.String() + "\n" +
 		"To: " + to + "\n" +
 		"Subject: " + title + "\n\n" +
 		body
 
-	conn, err := tls.Dial("tcp", gMailHost+":"+gMailPort, g.tlsConfig)
+	conn, err := tls.Dial("tcp", yandexHost+":"+yandexPort, g.tlsConfig)
 	if err != nil {
 		return errors.Wrap(err, "error dial")
 	}

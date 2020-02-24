@@ -118,15 +118,15 @@ func main() {
 }
 
 func newMailer() mail.Mailer {
-	host := os.Getenv("MAIL_HOST")
-	port := os.Getenv("MAIL_PORT")
-
-	if host == "" || port == "" {
-		return mailRepo.NewNull()
-	}
-
 	u := os.Getenv("MAIL_USER")
 	pass := os.Getenv("MAIL_PASSWORD")
 
-	return mailRepo.NewGMail(u, pass, host, port)
+	switch os.Getenv("MAIL_SERVICE") {
+	case mailRepo.GMailName:
+		return mailRepo.NewGMail(u, pass)
+	case mailRepo.YandexName:
+		return mailRepo.NewYandex(u, pass)
+	default:
+		return mailRepo.NewNull()
+	}
 }

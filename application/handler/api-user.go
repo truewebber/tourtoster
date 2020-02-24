@@ -199,15 +199,19 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	// password:end
 
-	if checkbox(values.Get("send_mail")) {
-		body := []byte(
-			"Welcome to Tourtoster! \n" +
-				fmt.Sprintf("Your new password: `%s`", password),
-		)
+	if (passwordHash != "") && checkbox(values.Get("send_mail")) {
+		title := "New password on Tourtoster!"
+		body := "Welcome to Tourtoster! \n" + fmt.Sprintf("Your new password: `%s`", password)
 
-		if err := h.mailer.Send(email, body); err != nil {
-			log.Error("Error send email", "error", err.Error())
+		if ID != 0 {
+			body = "Hello! \n" + fmt.Sprintf("Your new password: `%s`", password)
 		}
+
+		go func() {
+			if err := h.mailer.Send(email, title, body); err != nil {
+				log.Error("Error send email", "error", err.Error())
+			}
+		}()
 	}
 
 	newUser := &user.User{
