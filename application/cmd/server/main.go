@@ -98,9 +98,12 @@ func main() {
 	// -----------------------------------------------------------------------------------------------------------------
 	rca := r.PathPrefix(handler.ApiPathPrefix).Subrouter()
 	// --------------------------------------------------- MAIN API ----------------------------------------------------
+	rca.HandleFunc(handler.ForgetApiPath, handlers.ApiForget).Methods(http.MethodPost)
+	rca.HandleFunc(handler.RegistrationApiPath, handlers.ApiRegistration).Methods(http.MethodPost)
 	rca.HandleFunc(handler.AuthorizationApiPath, handlers.AuthorizationApi).Methods(http.MethodPost)
+	//
 	rca.HandleFunc(handler.UserApiPath, handlers.ApiUserCreate).Methods(http.MethodPost)
-	rca.HandleFunc(handler.UserApiPath, handlers.ApiUseDelete).Methods(http.MethodDelete)
+	rca.HandleFunc(handler.UserApiPath, handlers.ApiUserDelete).Methods(http.MethodDelete)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelList).Methods(http.MethodGet)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelDelete).Methods(http.MethodDelete)

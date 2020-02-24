@@ -114,22 +114,27 @@ var KTLoginGeneral = function () {
             btn.addClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', true);
 
             form.ajaxSubmit({
-                url: '',
+                method: "post",
+                url: '/console/api/forget',
+                dataType: "json",
                 success: function (response, status, xhr, $form) {
-                    // similate 2s delay
-                    setTimeout(function () {
-                        btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false); // remove
-                        form.clearForm(); // clear form
-                        form.validate().resetForm(); // reset validation states
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false); // remove
+                    form.clearForm(); // clear form
+                    form.validate().resetForm(); // reset validation states
 
-                        // display signup form
-                        displaySignInForm();
-                        var signInForm = login.find('.kt-login__signin form');
-                        signInForm.clearForm();
-                        signInForm.validate().resetForm();
+                    // display signup form
+                    displaySignInForm();
+                    var signInForm = login.find('.kt-login__signin form');
+                    signInForm.clearForm();
+                    signInForm.validate().resetForm();
 
-                        showErrorMsg(signInForm, 'success', 'Cool! Password recovery instruction has been sent to your email.');
-                    }, 2000);
+                    showErrorMsg(signInForm, 'success', 'Cool! New password has been sent to your email.');
+                },
+                error: function (response, status, xhr, $form) {
+                    console.log(response.responseJSON);
+
+                    btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false); // remove
+                    showErrorMsg(form, 'danger', response.responseJSON.error);
                 }
             });
         });

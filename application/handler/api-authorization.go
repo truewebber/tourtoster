@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"io/ioutil"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/mgutz/logxi/v1"
@@ -38,23 +36,14 @@ const (
 )
 
 func (h *Handlers) AuthorizationApi(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Error("Error read body", "error", err.Error())
+	if err := r.ParseForm(); err != nil {
+		log.Error("Error read form", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		write(w, internalError)
 
 		return
 	}
-
-	values, qErr := url.ParseQuery(string(body))
-	if qErr != nil {
-		log.Error("Error parse body", "error", qErr.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
-
-		return
-	}
+	values := r.Form
 
 	u, uErr := h.user.UserWithEmail(values.Get("email"))
 	if uErr != nil {

@@ -48,8 +48,10 @@ func (m *Middleware) APIAuthMiddleware(next http.Handler) http.Handler {
 			log.Error("auth error", "error", err.Error())
 		}
 
-		path := handler.ApiPathPrefix + handler.AuthorizationApiPath
-		if u == nil && r.URL.Path != path {
+		path1 := handler.ApiPathPrefix + handler.AuthorizationApiPath
+		path2 := handler.ApiPathPrefix + handler.ForgetApiPath
+		path3 := handler.ApiPathPrefix + handler.RegistrationApiPath
+		if u == nil && !(r.URL.Path == path1 || r.URL.Path == path2 || r.URL.Path == path3) {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}

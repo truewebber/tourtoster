@@ -30,7 +30,8 @@ const (
 	insertUser = `INSERT INTO users (first_name, second_name, last_name, hotel_name, 
 									hotel_id, note, email, phone, password_hash, status, role)
 					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`
-	deleteUser = `DELETE FROM users WHERE id=$1;`
+	updatePasswordUser = `UPDATE users SET password_hash=$1 WHERE id=$2;`
+	deleteUser         = `DELETE FROM users WHERE id=$1;`
 )
 
 func NewPostgres(db *sql.DB) *postgres {
@@ -99,6 +100,15 @@ func (p *postgres) List() ([]user.User, error) {
 	}
 
 	return uu, nil
+}
+
+func (p *postgres) Password(ID int64, passwordHash string) error {
+	_, err := p.db.Exec(updatePasswordUser, passwordHash, ID)
+	if err != nil {
+		return errors.Wrap(err, "error update user")
+	}
+
+	return nil
 }
 
 func (p *postgres) Save(u *user.User) error {

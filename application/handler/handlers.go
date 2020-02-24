@@ -34,6 +34,10 @@ type (
 )
 
 type (
+	respOK struct {
+		Message string `json:"message"`
+	}
+
 	respError struct {
 		Error string `json:"error"`
 	}

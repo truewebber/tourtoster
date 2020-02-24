@@ -77,6 +77,20 @@ func (mr *MockRepositoryMockRecorder) Save(u interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockRepository)(nil).Save), u)
 }
 
+// Password mocks base method
+func (m *MockRepository) Password(ID int64, passwordHash string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Password", ID, passwordHash)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Password indicates an expected call of Password
+func (mr *MockRepositoryMockRecorder) Password(ID, passwordHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Password", reflect.TypeOf((*MockRepository)(nil).Password), ID, passwordHash)
+}
+
 // Delete mocks base method
 func (m *MockRepository) Delete(ID int64) error {
 	m.ctrl.T.Helper()

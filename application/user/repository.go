@@ -14,6 +14,7 @@ type (
 		User(ID int64) (*User, error)
 		UserWithEmail(email string) (*User, error)
 		Save(u *User) error
+		Password(ID int64, passwordHash string) error
 		Delete(ID int64) error
 		List() ([]User, error)
 	}

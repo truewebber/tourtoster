@@ -56,8 +56,7 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseForm()
-	if err != nil {
+	if err := r.ParseForm(); err != nil {
 		log.Error("Error read form", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		write(w, internalError)
@@ -248,7 +247,7 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	write(w, u)
 }
 
-func (h *Handlers) ApiUseDelete(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) ApiUserDelete(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
