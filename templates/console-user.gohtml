@@ -254,6 +254,14 @@
                                                             <input type="submit" value="Send">
                                                         </div>
                                                     </div>
+                                                    {{ if .EditUser.ID }}
+                                                        <div class="line">
+                                                            <div class="input_title"></div>
+                                                            <div class="input_container delete-user">
+                                                                <a href="javascript:void(0);">Delete</a>
+                                                            </div>
+                                                        </div>
+                                                    {{ end }}
                                                     <input type="hidden" name="id" value="{{ .EditUser.ID }}">
                                                 </form>
                                             </div>

@@ -273,6 +273,21 @@ $h3: 1024px;
                 padding-bottom: 0;
               }
             }
+
+            .delete-user {
+              text-align: right;
+
+              a {
+                font-weight: 600;
+                color: #a92222;
+              }
+              a:hover {
+                color: #d12424;
+              }
+              a:active {
+                color: red;
+              }
+            }
           }
         }
       }

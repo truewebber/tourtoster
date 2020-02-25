@@ -13,27 +13,65 @@ let UserEditHotel = function () {
         btn.on('click', function (e) {
             e.preventDefault();
 
-            // See: src\js\framework\base\app.js
             KTApp.progress(btn);
-            //KTApp.block(formEl);
 
             $(userFormEl).ajaxSubmit({
                 url: $(userFormEl).attr("action"),
                 type: "post",
                 dataType: "json",
-                success: function () {
+                success: function (r) {
                     KTApp.unprogress(btn);
-                    // KTApp.unblock(formEl);
 
                     swal.fire({
                         "title": "",
-                        "text": "The application has been successfully submitted!",
+                        "text": "User has been successfully submitted!",
                         "type": "success",
                         "confirmButtonClass": "btn btn-secondary"
+                    }, function () {
+                        window.location = "/console/users?edit_id=" + r.responseJSON.id;
                     });
                 },
                 error: function (r) {
                     KTApp.unprogress(btn);
+
+                    let errorText = "Unknown server error";
+                    if (r.responseJSON) {
+                        errorText = r.responseJSON.error;
+                    }
+
+                    swal.fire({
+                        "title": "error",
+                        "text": errorText,
+                        "type": "error",
+                        "confirmButtonClass": "btn btn-secondary"
+                    });
+                }
+            })
+        });
+    };
+
+    let initRemoveUser = function () {
+        let btn = userFormEl.find('.delete-user a');
+
+        btn.on('click', function (e) {
+            e.preventDefault();
+
+            if (!confirm("Are you sure you want delete this user?")) {
+                return
+            }
+
+            let userID = userFormEl.find('input[name=id]').val();
+
+            $.ajax({
+                url: "/console/api/user",
+                type: "delete",
+                data: "id=" + userID,
+                dataType: "json",
+                success: function () {
+                    window.location = "/console/users";
+                },
+                error: function (r) {
+                    console.log("error delete user", r);
 
                     let errorText = "Unknown server error";
                     if (r.responseJSON) {
@@ -187,6 +225,7 @@ let UserEditHotel = function () {
             hotelListEl = $('#popup-hotel .list');
 
             initSubmitUser();
+            initRemoveUser();
             initOpenPopupHotel();
             initClosePopupHotel();
 
