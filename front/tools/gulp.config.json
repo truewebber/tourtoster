@@ -23,8 +23,8 @@
       },
       "jsUglify": true,
       "cssMinify": true,
-      "jsSourcemaps": true,
-      "cssSourcemaps": true
+      "jsSourcemaps": false,
+      "cssSourcemaps": false
     },
     "path": {
       "src": "./../src/assets",

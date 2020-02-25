@@ -131,8 +131,6 @@ var KTLoginGeneral = function () {
                     showErrorMsg(signInForm, 'success', 'Cool! New password has been sent to your email.');
                 },
                 error: function (response, status, xhr, $form) {
-                    console.log(response.responseJSON);
-
                     btn.removeClass('kt-spinner kt-spinner--right kt-spinner--sm kt-spinner--light').attr('disabled', false); // remove
                     showErrorMsg(form, 'danger', response.responseJSON.error);
                 }

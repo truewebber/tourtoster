@@ -198,21 +198,6 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	// password:end
 
-	if (passwordHash != "") && checkbox(values.Get("send_mail")) {
-		title := "New password on Tourtoster!"
-		body := "Welcome to Tourtoster! \n" + fmt.Sprintf("Your new password: `%s`", password)
-
-		if ID != 0 {
-			body = "Hello! \n" + fmt.Sprintf("Your new password: `%s`", password)
-		}
-
-		go func() {
-			if err := h.mailer.Send(email, title, body); err != nil {
-				log.Error("Error send email", "error", err.Error())
-			}
-		}()
-	}
-
 	newUser := &user.User{
 		ID:           ID,
 		FirstName:    firstName,
@@ -241,6 +226,21 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 		write(w, e)
 
 		return
+	}
+
+	if (passwordHash != "") && checkbox(values.Get("send_mail")) {
+		title := "New password on Tourtoster!"
+		body := "Welcome to Tourtoster! \n" + fmt.Sprintf("Your new password: `%s`", password)
+
+		if ID != 0 {
+			body = "Hello! \n" + fmt.Sprintf("Your new password: `%s`", password)
+		}
+
+		go func() {
+			if err := h.mailer.Send(email, title, body); err != nil {
+				log.Error("Error send email", "error", err.Error())
+			}
+		}()
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -304,7 +304,15 @@ func (h *Handlers) newHotel(hotelID int64, hotelName string, new bool) (*hotel.H
 		return nil, nil
 	}
 
-	htl := &hotel.Hotel{Name: hotelName}
+	htl, checkErr := h.hotel.HotelByName(hotelName)
+	if checkErr != nil {
+		return nil, errors.Wrap(checkErr, "error check hotel exists")
+	}
+	if htl != nil {
+		return htl, nil
+	}
+
+	htl = &hotel.Hotel{Name: hotelName}
 	if new {
 		if err := h.hotel.Save(htl); err != nil {
 			return nil, err

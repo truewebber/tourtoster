@@ -273,7 +273,7 @@ const mainConfig = function () {
                         {
                             loader: "sass-loader",
                             options: {
-                                sourceMap: true,
+                                sourceMap: false,
                                 // // use for separate css pages (custom pages, eg. wizard, invoices, etc.)
                                 // includePaths: demos.map((demo) => {
                                 //     return slash(srcPath) + "/sass/theme/demos/" + demo;

@@ -34,16 +34,16 @@ $desktop: 1024px;
 
   .rp-wrapper {
     @media (max-width: $mobile) {
-      max-width: 95%;
+      width: 95%;
     }
     @media (min-width: $mobile+1px) and (max-width: $tablet) {
-      max-width: 90%;
+      width: 90%;
     }
     @media (min-width: $tablet+1px) and (max-width: $desktop) {
-      max-width: 85%;
+      width: 85%;
     }
 
-    max-width: 80%;
+    width: 80%;
     margin: 0 auto;
   }
 
@@ -59,5 +59,60 @@ $desktop: 1024px;
     }
 
     padding: 0 20%;
+  }
+
+  .line {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+
+    .input_title {
+      flex-direction: column;
+      flex: 1;
+      padding-left: 10px;
+    }
+
+    .input_title__edit_hotels {
+      line-height: 24pt;
+    }
+
+    .input_main_title {
+      line-height: 24pt;
+      font-weight: 400;
+      font-size: 15pt;
+    }
+
+    .input_container {
+      flex-direction: column;
+      flex: 2;
+
+      input:not([type="checkbox"]), select, textarea {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #bbbbbb;
+        height: 36px;
+      }
+
+      input[type="submit"] {
+        background-color: #1a46da;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      textarea {
+        height: auto;
+      }
+
+      input:not([type="checkbox"]) {
+        line-height: 18pt;
+      }
+
+      .left_column_wrapper {
+        padding-left: 5px;
+        padding-bottom: 0;
+      }
+    }
   }
 }
