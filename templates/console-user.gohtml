@@ -80,15 +80,53 @@
                                 <div class="users_wrapper">
                                     <div class="table">
                                         <div class="list_wrapper">
-                                            <div class="header header_underline">
+                                            <div class="header header-underline header-indent">
                                                 <p>List</p>
                                                 <p><a href="/console/users">+</a></p>
                                             </div>
-                                            <div class="list">
+                                            <div class="sub-header header-indent">
+                                                <p>Status
+                                                    <select name="filter-status">
+                                                        <optgroup>
+                                                            <option value="_">Any</option>
+                                                        </optgroup>
+                                                        <optgroup label="--------------">
+                                                            <option {{if eq (index $.Filters "status") 1 }}selected{{end}}
+                                                                    value="1">New (not confirmed)
+                                                            </option>
+                                                            <option {{if eq (index $.Filters "status") 2 }}selected{{end}}
+                                                                    value="2">Enabled
+                                                            </option>
+                                                            <option {{if eq (index $.Filters "status") 3 }}selected{{end}}
+                                                                    value="3">Disabled
+                                                            </option>
+                                                        </optgroup>
+                                                    </select>
+                                                </p>
+                                                <p>Hotel
+                                                    <select name="filter-hotel">
+                                                        <optgroup>
+                                                            <option value="_">Any</option>
+                                                            <option {{if eq (index $.Filters "hotel") 0 }}selected{{end}}
+                                                                    value="0">Empty
+                                                            </option>
+                                                        </optgroup>
+                                                        <optgroup label="--------------">
+                                                            {{ with .Hotels }}
+                                                                {{ range . }}
+                                                                    <option {{if eq (index $.Filters "hotel") .ID }}selected{{end}}
+                                                                            value="{{ .ID }}">{{ .Name }}</option>
+                                                                {{ end }}
+                                                            {{ end }}
+                                                        </optgroup>
+                                                    </select>
+                                                </p>
+                                            </div>
+                                            <div class="list header-indent user-list">
                                                 {{ with .Users }}
                                                     {{ range . }}
                                                         {{ $user := . }}
-                                                        <a href="/console/users?edit_id={{ $user.ID }}"
+                                                        <a href="/console/users?edit_id={{ $user.ID }}&{{$.Filters.ToURL}}"
                                                            class="user-item {{if eq $.EditUser.ID $user.ID}}active{{end}}">
                                                             {{ $user.LastName}} {{$user | UserShortName }}</a>
                                                     {{ end }}
@@ -96,7 +134,9 @@
                                             </div>
                                         </div>
                                         <div class="edit_wrapper">
-                                            <div class="header header_center">New User</div>
+                                            <div class="header header_center">
+                                                {{ if .EditUser.ID }}Edit User{{ else }}New User{{ end }}
+                                            </div>
                                             <div class="input_wrapper">
                                                 <form class="new-user" action="/console/api/user" autocomplete="off">
                                                     <div class="line">
@@ -317,7 +357,7 @@
     <!--end::Page Vendors -->
 
     <!--begin::Page Scripts(used by this page) -->
-    <script src="/static/js/pages/custom/user/user-edit-hotel.js" type="text/javascript"></script>
+    <script src="/static/js/pages/custom/user/user-hotel-edit.js" type="text/javascript"></script>
     <!--end::Page Scripts -->
     </body>
 

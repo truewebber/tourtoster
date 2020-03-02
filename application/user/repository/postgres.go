@@ -2,7 +2,9 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
@@ -18,15 +20,17 @@ type (
 )
 
 const (
+	selectUsers = `SELECT id, first_name, second_name, last_name, hotel_name, hotel_id,
+       						note, email, phone, password_hash, status, role
+					FROM users ` + field + ` ORDER BY last_name COLLATE NOCASE, first_name COLLATE NOCASE;`
+	field = `{FIELD}`
+
 	selectUserByID = `SELECT first_name, second_name, last_name, hotel_name, hotel_id,
        						note, email, phone, password_hash, status, role
 					FROM users WHERE id=$1;`
 	selectUserByEmail = `SELECT id, first_name, second_name, last_name, hotel_name, hotel_id,
        						note, phone, password_hash, status, role
 						FROM users WHERE email=$1;`
-	selectUsers = `SELECT id, first_name, second_name, last_name, hotel_name, hotel_id,
-       						note, email, phone, password_hash, status, role
-					FROM users ORDER BY last_name COLLATE NOCASE, first_name COLLATE NOCASE;`
 	insertUser = `INSERT INTO users (first_name, second_name, last_name, hotel_name, 
 									hotel_id, note, email, phone, password_hash, status, role)
 					VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`
@@ -77,8 +81,10 @@ func (p *postgres) UserWithEmail(email string) (*user.User, error) {
 	return u, nil
 }
 
-func (p *postgres) List() ([]user.User, error) {
-	rows, err := p.db.Query(selectUsers)
+func (p *postgres) List(filters map[string]interface{}) ([]user.User, error) {
+	query, params := buildListQueryParams(selectUsers, filters)
+
+	rows, err := p.db.Query(query, params...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,6 +106,39 @@ func (p *postgres) List() ([]user.User, error) {
 	}
 
 	return uu, nil
+}
+
+func buildListQueryParams(query string, filters map[string]interface{}) (string, []interface{}) {
+	params := make([]interface{}, 0, 2)
+	where := make([]string, 0)
+
+	for key, val := range filters {
+		switch key {
+		case "status":
+			if val.(user.Status) == user.Status(-1) {
+				continue
+			}
+
+			where = append(where, fmt.Sprintf("status=$%d", len(where)+1))
+			params = append(params, val)
+		case "hotel":
+			if val.(int64) == int64(-1) {
+				continue
+			}
+
+			where = append(where, fmt.Sprintf("hotel_id=$%d", len(where)+1))
+			params = append(params, val)
+		}
+	}
+
+	r := ""
+	if len(params) > 0 {
+		r = "WHERE " + strings.Join(where, " AND ")
+	}
+
+	query = strings.Replace(query, field, r, 1)
+
+	return query, params
 }
 
 func (p *postgres) Password(ID int64, passwordHash string) error {

@@ -106,16 +106,16 @@ func (mr *MockRepositoryMockRecorder) Delete(ID interface{}) *gomock.Call {
 }
 
 // List mocks base method
-func (m *MockRepository) List() ([]user.User, error) {
+func (m *MockRepository) List(filters map[string]interface{}) ([]user.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List")
+	ret := m.ctrl.Call(m, "List", filters)
 	ret0, _ := ret[0].([]user.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List
-func (mr *MockRepositoryMockRecorder) List() *gomock.Call {
+func (mr *MockRepositoryMockRecorder) List(filters interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockRepository)(nil).List))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockRepository)(nil).List), filters)
 }

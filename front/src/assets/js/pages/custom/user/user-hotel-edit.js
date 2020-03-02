@@ -1,11 +1,15 @@
 "use strict";
 
-let UserEditHotel = function () {
+let UserHotelEdit = function () {
     let userFormEl;
     let hotelFormEl;
 
     let hotelPopupEl;
     let hotelListEl;
+
+    // let userListEl;
+    let userFilterStatus;
+    let userFilterHotel;
 
     let initSubmitUser = function () {
         let btn = userFormEl.find('input[type=submit]');
@@ -216,6 +220,77 @@ let UserEditHotel = function () {
         })
     };
 
+    let userFiltersURL = function () {
+        let cond = [];
+
+        let statusVal = $(userFilterStatus).val();
+        if (statusVal !== "_") {
+            cond.push("filter_status=" + statusVal);
+        }
+
+        let hotelVal = $(userFilterHotel).val();
+        if (hotelVal !== "_") {
+            cond.push("filter_hotel=" + hotelVal);
+        }
+
+        let href = "/console/users";
+        if (cond.length > 0) {
+            href += "?"
+        }
+
+        return href + cond.join("&");
+    };
+
+    let initUserFilterStatus = function () {
+        userFilterStatus.on('change', function (e) {
+            e.preventDefault();
+
+            window.location.href = userFiltersURL();
+        });
+    };
+
+    let initUserFilterHotel = function () {
+        userFilterHotel.on('change', function (e) {
+            e.preventDefault();
+
+            window.location.href = userFiltersURL();
+        });
+    };
+
+    // let loadUserList = function () {
+    //     $(userListEl).html("Loading...");
+    //
+    //     let statusVal = userListEl.find('select[name=filter-status]');
+    //     let hotelVal = userListEl.find('select[name=filter-hotel]');
+    //
+    //     $.ajax({
+    //         url: "/console/api/user",
+    //         type: "get",
+    //         dataType: "json",
+    //         success: function (r) {
+    //             $(hotelListEl).html("");
+    //
+    //             r.forEach(function (e) {
+    //                 $(hotelListEl).append(
+    //                     '<div class="elem">' +
+    //                     '<div class="hotel_name">' + e.name + '</div>' +
+    //                     '<a class="edit" data-id="' + e.id + '" data-name="' + e.name + '" href="javascript:void(0);">✎</a>' +
+    //                     '<a class="remove" data-id="' + e.id + '" data-name="' + e.name + '" href="javascript:void(0);">✕</a>' +
+    //                     '</div>'
+    //                 );
+    //             });
+    //
+    //             initEditHotel();
+    //             initRemoveHotel();
+    //         },
+    //         error: function (r) {
+    //             $(hotelListEl).html("Error get hotel list.");
+    //
+    //             console.log("error get hotel list", r);
+    //         }
+    //     })
+    // };
+
     return {
         // public functions
         init: function () {
@@ -224,6 +299,10 @@ let UserEditHotel = function () {
             hotelPopupEl = $('#popup-hotel');
             hotelListEl = $('#popup-hotel .list');
 
+            // userListEl = $('.user-list');
+            userFilterStatus = $('select[name=filter-status]');
+            userFilterHotel = $('select[name=filter-hotel]');
+
             initSubmitUser();
             initRemoveUser();
             initOpenPopupHotel();
@@ -231,10 +310,13 @@ let UserEditHotel = function () {
 
             initSubmitHotel();
             initNewHotel();
+
+            initUserFilterStatus();
+            initUserFilterHotel();
         },
     };
 }();
 
 jQuery(document).ready(function () {
-    UserEditHotel.init();
+    UserHotelEdit.init();
 });

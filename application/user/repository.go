@@ -16,6 +16,6 @@ type (
 		Save(u *User) error
 		Password(ID int64, passwordHash string) error
 		Delete(ID int64) error
-		List() ([]User, error)
+		List(filters map[string]interface{}) ([]User, error)
 	}
 )

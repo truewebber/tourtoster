@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"fmt"
+	"html/template"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/context"
@@ -13,6 +17,8 @@ import (
 )
 
 type (
+	Filters map[string]interface{}
+
 	UserPage struct {
 		Menu menu
 		Me   *me
@@ -21,6 +27,7 @@ type (
 		Users    []user.User
 		Hotels   []hotel.Hotel
 		EditUser *user.User
+		Filters  Filters
 	}
 )
 
@@ -28,6 +35,20 @@ const (
 	ConsoleUserPath         = "/users"
 	ConsoleUserTemplateName = "console-user"
 )
+
+func (f Filters) ToURL() template.URL {
+	uu := make([]string, 0, 2)
+
+	for key, val := range f {
+		if fmt.Sprintf("%d", val) == "-1" {
+			continue
+		}
+
+		uu = append(uu, fmt.Sprintf("filter_%s=%d", key, val))
+	}
+
+	return template.URL(strings.Join(uu, "&"))
+}
 
 func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, "user").(*user.User)
@@ -47,7 +68,64 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, errUsers := h.user.List()
+	// default filter values
+	queryFilters := map[string]interface{}{
+		"status": user.Status(-1),
+		"hotel":  int64(-1),
+	}
+	errs := make([]error, 0)
+	for k := range queryFilters {
+		if val := r.URL.Query().Get(fmt.Sprintf("filter_%s", k)); val != "" {
+			switch k {
+			case "status":
+				i, err := strconv.Atoi(val)
+				if err != nil {
+					errs = append(errs, errors.Wrap(err, "error convert status to int"))
+
+					continue
+				}
+
+				statusVal := user.Status(i)
+				if err := user.ValidationFilterStatus(statusVal); err != nil {
+					errs = append(errs, errors.Wrap(err, "error validate status"))
+
+					continue
+				}
+
+				queryFilters[k] = statusVal
+			case "hotel":
+				i, err := strconv.ParseInt(val, 10, 64)
+				if err != nil {
+					errs = append(errs, errors.Wrap(err, "error convert hotel to int64"))
+
+					continue
+				}
+
+				if i < 0 {
+					// no filter
+					continue
+				}
+
+				if err := hotel.ValidationFilterHotelID(i); err != nil {
+					errs = append(errs, errors.Wrap(err, "error validate hotel"))
+
+					continue
+				}
+
+				queryFilters[k] = i
+			}
+		}
+	}
+
+	if len(errs) != 0 {
+		log.Error("Error validate input params", "query", r.URL.Query(),
+			"errors", fmt.Sprintf("%#v", errs))
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	users, errUsers := h.user.List(queryFilters)
 	if errUsers != nil {
 		log.Error("Error get user list", "error", errUsers.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -70,6 +148,7 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 		Users:    users,
 		Hotels:   hotels,
 		EditUser: editUser,
+		Filters:  queryFilters,
 	}
 
 	if err := h.templates[ConsoleUserTemplateName].Execute(w, data); err != nil {

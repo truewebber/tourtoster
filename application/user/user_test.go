@@ -193,3 +193,52 @@ func TestShortName(t *testing.T) {
 		})
 	}
 }
+
+func TestValidationFilterStatus(t *testing.T) {
+	type args struct {
+		s Status
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name:    "test1",
+			args:    args{s: Status(0)},
+			wantErr: false,
+		},
+		{
+			name:    "test2",
+			args:    args{s: Status(1)},
+			wantErr: false,
+		},
+		{
+			name:    "test3",
+			args:    args{s: Status(2)},
+			wantErr: false,
+		},
+		{
+			name:    "test4",
+			args:    args{s: Status(3)},
+			wantErr: false,
+		},
+		{
+			name:    "test5",
+			args:    args{s: Status(4)},
+			wantErr: true,
+		},
+		{
+			name:    "test6",
+			args:    args{s: Status(-1)},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := ValidationFilterStatus(tt.args.s); (err != nil) != tt.wantErr {
+				t.Errorf("ValidationFilterStatus() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}

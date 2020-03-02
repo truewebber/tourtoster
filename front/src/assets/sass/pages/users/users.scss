@@ -194,12 +194,31 @@ $h3: 1024px;
         flex-direction: column;
         flex: 1;
 
+        .sub-header {
+          font-weight: normal;
+          font-size: 11pt;
+
+          p {
+            select {
+              float: right;
+              max-width: 60%;
+            }
+          }
+        }
+
+        .header-indent {
+          margin-bottom: 20px;
+        }
+
+        .header-indent:last-child {
+          margin-bottom: 0px;
+        }
+
         .list {
-          padding-top: 20px;
+          padding-left: 10px;
 
           a {
             display: block;
-            padding: 0 0 0 10px;
             margin: 0;
             line-height: 24pt;
             font-size: 12pt;
@@ -281,9 +300,11 @@ $h3: 1024px;
                 font-weight: 600;
                 color: #a92222;
               }
+
               a:hover {
                 color: #d12424;
               }
+
               a:active {
                 color: red;
               }
@@ -340,7 +361,7 @@ $h3: 1024px;
         clear: both;
       }
 
-      .header_underline {
+      .header-underline {
         border-bottom: 1px solid #000000;
       }
 

@@ -1,6 +1,8 @@
 package user
 
-import "github.com/pkg/errors"
+import (
+	"github.com/pkg/errors"
+)
 
 type (
 	Status int
@@ -40,6 +42,18 @@ func (s Status) String() string {
 func ValidationStatus(s Status) error {
 	if _, ok := allowedStatuses[s]; !ok {
 		return errors.New("status invalid")
+	}
+
+	return nil
+}
+
+func ValidationFilterStatus(s Status) error {
+	if err := ValidationStatus(s); err != nil {
+		if s == Status(-1) {
+			return nil
+		}
+
+		return err
 	}
 
 	return nil
