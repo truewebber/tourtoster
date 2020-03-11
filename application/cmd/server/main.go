@@ -95,6 +95,8 @@ func main() {
 	rc.HandleFunc(handler.ConsoleUserPath, handlers.ConsoleUserPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserBillingPath, handlers.ConsoleUserBillingPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserProfilePath, handlers.ConsoleUserProfilePage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleContactPath, handlers.ConsoleContactPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsoleAboutPath, handlers.ConsoleAboutPage).Methods(http.MethodGet)
 	// -----------------------------------------------------------------------------------------------------------------
 	rca := r.PathPrefix(handler.ApiPathPrefix).Subrouter()
 	// --------------------------------------------------- MAIN API ----------------------------------------------------
