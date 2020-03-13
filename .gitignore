@@ -2,6 +2,9 @@
 bin
 
 static
+uploads
+!uploads/.gitkeep
+
 front/dist
 node_modules
 

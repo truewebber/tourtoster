@@ -110,10 +110,10 @@ func main() {
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelDelete).Methods(http.MethodDelete)
 	// -------------------------------------------------- MIDDLEWARE ---------------------------------------------------
+	r.Use(middlewares.LogMiddleware)
 	rc.Use(middlewares.PageAuthMiddleware)
 	rca.Use(middlewares.APIAuthMiddleware)
 	// -----------------------------------------------------------------------------------------------------------------
-
 	// ---------------------------------------------------- SERVER -----------------------------------------------------
 	log.Debug("Starting server", host, port)
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), r); err != nil {

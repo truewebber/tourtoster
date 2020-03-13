@@ -1,0 +1,52 @@
+// Global config
+@import "../../config";
+
+// Layout config
+@import "../../global/layout/config.scss";
+
+$format: screen;
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+//$retina: "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+
+@media #{$format} {
+  .tours-container {
+    .tour-row {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: .8em;
+
+      .tour {
+        @media (max-width: $mobile) {
+          min-width: 5em;
+          height: 7em;
+        }
+        @media (min-width: $mobile+1px) and (max-width: $tablet) {
+          height: 12em;
+        }
+        @media (min-width: $tablet+1px) and (max-width: $desktop) {
+          height: 15em;
+        }
+
+        flex: 1 0 0;
+        border-radius: 5px;
+        min-width: 7em;
+        height: 20em;
+        margin-right: .8em;
+        background-color: red;
+
+
+      }
+
+      .tour.clear {
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      .tour:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
