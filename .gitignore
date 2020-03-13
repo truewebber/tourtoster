@@ -2,7 +2,7 @@
 bin
 
 static
-uploads
+uploads/*
 !uploads/.gitkeep
 
 front/dist
