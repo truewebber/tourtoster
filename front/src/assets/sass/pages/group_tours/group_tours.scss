@@ -13,6 +13,8 @@ $desktop: 1024px;
 
 @media #{$format} {
   .tours-container {
+    font-family: Helvetica, Arial, sans-serif;
+
     .tour-row {
       display: flex;
       flex-direction: row;
@@ -30,14 +32,56 @@ $desktop: 1024px;
           height: 15em;
         }
 
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
         flex: 1 0 0;
         border-radius: 5px;
         min-width: 7em;
         height: 20em;
         margin-right: .8em;
-        background-color: red;
+        background-position: center;
+        background-size: cover;
+        background-color: #eee;
 
+        .title {
+          padding: .8em .5em;
+          background-color: rgba(255, 255, 255, .3);
+          color: black;
+          font-size: 1.4em;
+          font-weight: 600;
+        }
 
+        .footer {
+          //overflow: auto;
+          display: flex;
+          flex-flow: row wrap;
+          border-top: 1px solid #444;
+          padding: .5em .5em;
+          background-color: rgba(230, 230, 230, .3);
+          font-weight: 600;
+          color: black;
+          line-height: 1.5em;
+          text-align: center;
+          vertical-align: middle;
+
+          .footer-row {
+            flex: 1;
+          }
+
+          .price {
+            line-height: 2.3em;
+            font-size: 1.3em;
+          }
+
+          .max {
+            font-size: 1.1em;
+          }
+
+          .nearest {
+            font-size: 1.1em;
+          }
+        }
       }
 
       .tour.clear {

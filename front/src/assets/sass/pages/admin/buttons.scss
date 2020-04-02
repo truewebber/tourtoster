@@ -1,0 +1,33 @@
+// Global config
+@import "../../config";
+
+// Layout config
+@import "../../global/layout/config.scss";
+
+.admin-buttons {
+  padding-bottom: 30px;
+
+  a {
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+    border: none;
+    transition: .2s;
+
+    font-family: Helvetica, sans-serif;
+    padding: .8em 1.4em;
+    min-width: 8em;
+    background: #009ED8;
+    color: white;
+
+    &:hover {
+      background: darken(#009ED8, 15%);
+    }
+
+    &:active,
+    &:focus {
+      background: darken(#009ED8, 30%);
+      outline: none;
+    }
+  }
+}
