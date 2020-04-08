@@ -209,19 +209,24 @@ const mainConfig = function () {
             }),
             new CopyWebpackPlugin([
                 {
-                  // copy media
-                  from: srcPath + "/media",
-                  to: assetDistPath + "/media",
+                    // copy media
+                    from: srcPath + "/media",
+                    to: assetDistPath + "/media",
                 },
                 {
-                  // copy tinymce skins
-                  from: configPath + "/node_modules/tinymce/skins",
-                  to: assetDistPath + "/plugins/custom/tinymce/skins",
+                    // copy redactor
+                    from: srcPath + "/plugins/redactor",
+                    to: assetDistPath + "/plugins/custom/redactor",
                 },
                 {
-                  // copy tinymce plugins
-                  from: configPath + "/node_modules/tinymce/plugins",
-                  to: assetDistPath + "/plugins/custom/tinymce/plugins",
+                    // copy tinymce skins
+                    from: configPath + "/node_modules/tinymce/skins",
+                    to: assetDistPath + "/plugins/custom/tinymce/skins",
+                },
+                {
+                    // copy tinymce plugins
+                    from: configPath + "/node_modules/tinymce/plugins",
+                    to: assetDistPath + "/plugins/custom/tinymce/plugins",
                 },
             ]),
             {
@@ -353,12 +358,6 @@ const mainConfig = function () {
                 },
             ]
         },
-        // webpack dev server config
-        devServer: {
-            contentBase: distPath,
-            compress: true,
-            port: 3000
-        }
     }
 };
 
