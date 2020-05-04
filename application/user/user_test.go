@@ -206,7 +206,7 @@ func TestValidationFilterStatus(t *testing.T) {
 		{
 			name:    "test1",
 			args:    args{s: Status(0)},
-			wantErr: false,
+			wantErr: true,
 		},
 		{
 			name:    "test2",
@@ -231,7 +231,7 @@ func TestValidationFilterStatus(t *testing.T) {
 		{
 			name:    "test6",
 			args:    args{s: Status(-1)},
-			wantErr: true,
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

@@ -9,21 +9,13 @@ type (
 )
 
 const (
-	StatusNew      Status = 1
-	StatusEnabled  Status = 2
-	StatusDisabled Status = 3
+	StatusNew Status = iota + 1
+	StatusEnabled
+	StatusDisabled
 
 	StatusNewName      = "new"
 	StatusEnabledName  = "enabled"
 	StatusDisabledName = "disabled"
-)
-
-var (
-	allowedStatuses = map[Status]struct{}{
-		StatusNew:      {},
-		StatusEnabled:  {},
-		StatusDisabled: {},
-	}
 )
 
 func (s Status) String() string {
@@ -40,11 +32,12 @@ func (s Status) String() string {
 }
 
 func ValidationStatus(s Status) error {
-	if _, ok := allowedStatuses[s]; !ok {
-		return errors.New("status invalid")
+	switch s {
+	case StatusNew, StatusEnabled, StatusDisabled:
+		return nil
 	}
 
-	return nil
+	return errors.New("status invalid")
 }
 
 func ValidationFilterStatus(s Status) error {
