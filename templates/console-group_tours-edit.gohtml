@@ -1,18 +1,26 @@
 {{ define "console-group_tours-edit" }}
     <div class="gp-container">
         <div class="list">
-            <a href="/console/group_tours/edit?id=1">M83 Group Tour</a>
-            <a href="/console/group_tours/edit?id=2">Space long long long Group Tour name</a>
-            <a href="/console/group_tours/edit?id=3">Very very very very long long long Space Group Tour name</a>
-            <a href="/console/group_tours/edit?id=4">Hidden Very very very very long long long Space Group Tour name</a>
+            <div class="list-new-elem">
+                <a href="/console/group_tours/edit">Add New Tour</a>
+            </div>
+            <div class="list-elements">
+                {{ with .Tours }}
+                    {{ range . }}
+                        {{ $tour := . }}
+                        <a href="/console/group_tours/edit?id={{ $tour.ID }}"
+                           class="{{if eq $.EditTour.ID $tour.ID}}active{{end}}">{{ $tour.Title}}</a>
+                    {{ end }}
+                {{ end }}
+            </div>
         </div>
-        <div class="edit-container">
+        <form class="edit-container">
             <div class="title">
                 <input name="title" placeholder="Tour title">
             </div>
             <div class="description">
                 <textarea name="description" placeholder="Tour description"></textarea>
             </div>
-        </div>
+        </form>
     </div>
 {{ end }}

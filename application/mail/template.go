@@ -1,5 +1,0 @@
-package mail
-
-func NewTemplate() {
-
-}

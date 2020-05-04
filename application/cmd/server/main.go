@@ -11,6 +11,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mgutz/logxi/v1"
 
+	gpRepo "tourtoster/group_tour/repository"
 	"tourtoster/handler"
 	hotelRepo "tourtoster/hotel/repository"
 	"tourtoster/mail"
@@ -18,6 +19,8 @@ import (
 	"tourtoster/middleware"
 	"tourtoster/token"
 	tokenRepo "tourtoster/token/repository"
+	"tourtoster/tour"
+	tourRepo "tourtoster/tour/repository"
 	userRepo "tourtoster/user/repository"
 )
 
@@ -49,13 +52,18 @@ func main() {
 	}
 	log.Debug("connection to db established", "db", dbFilePath)
 	// -----------------------------------------------------------------------------------------------------------------
+	if err := initCurrencies(db); err != nil {
+		println("error init currencies")
+		panic(err)
+	}
 	tokenR := tokenRepo.NewMemory()
 	_ = tokenR.Save(&token.Token{
 		Token:  "blah",
 		UserID: 1,
 	})
-	userR := userRepo.NewPostgres(db)
-	hotelR := hotelRepo.NewPostgres(db)
+	userR := userRepo.NewSQLite(db)
+	hotelR := hotelRepo.NewSQLite(db)
+	gpR := gpRepo.NewSQLite(db)
 	// -----------------------------------------------------------------------------------------------------------------
 	mailer := newMailer()
 	log.Debug("Init mailer", "_", mailer.Name())
@@ -63,6 +71,7 @@ func main() {
 	handlers, handlersErr := handler.New(&handler.Config{
 		User:          userR,
 		Token:         tokenR,
+		GroupTour:     gpR,
 		Hotel:         hotelR,
 		Mailer:        mailer,
 		TemplatesPath: templatePath,
@@ -122,6 +131,24 @@ func main() {
 		log.Error("Error start http server", "error", err.Error())
 	}
 	// -----------------------------------------------------------------------------------------------------------------
+}
+
+func initCurrencies(db *sql.DB) error {
+	repo := tourRepo.NewSQLite(db)
+	values, err := repo.List(tour.USDName, tour.EURName)
+	if err != nil {
+		return err
+	}
+
+	if value, ok := values[tour.USDName]; ok {
+		tour.USD = value
+	}
+
+	if value, ok := values[tour.EURName]; ok {
+		tour.EUR = value
+	}
+
+	return nil
 }
 
 func newMailer() mail.Mailer {

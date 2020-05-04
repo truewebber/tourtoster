@@ -30,19 +30,30 @@ CREATE TABLE IF NOT EXISTS hotel
 CREATE UNIQUE INDEX IF NOT EXISTS idx__hotel__name ON hotel (name);
 
 -- ###########################################################################################
+-- DROP TABLE currencies;
+
+CREATE TABLE IF NOT EXISTS currencies
+(
+    name       VARCHAR NOT NULL,
+    value      NUMERIC NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx__currencies__name ON currencies (name);
+INSERT INTO currencies (name, value)
+VALUES ('USD', 60.33),
+       ('EUR', 70.67)
+ON CONFLICT DO NOTHING;
+
+-- ###########################################################################################
+-- DROP TABLE faq_general;
+-- DROP TABLE faq_tours;
+-- DROP TABLE features;
+-- DROP TABLE tour_features;
+-- DROP TABLE tour_highlights;
+-- DROP TABLE tours;
 
 PRAGMA foreign_keys=1;
-
-CREATE TABLE IF NOT EXISTS tour_types
-(
-    id   INTEGER PRIMARY KEY autoincrement,
-    name VARCHAR NOT NULL
-);
-CREATE UNIQUE INDEX IF NOT EXISTS idx__tour_types__name ON tour_types (name);
-INSERT INTO tour_types (name)
-VALUES ('group tour'),
-       ('private tour')
-ON CONFLICT DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS tours
 (
@@ -52,14 +63,13 @@ CREATE TABLE IF NOT EXISTS tours
     title           VARCHAR  NOT NULL,
     image           TEXT      DEFAULT NULL,
     description     TEXT      DEFAULT NULL,
-    map_description TEXT      DEFAULT NULL,
+    map             TEXT      DEFAULT NULL,
     max_persons     SMALLINT NOT NULL,
     price_per_adult INTEGER  NOT NULL,
     price_per_child INTEGER  NOT NULL,
     status          SMALLINT NOT NULL,
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tour_type_id) REFERENCES tour_types (id)
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx__tours__creator_id ON tours (creator_id);
 
@@ -68,8 +78,7 @@ CREATE TABLE IF NOT EXISTS features
     id           INTEGER PRIMARY KEY autoincrement,
     tour_type_id SMALLINT NOT NULL,
     icon         TEXT     NOT NULL,
-    title        TEXT     NOT NULL,
-    FOREIGN KEY (tour_type_id) REFERENCES tour_types (id)
+    title        TEXT     NOT NULL
 );
 INSERT INTO features (tour_type_id, title, icon)
 VALUES (1, 'AVAILABILITY',
@@ -112,8 +121,7 @@ CREATE TABLE IF NOT EXISTS faq_general
     id           INTEGER PRIMARY KEY autoincrement,
     tour_type_id SMALLINT NOT NULL,
     question     TEXT,
-    answer       TEXT,
-    FOREIGN KEY (tour_type_id) REFERENCES tour_types (id)
+    answer       TEXT
 );
 
 CREATE TABLE IF NOT EXISTS faq_tours
@@ -125,23 +133,11 @@ CREATE TABLE IF NOT EXISTS faq_tours
     FOREIGN KEY (tour_id) REFERENCES tours (id)
 );
 
-CREATE TABLE IF NOT EXISTS highlight_types
-(
-    id   INTEGER PRIMARY KEY autoincrement,
-    name VARCHAR NOT NULL
-);
-CREATE UNIQUE INDEX IF NOT EXISTS idx__highlight_types__name ON highlight_types (name);
-INSERT INTO highlight_types (name)
-VALUES ('highlight'),
-       ('included')
-ON CONFLICT DO NOTHING;
-
 CREATE TABLE IF NOT EXISTS tour_highlights
 (
-    id                INTEGER PRIMARY KEY autoincrement,
-    highlight_type_id INTEGER,
-    tour_id           INTEGER,
-    text              TEXT,
-    FOREIGN KEY (highlight_type_id) REFERENCES highlight_types (id),
+    id      INTEGER PRIMARY KEY autoincrement,
+    type_id INTEGER,
+    tour_id INTEGER,
+    text    TEXT,
     FOREIGN KEY (tour_id) REFERENCES tours (id)
 );

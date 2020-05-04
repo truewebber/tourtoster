@@ -10,7 +10,7 @@ import (
 )
 
 type (
-	postgres struct {
+	sqlite struct {
 		db *sql.DB
 	}
 )
@@ -26,13 +26,13 @@ const (
 	selectHotels      = "SELECT id,name FROM hotel ORDER BY name COLLATE NOCASE;"
 )
 
-func NewPostgres(db *sql.DB) *postgres {
-	return &postgres{
+func NewSQLite(db *sql.DB) *sqlite {
+	return &sqlite{
 		db: db,
 	}
 }
 
-func (p *postgres) HotelByName(name string) (*hotel.Hotel, error) {
+func (p *sqlite) HotelByName(name string) (*hotel.Hotel, error) {
 	h := new(hotel.Hotel)
 
 	if err := p.db.QueryRow(selectHotelByName, name).Scan(&h.ID); err != nil {
@@ -47,7 +47,7 @@ func (p *postgres) HotelByName(name string) (*hotel.Hotel, error) {
 	return h, nil
 }
 
-func (p *postgres) Hotel(ID int64) (*hotel.Hotel, error) {
+func (p *sqlite) Hotel(ID int64) (*hotel.Hotel, error) {
 	h := new(hotel.Hotel)
 
 	if err := p.db.QueryRow(selectHotelByID, ID).Scan(&h.Name); err != nil {
@@ -62,7 +62,7 @@ func (p *postgres) Hotel(ID int64) (*hotel.Hotel, error) {
 	return h, nil
 }
 
-func (p *postgres) List() ([]hotel.Hotel, error) {
+func (p *sqlite) List() ([]hotel.Hotel, error) {
 	rows, err := p.db.Query(selectHotels)
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (p *postgres) List() ([]hotel.Hotel, error) {
 	return hh, nil
 }
 
-func (p *postgres) Save(h *hotel.Hotel) error {
+func (p *sqlite) Save(h *hotel.Hotel) error {
 	if h.ID == 0 {
 		return p.insert(h)
 	}
@@ -92,7 +92,7 @@ func (p *postgres) Save(h *hotel.Hotel) error {
 	return p.update(h)
 }
 
-func (p *postgres) Delete(ID int64) error {
+func (p *sqlite) Delete(ID int64) error {
 	tx, txErr := p.db.Begin()
 	if txErr != nil {
 		return errors.Wrap(txErr, "error create transaction")
@@ -116,7 +116,7 @@ func (p *postgres) Delete(ID int64) error {
 	return nil
 }
 
-func (p *postgres) insert(h *hotel.Hotel) error {
+func (p *sqlite) insert(h *hotel.Hotel) error {
 	tx, txErr := p.db.Begin()
 	if txErr != nil {
 		return errors.Wrap(txErr, "error create transaction")
@@ -143,7 +143,7 @@ func (p *postgres) insert(h *hotel.Hotel) error {
 	return nil
 }
 
-func (p *postgres) update(h *hotel.Hotel) error {
+func (p *sqlite) update(h *hotel.Hotel) error {
 	if _, err := p.db.Exec(updateHotel, h.Name, h.ID); err != nil {
 		return errors.Wrap(err, "error update hotel")
 	}

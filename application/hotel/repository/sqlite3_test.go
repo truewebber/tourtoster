@@ -41,7 +41,7 @@ func Test_postgres_Save(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &postgres{
+			p := &sqlite{
 				db: tt.fields.db,
 			}
 			if err := p.Save(tt.args.h); (err != nil) != tt.wantErr {

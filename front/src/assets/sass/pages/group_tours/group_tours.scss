@@ -28,22 +28,45 @@ $desktop: 1024px;
       flex: 3 0 0;
       padding-right: 10px;
 
-      a {
-        display: inline-block;
-        font-size: 1.2em;
-        line-height: 1.2em;
-        font-family: Helvetica, Arial, sans-serif;
-        font-weight: 400;
-        color: rgba(0, 0, 0, 0.5);
-        padding: 0.7em 0.3em;
+      .list-new-elem {
+
       }
 
-      a:nth-child(odd) {
-        background-color: #ebfaf7;
-      }
+      .list-elements {
+        a {
+          display: inline-block;
+          font-size: 1.2em;
+          line-height: 1.2em;
+          font-family: Helvetica, Arial, sans-serif;
+          font-weight: 400;
+          color: rgba(0, 0, 0, 0.5);
+          padding: 0.7em 0.3em;
+          width: 100%;
+        }
 
-      a:nth-child(even) {
-        background-color: #ebf6fa;
+        a:nth-child(odd) {
+          background-color: rgba(46, 230, 193, 0.08);
+        }
+
+        a:nth-child(even) {
+          background-color: rgba(26, 179, 235, 0.08);
+        }
+
+        a:hover {
+          color: black;
+        }
+
+        a.active {
+          color: black;
+        }
+
+        a.active:nth-child(odd) {
+          background-color: rgba(46, 230, 193, 0.18);
+        }
+
+        a.active:nth-child(even) {
+          background-color: rgba(26, 179, 235, 0.15);
+        }
       }
     }
 

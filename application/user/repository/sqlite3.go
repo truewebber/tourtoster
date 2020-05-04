@@ -14,7 +14,7 @@ import (
 )
 
 type (
-	postgres struct {
+	sqlite struct {
 		db *sql.DB
 	}
 )
@@ -38,13 +38,13 @@ const (
 	deleteUser         = `DELETE FROM users WHERE id=$1;`
 )
 
-func NewPostgres(db *sql.DB) *postgres {
-	return &postgres{
+func NewSQLite(db *sql.DB) *sqlite {
+	return &sqlite{
 		db: db,
 	}
 }
 
-func (p *postgres) User(ID int64) (*user.User, error) {
+func (p *sqlite) User(ID int64) (*user.User, error) {
 	u := new(user.User)
 	u.Hotel = new(hotel.Hotel)
 
@@ -63,7 +63,7 @@ func (p *postgres) User(ID int64) (*user.User, error) {
 	return u, nil
 }
 
-func (p *postgres) UserWithEmail(email string) (*user.User, error) {
+func (p *sqlite) UserWithEmail(email string) (*user.User, error) {
 	u := new(user.User)
 	u.Hotel = new(hotel.Hotel)
 	if err := p.db.QueryRow(selectUserByEmail, email).Scan(
@@ -81,7 +81,7 @@ func (p *postgres) UserWithEmail(email string) (*user.User, error) {
 	return u, nil
 }
 
-func (p *postgres) List(filters map[string]interface{}) ([]user.User, error) {
+func (p *sqlite) List(filters map[string]interface{}) ([]user.User, error) {
 	query, params := buildListQueryParams(selectUsers, filters)
 
 	rows, err := p.db.Query(query, params...)
@@ -141,7 +141,7 @@ func buildListQueryParams(query string, filters map[string]interface{}) (string,
 	return query, params
 }
 
-func (p *postgres) Password(ID int64, passwordHash string) error {
+func (p *sqlite) Password(ID int64, passwordHash string) error {
 	_, err := p.db.Exec(updatePasswordUser, passwordHash, ID)
 	if err != nil {
 		return errors.Wrap(err, "error update user")
@@ -150,7 +150,7 @@ func (p *postgres) Password(ID int64, passwordHash string) error {
 	return nil
 }
 
-func (p *postgres) Save(u *user.User) error {
+func (p *sqlite) Save(u *user.User) error {
 	if u.ID == 0 {
 		return p.insert(u)
 	}
@@ -158,7 +158,7 @@ func (p *postgres) Save(u *user.User) error {
 	return p.update(u)
 }
 
-func (p *postgres) Delete(ID int64) error {
+func (p *sqlite) Delete(ID int64) error {
 	_, err := p.db.Exec(deleteUser, ID)
 	if err != nil {
 		return errors.Wrap(err, "error delete user")
@@ -167,7 +167,7 @@ func (p *postgres) Delete(ID int64) error {
 	return nil
 }
 
-func (p *postgres) insert(u *user.User) error {
+func (p *sqlite) insert(u *user.User) error {
 	tx, txErr := p.db.Begin()
 	if txErr != nil {
 		return errors.Wrap(txErr, "error create tx insert user")
@@ -198,7 +198,7 @@ func (p *postgres) insert(u *user.User) error {
 	return nil
 }
 
-func (p *postgres) update(u *user.User) error {
+func (p *sqlite) update(u *user.User) error {
 	q := buildUpdateQuery(u.PasswordHash != "")
 	params := buildUpdateParams(u)
 

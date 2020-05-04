@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 
+	"tourtoster/group_tour"
 	"tourtoster/hotel"
 	"tourtoster/mail"
 	"tourtoster/token"
@@ -20,6 +21,7 @@ type (
 		user      user.Repository
 		token     token.Repository
 		hotel     hotel.Repository
+		groupTour group_tour.Repository
 		templates map[string]*template.Template
 		mailer    mail.Mailer
 	}
@@ -27,6 +29,7 @@ type (
 	Config struct {
 		User          user.Repository
 		Token         token.Repository
+		GroupTour     group_tour.Repository
 		Hotel         hotel.Repository
 		Mailer        mail.Mailer
 		TemplatesPath string
@@ -71,6 +74,7 @@ func New(cfg *Config) (*Handlers, error) {
 	return &Handlers{
 		user:      cfg.User,
 		token:     cfg.Token,
+		groupTour: cfg.GroupTour,
 		hotel:     cfg.Hotel,
 		templates: templates,
 		mailer:    cfg.Mailer,
