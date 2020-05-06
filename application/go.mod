@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/go-redis/redis v6.15.6+incompatible
-	github.com/golang/mock v1.3.1
+	github.com/golang/mock v1.4.3
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.7.3
 	github.com/mattn/go-colorable v0.1.4 // indirect
@@ -17,4 +17,5 @@ require (
 	github.com/pkg/errors v0.9.0
 	github.com/stretchr/testify v1.5.1 // indirect
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
+	google.golang.org/api v0.23.0
 )

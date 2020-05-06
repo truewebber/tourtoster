@@ -63,7 +63,7 @@ func main() {
 	})
 	userR := userRepo.NewSQLite(db)
 	hotelR := hotelRepo.NewSQLite(db)
-	gpR := gpRepo.NewSQLite(db)
+	gpR := gpRepo.NewSQLite(db, userR)
 	// -----------------------------------------------------------------------------------------------------------------
 	mailer := newMailer()
 	log.Debug("Init mailer", "_", mailer.Name())

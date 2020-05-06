@@ -4,14 +4,14 @@ CREATE TABLE IF NOT EXISTS users
     first_name    VARCHAR(60) NOT NULL,
     second_name   VARCHAR(60) NOT NULL,
     last_name     VARCHAR(60) NOT NULL,
-    hotel_name    VARCHAR(100),
+    hotel_name    VARCHAR(100)         DEFAULT '',
     hotel_id      INTEGER     NOT NULL DEFAULT 0,
-    note          TEXT,
+    note          TEXT                 DEFAULT '',
     email         VARCHAR(60) NOT NULL,
     phone         VARCHAR(20) NOT NULL,
-    password_hash TEXT,
+    password_hash TEXT        NOT NULL,
     status        TINYINT              DEFAULT 1,
-    role          INTEGER,
+    role          INTEGER     NOT NULL,
     updated_at    TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
     created_at    TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 );
@@ -25,7 +25,7 @@ ON CONFLICT DO NOTHING;
 CREATE TABLE IF NOT EXISTS hotel
 (
     id   INTEGER PRIMARY KEY autoincrement,
-    name VARCHAR(100)
+    name VARCHAR(100) NOT NULL
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx__hotel__name ON hotel (name);
 
@@ -61,9 +61,9 @@ CREATE TABLE IF NOT EXISTS tours
     tour_type_id    SMALLINT NOT NULL,
     creator_id      INTEGER  NOT NULL,
     title           VARCHAR  NOT NULL,
-    image           TEXT      DEFAULT NULL,
-    description     TEXT      DEFAULT NULL,
-    map             TEXT      DEFAULT NULL,
+    image           TEXT      DEFAULT '',
+    description     TEXT      DEFAULT '',
+    map             TEXT      DEFAULT '',
     max_persons     SMALLINT NOT NULL,
     price_per_adult INTEGER  NOT NULL,
     price_per_child INTEGER  NOT NULL,
@@ -120,24 +120,24 @@ CREATE TABLE IF NOT EXISTS faq_general
 (
     id           INTEGER PRIMARY KEY autoincrement,
     tour_type_id SMALLINT NOT NULL,
-    question     TEXT,
-    answer       TEXT
+    question     TEXT DEFAULT '',
+    answer       TEXT DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS faq_tours
 (
     id       INTEGER PRIMARY KEY autoincrement,
-    tour_id  INTEGER,
-    question TEXT,
-    answer   TEXT,
+    tour_id  INTEGER NOT NULL,
+    question TEXT DEFAULT '',
+    answer   TEXT DEFAULT '',
     FOREIGN KEY (tour_id) REFERENCES tours (id)
 );
 
 CREATE TABLE IF NOT EXISTS tour_highlights
 (
     id      INTEGER PRIMARY KEY autoincrement,
-    type_id INTEGER,
-    tour_id INTEGER,
-    text    TEXT,
+    tour_id INTEGER NOT NULL,
+    type_id INTEGER NOT NULL,
+    text    TEXT DEFAULT '',
     FOREIGN KEY (tour_id) REFERENCES tours (id)
 );

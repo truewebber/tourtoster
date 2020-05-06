@@ -125,8 +125,7 @@ func (h *Handlers) editGroupTour(idStr string) (*group_tour.Tour, error) {
 	}
 
 	if t == nil {
-		return &group_tour.Tour{ID: editTourID}, nil
-		//return nil, errors.New("group tour not found")
+		return nil, errors.New("group tour not found")
 	}
 
 	return t, nil

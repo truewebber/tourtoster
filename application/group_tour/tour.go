@@ -9,7 +9,7 @@ type (
 	Tour struct {
 		ID            int64       `json:"id"`
 		Type          tour.Type   `json:"type"`
-		Creator       user.User   `json:"creator"`
+		Creator       *user.User  `json:"creator"`
 		Status        tour.Status `json:"status"`
 		Title         string      `json:"title"`
 		Description   string      `json:"description"`
