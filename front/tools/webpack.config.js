@@ -4,7 +4,6 @@
  */
 const path = require("path");
 const glob = require("glob");
-const webpack = require("webpack");
 const fs = require("fs");
 const parser = require("comment-parser");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -14,12 +13,8 @@ const TerserJSPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const WebpackMessages = require("webpack-messages");
 const ExcludeAssetsPlugin = require("webpack-exclude-assets-plugin");
-const atob = require("atob");
+const UglifyJS = require("uglify-es");
 const slash = require("slash");
-const del = require("del");
-
-// optional
-const ReplaceInFileWebpackPlugin = require("replace-in-file-webpack-plugin");
 
 /**
  * Known issues:
@@ -49,8 +44,6 @@ const js = args["--js"] || true;
 // theme name
 const themeName = "metronic";
 // global variables
-const release = true;
-const apiUrl = false; // boolean
 const rootPath = path.resolve(__dirname, "..");
 const frameworkPath = path.resolve(__dirname, "..");
 const distPath = rootPath + "/dist";
@@ -67,11 +60,6 @@ const filesConfig = [];
 const imageReference = {};
 const exclude = [];
 const nodeMedia = [];
-
-// remove older folders and files
-// (async () => {
-//     await del.sync(assetDistPath, {force: true});
-// })();
 
 // get all assets config
 let files = glob.sync(configPath + "/webpack/**/*.js");
@@ -158,18 +146,6 @@ if (exclude.length) {
     }));
 }
 
-if (apiUrl) {
-    // replace api url to point to server
-    extraPlugins.push(new ReplaceInFileWebpackPlugin([{
-        dir: assetDistPath + "/js",
-        test: /\.js$/,
-        rules: [{
-            search: /inc\/api\//i,
-            replace: 'https://keenthemes.com/' + themeName + '/tools/preview/api/'
-        }]
-    }]));
-}
-
 const mainConfig = function () {
     return {
         // enabled/disable optimizations
@@ -217,6 +193,21 @@ const mainConfig = function () {
                     // copy redactor
                     from: srcPath + "/plugins/redactor",
                     to: assetDistPath + "/plugins/custom/redactor",
+                    transform: function (content, path) {
+                        if (!path.match(/^.*\.js$/i)) {
+                            return content.toString();
+                        }
+
+                        return UglifyJS.minify(content.toString()).code;
+                    },
+                },
+                {
+                    // copy rrule
+                    from: srcPath + "/plugins/rrule",
+                    to: assetDistPath + "/plugins/custom/rrule",
+                    transform: function (content, path) {
+                        return UglifyJS.minify(content.toString()).code;
+                    },
                 },
                 {
                     // copy tinymce skins
@@ -279,10 +270,6 @@ const mainConfig = function () {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: false,
-                                // // use for separate css pages (custom pages, eg. wizard, invoices, etc.)
-                                // includePaths: demos.map((demo) => {
-                                //     return slash(srcPath) + "/sass/theme/demos/" + demo;
-                                // })
                             }
                         },
                     ]
