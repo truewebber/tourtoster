@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
@@ -68,7 +69,9 @@ func (p *sqlite) List() ([]hotel.Hotel, error) {
 		return nil, err
 	}
 	defer func() {
-		_ = rows.Close()
+		if err := rows.Close(); err != nil {
+			log.Error("error close db rows", "error", err.Error())
+		}
 	}()
 
 	hh := make([]hotel.Hotel, 0)
@@ -98,7 +101,9 @@ func (p *sqlite) Delete(ID int64) error {
 		return errors.Wrap(txErr, "error create transaction")
 	}
 	defer func() {
-		_ = tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			log.Error("error rollback tx", "error", err.Error())
+		}
 	}()
 
 	if _, err := tx.Exec(updateUsers, ID); err != nil {
@@ -122,7 +127,9 @@ func (p *sqlite) insert(h *hotel.Hotel) error {
 		return errors.Wrap(txErr, "error create transaction")
 	}
 	defer func() {
-		_ = tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			log.Error("error rollback tx", "error", err.Error())
+		}
 	}()
 
 	r, execErr := tx.Exec(insertHotel, h.Name)

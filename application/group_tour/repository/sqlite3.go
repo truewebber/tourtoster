@@ -3,6 +3,9 @@ package repository
 import (
 	"database/sql"
 
+	"github.com/mgutz/logxi/v1"
+	"github.com/pkg/errors"
+
 	"tourtoster/group_tour"
 	"tourtoster/tour"
 	"tourtoster/user"
@@ -37,7 +40,11 @@ func (p *sqlite) List() ([]group_tour.Tour, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Error("error close db rows", "error", err.Error())
+		}
+	}()
 
 	out := make([]group_tour.Tour, 0)
 
@@ -87,6 +94,10 @@ func (p *sqlite) Tour(ID int64) (*group_tour.Tour, error) {
 	t.Creator, err = p.userRepo.User(t.Creator.ID)
 	if err != nil {
 		return nil, err
+	}
+
+	if t.Creator == nil {
+		return nil, errors.New("creator can't be nil")
 	}
 
 	return &t, nil

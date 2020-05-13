@@ -16,6 +16,7 @@ require (
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/pkg/errors v0.9.0
 	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/teambition/rrule-go v1.5.0
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 	google.golang.org/api v0.23.0
 )

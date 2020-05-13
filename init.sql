@@ -1,3 +1,5 @@
+PRAGMA foreign_keys=1;
+
 CREATE TABLE IF NOT EXISTS users
 (
     id            INTEGER PRIMARY KEY autoincrement,
@@ -30,7 +32,7 @@ CREATE TABLE IF NOT EXISTS hotel
 CREATE UNIQUE INDEX IF NOT EXISTS idx__hotel__name ON hotel (name);
 
 -- ###########################################################################################
--- DROP TABLE currencies;
+DROP TABLE IF EXISTS currencies;
 
 CREATE TABLE IF NOT EXISTS currencies
 (
@@ -46,14 +48,13 @@ VALUES ('USD', 60.33),
 ON CONFLICT DO NOTHING;
 
 -- ###########################################################################################
--- DROP TABLE faq_general;
--- DROP TABLE faq_tours;
--- DROP TABLE features;
--- DROP TABLE tour_features;
--- DROP TABLE tour_highlights;
--- DROP TABLE tours;
-
-PRAGMA foreign_keys=1;
+DROP TABLE IF EXISTS faq_general;
+DROP TABLE IF EXISTS faq_tours;
+DROP TABLE IF EXISTS features;
+DROP TABLE IF EXISTS tour_features;
+DROP TABLE IF EXISTS tour_highlights;
+DROP TABLE IF EXISTS tour_timetable;
+DROP TABLE IF EXISTS tours;
 
 CREATE TABLE IF NOT EXISTS tours
 (
@@ -67,11 +68,21 @@ CREATE TABLE IF NOT EXISTS tours
     max_persons     SMALLINT NOT NULL,
     price_per_adult INTEGER  NOT NULL,
     price_per_child INTEGER  NOT NULL,
+    recurrence_rule TEXT     NOT NULL,
     status          SMALLINT NOT NULL,
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx__tours__creator_id ON tours (creator_id);
+
+CREATE TABLE IF NOT EXISTS tour_timetable
+(
+    id           INTEGER PRIMARY KEY autoincrement,
+    tour_id      INTEGER  NOT NULL,
+    time_mark    DATETIME NOT NULL,
+    groups_count SMALLINT NOT NULL,
+    FOREIGN KEY (tour_id) REFERENCES tours (id)
+);
 
 CREATE TABLE IF NOT EXISTS features
 (

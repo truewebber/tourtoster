@@ -42,30 +42,30 @@ $desktop: 1024px;
           color: rgba(0, 0, 0, 0.5);
           padding: 0.7em 0.3em;
           width: 100%;
-        }
 
-        a:nth-child(odd) {
-          background-color: rgba(46, 230, 193, 0.08);
-        }
+          &:nth-child(odd) {
+            background-color: rgba(46, 230, 193, 0.08);
+          }
 
-        a:nth-child(even) {
-          background-color: rgba(26, 179, 235, 0.08);
-        }
+          &:nth-child(even) {
+            background-color: rgba(26, 179, 235, 0.08);
+          }
 
-        a:hover {
-          color: black;
+          &:hover {
+            color: black;
+          }
         }
 
         a.active {
           color: black;
-        }
 
-        a.active:nth-child(odd) {
-          background-color: rgba(46, 230, 193, 0.18);
-        }
+          &:nth-child(odd) {
+            background-color: rgba(46, 230, 193, 0.18);
+          }
 
-        a.active:nth-child(even) {
-          background-color: rgba(26, 179, 235, 0.15);
+          &:nth-child(even) {
+            background-color: rgba(26, 179, 235, 0.15);
+          }
         }
       }
     }
@@ -77,16 +77,47 @@ $desktop: 1024px;
       padding-left: 10px;
       border-left: 1px solid #eeeeee;
 
-      .title {
-        input {
-          width: 100%;
-          padding: 5px 7px;
-          font-size: 1.5em;
+      //.row {
+      //  margin-bottom: 10px;
+      //
+      //  &:last-child {
+      //    margin-bottom: 0;
+      //  }
+      //}
+
+      .line {
+        margin-bottom: 20px;
+
+        &:last-child {
+          margin-bottom: 0;
         }
       }
 
-      .description {
-        margin-top: 10px;
+      input[type=text] {
+        width: 100%;
+        padding: 5px 7px;
+        font-size: 1.5em;
+      }
+
+      input[type=submit] {
+        background-color: transparent;
+        border-radius: 0.6em;
+        cursor: pointer;
+        align-self: center;
+        font-size: 1rem;
+        line-height: 1;
+        padding: 1.2em 5em;
+        text-decoration: none;
+        text-align: center;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        border-color: #3498db;
+        color: #fff;
+        box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+
+        &:hover {
+          opacity: 0.8;
+        }
       }
     }
   }

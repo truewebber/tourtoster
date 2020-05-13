@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/mgutz/logxi/v1"
+
 	"tourtoster/tour"
 )
 
@@ -30,7 +32,11 @@ func (s *sqlite) List(currencies ...tour.Currency) (map[tour.Currency]float64, e
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Error("error close db rows", "error", err.Error())
+		}
+	}()
 
 	out := make(map[tour.Currency]float64)
 

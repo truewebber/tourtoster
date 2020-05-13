@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	log "github.com/mgutz/logxi/v1"
 	"strconv"
 	"strings"
 
@@ -88,7 +89,11 @@ func (p *sqlite) List(filters map[string]interface{}) ([]user.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = rows.Close() }()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Error("error close db rows", "error", err.Error())
+		}
+	}()
 
 	uu := make([]user.User, 0)
 	for rows.Next() {
@@ -172,7 +177,11 @@ func (p *sqlite) insert(u *user.User) error {
 	if txErr != nil {
 		return errors.Wrap(txErr, "error create tx insert user")
 	}
-	defer func() { _ = tx.Rollback() }()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			log.Error("error rollback tx", "error", err.Error())
+		}
+	}()
 
 	result, err := tx.Exec(insertUser, u.FirstName, u.SecondName, u.LastName, insertHotelName(u.Hotel), u.Hotel.ID,
 		u.Note, u.Email, u.Phone, u.PasswordHash, u.Status, u.Permissions)
