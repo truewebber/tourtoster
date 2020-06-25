@@ -2,6 +2,8 @@ package tour
 
 import (
 	"math"
+
+	"tourtoster/currency"
 )
 
 type (
@@ -9,11 +11,11 @@ type (
 )
 
 func (p Price) ToUSD() int64 {
-	return p.calc(USD)
+	return p.calc(currency.USD)
 }
 
 func (p Price) ToEUR() int64 {
-	return p.calc(EUR)
+	return p.calc(currency.EUR)
 }
 
 func (p Price) calc(currency float64) int64 {

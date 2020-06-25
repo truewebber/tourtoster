@@ -33,21 +33,75 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
-// List mocks base method
-func (m *MockRepository) List(currencies ...tour.Currency) (map[tour.Currency]float64, error) {
+// Features mocks base method
+func (m *MockRepository) Features() ([]tour.Feature, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{}
-	for _, a := range currencies {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "List", varargs...)
-	ret0, _ := ret[0].(map[tour.Currency]float64)
+	ret := m.ctrl.Call(m, "Features")
+	ret0, _ := ret[0].([]tour.Feature)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Features indicates an expected call of Features
+func (mr *MockRepositoryMockRecorder) Features() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Features", reflect.TypeOf((*MockRepository)(nil).Features))
+}
+
+// List mocks base method
+func (m *MockRepository) List() ([]tour.Tour, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "List")
+	ret0, _ := ret[0].([]tour.Tour)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List
-func (mr *MockRepositoryMockRecorder) List(currencies ...interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) List() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockRepository)(nil).List), currencies...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockRepository)(nil).List))
+}
+
+// Tour mocks base method
+func (m *MockRepository) Tour(ID int64) (*tour.Tour, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Tour", ID)
+	ret0, _ := ret[0].(*tour.Tour)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Tour indicates an expected call of Tour
+func (mr *MockRepositoryMockRecorder) Tour(ID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Tour", reflect.TypeOf((*MockRepository)(nil).Tour), ID)
+}
+
+// Save mocks base method
+func (m *MockRepository) Save(t *tour.Tour) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Save", t)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Save indicates an expected call of Save
+func (mr *MockRepositoryMockRecorder) Save(t interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockRepository)(nil).Save), t)
+}
+
+// Delete mocks base method
+func (m *MockRepository) Delete(ID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete
+func (mr *MockRepositoryMockRecorder) Delete(ID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockRepository)(nil).Delete), ID)
 }

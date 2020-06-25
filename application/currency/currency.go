@@ -1,4 +1,4 @@
-package tour
+package currency
 
 type (
 	Currency string

@@ -1,9 +1,13 @@
 package tour
 
-import "testing"
+import (
+	"testing"
+
+	"tourtoster/currency"
+)
 
 func TestPrice_ToUSD(t *testing.T) {
-	USD = 61.5
+	currency.USD = 61.5
 
 	tests := []struct {
 		name string

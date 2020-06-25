@@ -13,4 +13,5 @@ const (
 const (
 	Enabled Status = iota + 1
 	Disabled
+	Deleted
 )

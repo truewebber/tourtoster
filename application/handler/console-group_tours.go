@@ -8,7 +8,7 @@ import (
 	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
-	"tourtoster/group_tour"
+	"tourtoster/tour"
 	"tourtoster/user"
 )
 
@@ -19,8 +19,8 @@ type (
 		Year int
 		//
 		Page     string
-		Tours    []group_tour.Tour
-		EditTour *group_tour.Tour
+		Tours    []tour.Tour
+		EditTour *tour.Tour
 	}
 )
 
@@ -65,7 +65,7 @@ func (h *Handlers) ConsoleGTEditPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tours, err := h.groupTour.List()
+	tours, err := h.tour.List()
 	if err != nil {
 		log.Error("Error get group tours list", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -109,9 +109,9 @@ func (h *Handlers) renderGT(w http.ResponseWriter, gtPage *GTPage) {
 	}
 }
 
-func (h *Handlers) editGroupTour(idStr string) (*group_tour.Tour, error) {
+func (h *Handlers) editGroupTour(idStr string) (*tour.Tour, error) {
 	if idStr == "" {
-		return new(group_tour.Tour), nil
+		return new(tour.Tour), nil
 	}
 
 	editTourID, parseErr := toInt64(idStr)
@@ -119,7 +119,7 @@ func (h *Handlers) editGroupTour(idStr string) (*group_tour.Tour, error) {
 		return nil, errors.Wrap(parseErr, "error parse toInt64")
 	}
 
-	t, err := h.groupTour.Tour(editTourID)
+	t, err := h.tour.Tour(editTourID)
 	if err != nil {
 		return nil, errors.Wrap(err, "error find group tour")
 	}

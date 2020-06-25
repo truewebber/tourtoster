@@ -11,7 +11,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mgutz/logxi/v1"
 
-	gpRepo "tourtoster/group_tour/repository"
+	"tourtoster/currency"
+	currencyRepo "tourtoster/currency/repository"
 	"tourtoster/handler"
 	hotelRepo "tourtoster/hotel/repository"
 	"tourtoster/mail"
@@ -52,10 +53,6 @@ func main() {
 	}
 	log.Debug("connection to db established", "db", dbFilePath)
 	// -----------------------------------------------------------------------------------------------------------------
-	if err := initCurrencies(db); err != nil {
-		println("error init currencies")
-		panic(err)
-	}
 	tokenR := tokenRepo.NewMemory()
 	_ = tokenR.Save(&token.Token{
 		Token:  "blah",
@@ -63,7 +60,16 @@ func main() {
 	})
 	userR := userRepo.NewSQLite(db)
 	hotelR := hotelRepo.NewSQLite(db)
-	gpR := gpRepo.NewSQLite(db, userR)
+	tourR := tourRepo.NewSQLite(db, userR)
+
+	if err := initCurrencies(db); err != nil {
+		println("error init currencies")
+		panic(err)
+	}
+	if err := initFeatures(tourR); err != nil {
+		println("error init features")
+		panic(err)
+	}
 	// -----------------------------------------------------------------------------------------------------------------
 	mailer := newMailer()
 	log.Debug("Init mailer", "_", mailer.Name())
@@ -71,7 +77,7 @@ func main() {
 	handlers, handlersErr := handler.New(&handler.Config{
 		User:          userR,
 		Token:         tokenR,
-		GroupTour:     gpR,
+		Tour:          tourR,
 		Hotel:         hotelR,
 		Mailer:        mailer,
 		TemplatesPath: templatePath,
@@ -133,19 +139,36 @@ func main() {
 	// -----------------------------------------------------------------------------------------------------------------
 }
 
-func initCurrencies(db *sql.DB) error {
-	repo := tourRepo.NewSQLite(db)
-	values, err := repo.List(tour.USDName, tour.EURName)
+func initFeatures(repo tour.Repository) error {
+	ff, err := repo.Features()
 	if err != nil {
 		return err
 	}
 
-	if value, ok := values[tour.USDName]; ok {
-		tour.USD = value
+	tour.FeaturesByType[tour.PrivateType] = make([]tour.Feature, 0)
+	tour.FeaturesByType[tour.GroupType] = make([]tour.Feature, 0)
+
+	for i := 0; i < len(ff); i++ {
+		tour.FeaturesByID[ff[i].ID] = ff[i]
+		tour.FeaturesByType[ff[i].TourType] = append(tour.FeaturesByType[ff[i].TourType], ff[i])
 	}
 
-	if value, ok := values[tour.EURName]; ok {
-		tour.EUR = value
+	return nil
+}
+
+func initCurrencies(db *sql.DB) error {
+	repo := currencyRepo.NewSQLite(db)
+	values, err := repo.List(currency.USDName, currency.EURName)
+	if err != nil {
+		return err
+	}
+
+	if value, ok := values[currency.USDName]; ok {
+		currency.USD = value
+	}
+
+	if value, ok := values[currency.EURName]; ok {
+		currency.EUR = value
 	}
 
 	return nil
