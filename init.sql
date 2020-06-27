@@ -58,20 +58,26 @@ DROP TABLE IF EXISTS tours;
 
 CREATE TABLE IF NOT EXISTS tours
 (
-    id              INTEGER PRIMARY KEY autoincrement,
-    tour_type_id    SMALLINT NOT NULL,
-    creator_id      INTEGER  NOT NULL,
-    title           VARCHAR  NOT NULL,
-    image           TEXT      DEFAULT '',
-    description     TEXT      DEFAULT '',
-    map             TEXT      DEFAULT '',
-    max_persons     SMALLINT NOT NULL,
-    price_per_adult INTEGER  NOT NULL,
-    price_per_child INTEGER  NOT NULL,
-    recurrence_rule TEXT     NOT NULL,
-    status          SMALLINT NOT NULL,
-    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id                      INTEGER PRIMARY KEY autoincrement,
+    tour_type_id            SMALLINT NOT NULL,
+    creator_id              INTEGER  NOT NULL,
+    status                  SMALLINT NOT NULL,
+    recurrence_rule         TEXT     NOT NULL,
+    title                   VARCHAR  NOT NULL,
+    image                   TEXT      DEFAULT '',
+    description             TEXT      DEFAULT '',
+
+    map                     TEXT      DEFAULT '',
+    max_persons             SMALLINT NOT NULL,
+    price_per_children_3_6  INTEGER  NOT NULL,
+
+    price_per_children_0_6  INTEGER  NOT NULL,
+
+    price_per_children_7_17 INTEGER  NOT NULL,
+    price_per_adults        INTEGER  NOT NULL,
+
+    updated_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at              TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx__tours__creator_id ON tours (creator_id);
 

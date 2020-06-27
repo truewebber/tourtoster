@@ -8,9 +8,9 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/mgutz/logxi/v1"
 
+	"tourtoster/conn"
 	"tourtoster/currency"
 	currencyRepo "tourtoster/currency/repository"
 	"tourtoster/handler"
@@ -42,13 +42,9 @@ func init() {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", dbFilePath)
+	db, err := conn.NewConn(dbFilePath)
 	if err != nil {
-		println("error connect to db")
-		panic(err)
-	}
-	if err := db.Ping(); err != nil {
-		println("ping error")
+		println("error create db connection")
 		panic(err)
 	}
 	log.Debug("connection to db established", "db", dbFilePath)
