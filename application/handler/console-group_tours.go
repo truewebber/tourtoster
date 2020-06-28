@@ -29,8 +29,7 @@ const (
 	ConsoleGTEditPath    = "/group_tours/edit"
 	ConsoleGTEditFAQPath = "/group_tours/edit/faq"
 
-	ConsoleGTTemplateName = "console-group_tours"
-
+	ConsoleGTTemplateName           = "console-group_tours"
 	ConsoleGTViewAllSubTemplateName = "console-group_tours-view_all"
 	ConsoleGTEditSubTemplateName    = "console-group_tours-edit"
 	ConsoleGTEditFAQSubTemplateName = "console-group_tours-edit-faq"

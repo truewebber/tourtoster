@@ -105,6 +105,8 @@ func main() {
 	rc.HandleFunc(handler.ConsoleGTEditPath, handlers.ConsoleGTEditPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleGTEditFAQPath, handlers.ConsoleGTEditFAQPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsolePTPath, handlers.ConsolePTPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsolePTEditPath, handlers.ConsolePTEditPage).Methods(http.MethodGet)
+	rc.HandleFunc(handler.ConsolePTEditFAQPath, handlers.ConsolePTEditFAQPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserPath, handlers.ConsoleUserPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserBillingPath, handlers.ConsoleUserBillingPage).Methods(http.MethodGet)
 	rc.HandleFunc(handler.ConsoleUserProfilePath, handlers.ConsoleUserProfilePage).Methods(http.MethodGet)

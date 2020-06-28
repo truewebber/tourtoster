@@ -1,0 +1,29 @@
+{{ define "console-private_tours-edit" }}
+    <div class="gp-container">
+        <div class="list">
+            <div class="list-new-elem">
+                <a href="/console/private_tours/edit">Add New Tour</a>
+            </div>
+            <div class="list-elements">
+                {{ with .Tours }}
+                    {{ range . }}
+                        {{ $tour := . }}
+                        <a href="/console/private_tours/edit?id={{ $tour.ID }}"
+                           class="{{if eq $.EditTour.ID $tour.ID}}active{{end}}">{{ $tour.Title}}</a>
+                    {{ end }}
+                {{ end }}
+            </div>
+        </div>
+        <form class="edit-container">
+            <input type="text" name="title" placeholder="Tour title">
+            <div class="line"></div>
+            <h2>Description</h2>
+            <textarea name="description" placeholder="write here about tour"></textarea>
+            <div class="line"></div>
+            <h2>Map</h2>
+            <textarea name="map" placeholder="insert here meeting place map and some words about"></textarea>
+            <div class="line"></div>
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+{{ end }}

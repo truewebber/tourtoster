@@ -60,7 +60,6 @@
 
                             <!-- begin:: Content -->
                             <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-                                <!--Begin::Dashboard 1-->
                                 {{ if .Me.Allow.EditTours }}
                                     <div class="admin-buttons">
                                         <a href="/console/group_tours/edit">Edit tours</a>
@@ -77,7 +76,6 @@
                                 {{ if eq .Page "console-group_tours-edit-faq" }}
                                     {{template "console-group_tours-edit-faq" .}}
                                 {{ end }}
-                                <!--End::Dashboard 1-->
                             </div>
                             <!-- end:: Content -->
                         </div>

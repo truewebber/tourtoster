@@ -23,8 +23,14 @@
         <link href="/static/css/style.bundle.css" rel="stylesheet" type="text/css"/>
         <!--end::Global Theme Styles -->
 
+        <link href="/static/css/pages/group_tours/group_tours.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/css/pages/admin/buttons.css" rel="stylesheet" type="text/css"/>
+
         <!--begin::Layout Skins(used by all pages) -->
         <!--end::Layout Skins -->
+
+        <link href="/static/plugins/custom/redactor/redactor.min.css" rel="stylesheet" type="text/css"/>
+
         {{/*<link rel="shortcut icon" href="/static/media/logos/favicon.ico"/>*/}}
     </head>
     <!-- end::Head -->
@@ -54,13 +60,23 @@
 
                             <!-- begin:: Content -->
                             <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                                {{ if .Me.Allow.EditTours }}
+                                    <div class="admin-buttons">
+                                        <a href="/console/private_tours/edit">Edit tours</a>
+                                        <a href="/console/private_tours/edit/faq">Edit FAQ (general)</a>
+                                    </div>
+                                {{ end }}
 
-                                <!--Begin::Dashboard 1-->
-
-
-                                <!--End::Dashboard 1-->
+                                {{ if eq .Page "console-private_tours-view_all" }}
+                                    {{template "console-private_tours-view_all" .}}
+                                {{ end }}
+                                {{ if eq .Page "console-private_tours-edit" }}
+                                    {{template "console-private_tours-edit" .}}
+                                {{ end }}
+                                {{ if eq .Page "console-private_tours-edit-faq" }}
+                                    {{template "console-private_tours-edit-faq" .}}
+                                {{ end }}
                             </div>
-
                             <!-- end:: Content -->
                         </div>
                     </div>
