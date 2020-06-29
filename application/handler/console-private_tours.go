@@ -64,7 +64,7 @@ func (h *Handlers) ConsolePTEditPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tours, err := h.tour.List()
+	tours, err := h.tour.List(tour.NewOrder("title", "asc"), tour.FilterTourType(tour.PrivateType))
 	if err != nil {
 		log.Error("Error get private tours list", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)

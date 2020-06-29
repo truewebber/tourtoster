@@ -64,7 +64,7 @@ func (h *Handlers) ConsoleGTEditPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tours, err := h.tour.List()
+	tours, err := h.tour.List(tour.NewOrder("title", "asc"), tour.FilterTourType(tour.GroupType))
 	if err != nil {
 		log.Error("Error get group tours list", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)

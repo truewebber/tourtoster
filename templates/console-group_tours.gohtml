@@ -23,7 +23,7 @@
         <link href="/static/css/style.bundle.css" rel="stylesheet" type="text/css"/>
         <!--end::Global Theme Styles -->
 
-        <link href="/static/css/pages/group_tours/group_tours.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/css/pages/tours/group_tours.css" rel="stylesheet" type="text/css"/>
         <link href="/static/css/pages/admin/buttons.css" rel="stylesheet" type="text/css"/>
 
         <!--begin::Layout Skins(used by all pages) -->
@@ -64,6 +64,9 @@
                                     <div class="admin-buttons">
                                         <a href="/console/group_tours/edit">Edit tours</a>
                                         <a href="/console/group_tours/edit/faq">Edit FAQ (general)</a>
+                                        {{ if ne .Page "console-group_tours-view_all" }}
+                                            <a href="/console/group_tours" class="back">&#x21E6; Group Tours</a>
+                                        {{ end }}
                                     </div>
                                 {{ end }}
 
@@ -81,6 +84,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- begin:: Footer -->
                 {{template "footer" .}}
                 <!-- end:: Footer -->

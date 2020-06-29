@@ -29,5 +29,9 @@
       background: darken(#009ED8, 30%);
       outline: none;
     }
+
+    &.back {
+      background-color: #0abb87;
+    }
   }
 }

@@ -49,18 +49,23 @@ func (mr *MockRepositoryMockRecorder) Features() *gomock.Call {
 }
 
 // List mocks base method
-func (m *MockRepository) List() ([]tour.Tour, error) {
+func (m *MockRepository) List(arg0 *tour.Order, arg1 ...tour.Filter) ([]tour.Tour, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List")
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "List", varargs...)
 	ret0, _ := ret[0].([]tour.Tour)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // List indicates an expected call of List
-func (mr *MockRepositoryMockRecorder) List() *gomock.Call {
+func (mr *MockRepositoryMockRecorder) List(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockRepository)(nil).List))
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockRepository)(nil).List), varargs...)
 }
 
 // Tour mocks base method

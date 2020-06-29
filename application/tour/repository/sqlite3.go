@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"strings"
 
 	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
@@ -18,15 +19,14 @@ type (
 )
 
 const (
+	whereField = "{WHERE}"
+	orderField = "{ORDER}"
+)
+
+const (
 	selectFeatures = `SELECT id, tour_type_id, icon, title FROM features;`
 
-	selectTours = `SELECT id, creator_id, title, image, description, map,
-       				max_persons, price_per_adult, price_per_child
-					FROM tours WHERE tour_type_id = $1 AND status = $2;`
-
-	selectTourWithID = `SELECT creator_id, title, image, description, map,
-       					max_persons, price_per_adult, price_per_child, status
-						FROM tours WHERE id = $1;`
+	selectTours = `SELECT id,tour_type_id,creator_id,status,recurrence_rule,title,image,description,map,max_persons,price_per_children_3_6,price_per_children_0_6,price_per_children_7_17,price_per_adults,updated_at,created_at FROM tours` + whereField + orderField + `;`
 )
 
 func NewSQLite(db *sql.DB, userRepo user.Repository) *sqlite {
@@ -36,34 +36,47 @@ func NewSQLite(db *sql.DB, userRepo user.Repository) *sqlite {
 	}
 }
 
-func (s *sqlite) Features() ([]tour.Feature, error) {
-	rows, err := s.db.Query(selectFeatures)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			log.Error("error close db rows", "error", err.Error())
-		}
-	}()
+func (s *sqlite) buildListQuery(o *tour.Order, ff []tour.Filter) (string, []interface{}) {
+	replaceWhere, args := s.buildWhere(ff)
+	replaceOrder := s.buildOrder(o)
 
-	out := make([]tour.Feature, 0)
+	query := strings.ReplaceAll(selectTours, whereField, replaceWhere)
+	query = strings.ReplaceAll(query, orderField, replaceOrder)
 
-	for rows.Next() {
-		f := tour.Feature{}
-
-		if err := rows.Scan(&f.ID, &f.TourType, &f.Icon, &f.Title); err != nil {
-			return nil, err
-		}
-
-		out = append(out, f)
-	}
-
-	return out, nil
+	return query, args
 }
 
-func (p *sqlite) List() ([]tour.Tour, error) {
-	rows, err := p.db.Query(selectTours, tour.GroupType, tour.Enabled)
+func (s *sqlite) buildWhere(ff []tour.Filter) (string, []interface{}) {
+	out := ""
+	outArgs := make([]interface{}, 0, len(ff))
+
+	ss := make([]string, 0)
+	for i := 0; i < len(ff); i++ {
+		s, sArgs := ff[i].Build(len(outArgs) + 1)
+		ss = append(ss, s)
+		outArgs = append(outArgs, sArgs...)
+	}
+
+	out = strings.Join(ss, " AND ")
+	if out != "" {
+		out = " WHERE " + out
+	}
+
+	return out, outArgs
+}
+
+func (s *sqlite) buildOrder(o *tour.Order) string {
+	if o == nil {
+		return ""
+	}
+
+	return " ORDER BY " + o.Build()
+}
+
+func (s *sqlite) List(o *tour.Order, ff ...tour.Filter) ([]tour.Tour, error) {
+	query, args := s.buildListQuery(o, ff)
+
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +102,7 @@ func (p *sqlite) List() ([]tour.Tour, error) {
 		t.Type = tour.GroupType
 
 		var err error
-		t.Creator, err = p.userRepo.User(t.Creator.ID)
+		t.Creator, err = s.userRepo.User(t.Creator.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -100,12 +113,14 @@ func (p *sqlite) List() ([]tour.Tour, error) {
 	return out, nil
 }
 
-func (p *sqlite) Tour(ID int64) (*tour.Tour, error) {
+func (s *sqlite) Tour(ID int64) (*tour.Tour, error) {
 	t := tour.Tour{
 		Creator: &user.User{},
 	}
 
-	if err := p.db.QueryRow(selectTourWithID, ID).Scan(&t.Creator.ID, &t.Title, &t.Image, &t.Description,
+	query, args := s.buildListQuery(nil, []tour.Filter{tour.FilterTourID(ID)})
+
+	if err := s.db.QueryRow(query, args...).Scan(&t.Creator.ID, &t.Title, &t.Image, &t.Description,
 		&t.Map, &t.MaxPersons, &t.PricePerAdults, &t.PricePerChildrenSevenSeventeen, &t.Status); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -118,7 +133,7 @@ func (p *sqlite) Tour(ID int64) (*tour.Tour, error) {
 	t.Type = tour.GroupType
 
 	var err error
-	t.Creator, err = p.userRepo.User(t.Creator.ID)
+	t.Creator, err = s.userRepo.User(t.Creator.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -130,10 +145,38 @@ func (p *sqlite) Tour(ID int64) (*tour.Tour, error) {
 	return &t, nil
 }
 
-func (p *sqlite) Save(t *tour.Tour) error {
+func (s *sqlite) Save(t *tour.Tour) error {
 	return nil
 }
 
-func (p *sqlite) Delete(ID int64) error {
+func (s *sqlite) Delete(ID int64) error {
 	return nil
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+func (s *sqlite) Features() ([]tour.Feature, error) {
+	rows, err := s.db.Query(selectFeatures)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Error("error close db rows", "error", err.Error())
+		}
+	}()
+
+	out := make([]tour.Feature, 0)
+
+	for rows.Next() {
+		f := tour.Feature{}
+
+		if err := rows.Scan(&f.ID, &f.TourType, &f.Icon, &f.Title); err != nil {
+			return nil, err
+		}
+
+		out = append(out, f)
+	}
+
+	return out, nil
 }

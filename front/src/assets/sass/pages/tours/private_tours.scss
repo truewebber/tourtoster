@@ -1,0 +1,207 @@
+// Global config
+@import "../../config";
+
+// Layout config
+@import "../../global/layout/config.scss";
+
+$format: screen;
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+//$retina: "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
+
+@media #{$format} {
+  textarea {
+    margin: 0;
+    padding: 0;
+  }
+
+  // ###################################################### EDIT #######################################################
+  .gp-container {
+    display: flex;
+    flex-direction: row;
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      flex: 3 0 0;
+      padding-right: 10px;
+
+      .list-new-elem {
+
+      }
+
+      .list-elements {
+        a {
+          display: inline-block;
+          font-size: 1.2em;
+          line-height: 1.2em;
+          font-family: Helvetica, Arial, sans-serif;
+          font-weight: 400;
+          color: rgba(0, 0, 0, 0.5);
+          padding: 0.7em 0.3em;
+          width: 100%;
+
+          &:nth-child(odd) {
+            background-color: rgba(46, 230, 193, 0.08);
+          }
+
+          &:nth-child(even) {
+            background-color: rgba(26, 179, 235, 0.08);
+          }
+
+          &:hover {
+            color: black;
+          }
+        }
+
+        a.active {
+          color: black;
+
+          &:nth-child(odd) {
+            background-color: rgba(46, 230, 193, 0.18);
+          }
+
+          &:nth-child(even) {
+            background-color: rgba(26, 179, 235, 0.15);
+          }
+        }
+      }
+    }
+
+    .edit-container {
+      display: flex;
+      flex-direction: column;
+      flex: 7 0 0;
+      padding-left: 10px;
+      border-left: 1px solid #eeeeee;
+
+      //.row {
+      //  margin-bottom: 10px;
+      //
+      //  &:last-child {
+      //    margin-bottom: 0;
+      //  }
+      //}
+
+      .line {
+        margin-bottom: 20px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      input[type=text] {
+        width: 100%;
+        padding: 5px 7px;
+        font-size: 1.5em;
+      }
+
+      input[type=submit] {
+        background-color: transparent;
+        border-radius: 0.6em;
+        cursor: pointer;
+        align-self: center;
+        font-size: 1rem;
+        line-height: 1;
+        padding: 1.2em 5em;
+        text-decoration: none;
+        text-align: center;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        border-color: #3498db;
+        color: #fff;
+        box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+
+  // #################################################### VIEW ALL #####################################################
+  .tours-container {
+    font-family: Helvetica, Arial, sans-serif;
+
+    .tour-row {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: .8em;
+
+      .tour {
+        @media (max-width: $mobile) {
+          min-width: 5em;
+          height: 7em;
+        }
+        @media (min-width: $mobile+1px) and (max-width: $tablet) {
+          height: 12em;
+        }
+        @media (min-width: $tablet+1px) and (max-width: $desktop) {
+          height: 15em;
+        }
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        flex: 1 0 0;
+        border-radius: 5px;
+        min-width: 7em;
+        height: 20em;
+        margin-right: .8em;
+        background-position: center;
+        background-size: cover;
+        background-color: #eee;
+
+        .title {
+          padding: .8em .5em;
+          background-color: rgba(255, 255, 255, .3);
+          color: black;
+          font-size: 1.4em;
+          font-weight: 600;
+        }
+
+        .footer {
+          //overflow: auto;
+          display: flex;
+          flex-flow: row wrap;
+          border-top: 1px solid #444;
+          padding: .5em .5em;
+          background-color: rgba(230, 230, 230, .3);
+          font-weight: 600;
+          color: black;
+          line-height: 1.5em;
+          text-align: center;
+          vertical-align: middle;
+
+          .footer-row {
+            flex: 1;
+          }
+
+          .price {
+            line-height: 2.3em;
+            font-size: 1.3em;
+          }
+
+          .max {
+            font-size: 1.1em;
+          }
+
+          .nearest {
+            font-size: 1.1em;
+          }
+        }
+      }
+
+      .tour.clear {
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      .tour:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
