@@ -124,6 +124,8 @@ func main() {
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelList).Methods(http.MethodGet)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelCreate).Methods(http.MethodPost)
 	rca.HandleFunc(handler.HotelApiPath, handlers.ApiHotelDelete).Methods(http.MethodDelete)
+	rca.HandleFunc(handler.TourApiPath, handlers.ApiTourCreate).Methods(http.MethodPost)
+	rca.HandleFunc(handler.TourApiPath, handlers.ApiTourDelete).Methods(http.MethodDelete)
 	// -------------------------------------------------- MIDDLEWARE ---------------------------------------------------
 	r.Use(middlewares.LogMiddleware)
 	rc.Use(middlewares.PageAuthMiddleware)

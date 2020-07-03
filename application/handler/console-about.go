@@ -24,7 +24,7 @@ const (
 )
 
 func (h *Handlers) ConsoleAboutPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	data := AboutPage{
 		Menu: menu{},

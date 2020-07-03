@@ -35,7 +35,7 @@ func (m *Middleware) PageAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		context.Set(r, "user", u)
+		context.Set(r, user.ContextKey, u)
 
 		next.ServeHTTP(w, r)
 	})
@@ -56,7 +56,7 @@ func (m *Middleware) APIAuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		context.Set(r, "user", u)
+		context.Set(r, user.ContextKey, u)
 
 		next.ServeHTTP(w, r)
 	})

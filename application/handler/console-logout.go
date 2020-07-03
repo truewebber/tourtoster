@@ -15,7 +15,7 @@ const (
 )
 
 func (h *Handlers) ConsoleSignoutPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if err := h.token.Delete(u.Token.Token); err != nil {
 		log.Error("Error delete token", "error", err.Error())

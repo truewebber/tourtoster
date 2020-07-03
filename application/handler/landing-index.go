@@ -23,7 +23,7 @@ const (
 )
 
 func (h *Handlers) LandingIndexPage(w http.ResponseWriter, r *http.Request) {
-	u, _ := context.Get(r, "user").(*user.User)
+	u, _ := context.Get(r, user.ContextKey).(*user.User)
 
 	data := LandingPage{
 		User: u,

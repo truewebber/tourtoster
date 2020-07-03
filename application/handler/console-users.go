@@ -51,7 +51,7 @@ func (f Filters) ToURL() template.URL {
 }
 
 func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)

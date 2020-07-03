@@ -20,7 +20,7 @@ const (
 )
 
 func (h *Handlers) ApiHotelList(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
 		write(w, forbiddenError)
@@ -41,7 +41,7 @@ func (h *Handlers) ApiHotelList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ApiHotelCreate(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
 		write(w, forbiddenError)
@@ -91,7 +91,7 @@ func (h *Handlers) ApiHotelCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ApiHotelDelete(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
 		write(w, forbiddenError)

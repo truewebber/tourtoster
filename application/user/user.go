@@ -23,6 +23,8 @@ type (
 )
 
 const (
+	ContextKey = "user"
+
 	dotLetter = rune('.')
 )
 

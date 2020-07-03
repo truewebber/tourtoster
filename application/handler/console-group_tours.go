@@ -36,7 +36,7 @@ const (
 )
 
 func (h *Handlers) ConsoleGTPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	h.renderGT(w, &GTPage{
 		Page: ConsoleGTViewAllSubTemplateName,
@@ -47,7 +47,7 @@ func (h *Handlers) ConsoleGTPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ConsoleGTEditPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if !u.HasPermission(user.EditToursPermission) {
 		w.WriteHeader(http.StatusForbidden)
@@ -83,7 +83,7 @@ func (h *Handlers) ConsoleGTEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ConsoleGTEditFAQPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if !u.HasPermission(user.EditToursPermission) {
 		w.WriteHeader(http.StatusForbidden)
@@ -125,6 +125,10 @@ func (h *Handlers) editGroupTour(idStr string) (*tour.Tour, error) {
 
 	if t == nil {
 		return nil, errors.New("group tour not found")
+	}
+
+	if t.Type != tour.GroupType {
+		return nil, errors.Errorf("tour type is not Private, %v", t.Type)
 	}
 
 	return t, nil

@@ -36,7 +36,7 @@ const (
 )
 
 func (h *Handlers) ConsolePTPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	h.renderPT(w, &PTPage{
 		Page: ConsolePTViewAllSubTemplateName,
@@ -47,7 +47,7 @@ func (h *Handlers) ConsolePTPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ConsolePTEditPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if !u.HasPermission(user.EditToursPermission) {
 		w.WriteHeader(http.StatusForbidden)
@@ -83,7 +83,7 @@ func (h *Handlers) ConsolePTEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ConsolePTEditFAQPage(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if !u.HasPermission(user.EditToursPermission) {
 		w.WriteHeader(http.StatusForbidden)
@@ -125,6 +125,10 @@ func (h *Handlers) editPrivateTour(idStr string) (*tour.Tour, error) {
 
 	if t == nil {
 		return nil, errors.New("private tour not found")
+	}
+
+	if t.Type != tour.PrivateType {
+		return nil, errors.Errorf("tour type is not Private, %v", t.Type)
 	}
 
 	return t, nil

@@ -48,7 +48,7 @@ var (
 )
 
 func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
 		write(w, forbiddenError)
@@ -248,7 +248,7 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ApiUserDelete(w http.ResponseWriter, r *http.Request) {
-	u := context.Get(r, "user").(*user.User)
+	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
 		write(w, forbiddenError)
