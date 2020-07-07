@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
@@ -51,15 +50,15 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
-		write(w, forbiddenError)
+		h.write(w, forbiddenError)
 
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		log.Error("Error read form", "error", err.Error())
+		h.logger.Error("Error read form", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -67,9 +66,9 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 
 	ID, IDErr := toInt64(strings.TrimSpace(values.Get("id")))
 	if IDErr != nil {
-		log.Error("Error parse user id", "error", IDErr.Error(), "id", values.Get("id"))
+		h.logger.Error("Error parse user id", "error", IDErr.Error(), "id", values.Get("id"))
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
@@ -77,27 +76,27 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	firstName := html.EscapeString(strings.TrimSpace(values.Get("first_name")))
 	if firstName == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userFNameInvalidError)
+		h.write(w, userFNameInvalidError)
 		return
 	}
 	secondName := html.EscapeString(strings.TrimSpace(values.Get("second_name")))
 	lastName := html.EscapeString(strings.TrimSpace(values.Get("last_name")))
 	if lastName == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userLNameInvalidError)
+		h.write(w, userLNameInvalidError)
 		return
 	}
 
 	email := html.EscapeString(strings.TrimSpace(values.Get("email")))
 	if email == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userEmailInvalidError)
+		h.write(w, userEmailInvalidError)
 		return
 	}
 	phone := html.EscapeString(strings.TrimSpace(values.Get("phone")))
 	if phone == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userPhoneInvalidError)
+		h.write(w, userPhoneInvalidError)
 		return
 	}
 
@@ -108,26 +107,26 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	hotelName := html.EscapeString(strings.TrimSpace(values.Get("hotel_name")))
 	hotelID, hotelIDErr := toInt64(html.EscapeString(strings.TrimSpace(values.Get("hotel_id"))))
 	if hotelIDErr != nil {
-		log.Error("hotel_id is not int value", "error", hotelIDErr.Error(),
+		h.logger.Error("hotel_id is not int value", "error", hotelIDErr.Error(),
 			"hotel_id", values.Get("hotel_id"))
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
 
 	htl, hotelErr := h.newHotel(hotelID, hotelName, saveAsNewHotel)
 	if hotelErr != nil {
-		log.Error("user save hotel error", "error", hotelErr.Error(),
+		h.logger.Error("user save hotel error", "error", hotelErr.Error(),
 			"hotel_id", hotelID, "hotel_name", hotelName)
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
 	if htl == nil {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userHotelInvalidError)
+		h.write(w, userHotelInvalidError)
 
 		return
 	}
@@ -136,18 +135,18 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	// status:start
 	statusInt, parseStatusErr := toInt(strings.TrimSpace(values.Get("status")))
 	if parseStatusErr != nil {
-		log.Error("Error parse status id", "error", parseStatusErr.Error(), "status", values.Get("status"))
+		h.logger.Error("Error parse status id", "error", parseStatusErr.Error(), "status", values.Get("status"))
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
 	status := user.Status(statusInt)
 
 	if err := user.ValidationStatus(status); err != nil {
-		log.Error("Status invalid", "error", err.Error(), "status", values.Get("status"))
+		h.logger.Error("Status invalid", "error", err.Error(), "status", values.Get("status"))
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
@@ -158,18 +157,18 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 	for _, pStr := range values["permission[]"] {
 		pInt, err := toInt(strings.TrimSpace(pStr))
 		if err != nil {
-			log.Error("Error parse permission id", "error", err.Error(), "permission", pStr)
+			h.logger.Error("Error parse permission id", "error", err.Error(), "permission", pStr)
 			w.WriteHeader(http.StatusBadRequest)
-			write(w, inputInvalidError)
+			h.write(w, inputInvalidError)
 
 			return
 		}
 		p := user.Permission(pInt)
 
 		if err := user.ValidationPermission(p); err != nil {
-			log.Error("Permission invalid", "error", err.Error(), "permission", p)
+			h.logger.Error("Permission invalid", "error", err.Error(), "permission", p)
 			w.WriteHeader(http.StatusBadRequest)
-			write(w, inputInvalidError)
+			h.write(w, inputInvalidError)
 
 			return
 		}
@@ -189,9 +188,9 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 		var hashErr error
 		passwordHash, hashErr = HashPassword(password)
 		if hashErr != nil {
-			log.Error("Error hash password", "error", hashErr.Error())
+			h.logger.Error("Error hash password", "error", hashErr.Error())
 			w.WriteHeader(http.StatusInternalServerError)
-			write(w, internalError)
+			h.write(w, internalError)
 
 			return
 		}
@@ -217,13 +216,13 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 		e := userEmailPhoneUniqueError
 
 		if errors.Cause(err) != user.PhoneEmailUniqueError {
-			log.Error("Error create/save user", "error", err.Error(), "id", ID)
+			h.logger.Error("Error create/save user", "error", err.Error(), "id", ID)
 			code = http.StatusInternalServerError
 			e = internalError
 		}
 
 		w.WriteHeader(code)
-		write(w, e)
+		h.write(w, e)
 
 		return
 	}
@@ -238,38 +237,38 @@ func (h *Handlers) ApiUserCreate(w http.ResponseWriter, r *http.Request) {
 
 		go func() {
 			if err := h.mailer.Send(email, title, body); err != nil {
-				log.Error("Error send email", "error", err.Error())
+				h.logger.Error("Error send email", "error", err.Error())
 			}
 		}()
 	}
 
 	w.WriteHeader(http.StatusOK)
-	write(w, u)
+	h.write(w, u)
 }
 
 func (h *Handlers) ApiUserDelete(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, user.ContextKey).(*user.User)
 	if !u.HasPermission(user.CreateNewUserPermission) {
 		w.WriteHeader(http.StatusForbidden)
-		write(w, forbiddenError)
+		h.write(w, forbiddenError)
 
 		return
 	}
 
 	body, readErr := ioutil.ReadAll(r.Body)
 	if readErr != nil {
-		log.Error("Error read body", "error", readErr.Error())
+		h.logger.Error("Error read body", "error", readErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
 
 	values, parseErr := url.ParseQuery(string(body))
 	if parseErr != nil {
-		log.Warn("Error parse body", "error", parseErr.Error())
+		h.logger.Warn("Error parse body", "error", parseErr.Error())
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
@@ -277,17 +276,17 @@ func (h *Handlers) ApiUserDelete(w http.ResponseWriter, r *http.Request) {
 	stringID := strings.TrimSpace(values.Get("id"))
 	ID, convertErr := strconv.ParseInt(stringID, 10, 64)
 	if convertErr != nil {
-		log.Warn("Error parse user id", "error", convertErr.Error(), "id", stringID)
+		h.logger.Warn("Error parse user id", "error", convertErr.Error(), "id", stringID)
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
 
 	if err := h.user.Delete(ID); err != nil {
-		log.Error("Error delete project", "error", err.Error())
+		h.logger.Error("Error delete project", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}

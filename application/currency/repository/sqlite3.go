@@ -5,14 +5,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mgutz/logxi/v1"
-
 	"tourtoster/currency"
+	"tourtoster/log"
 )
 
 type (
 	sqlite struct {
-		db *sql.DB
+		db     *sql.DB
+		logger log.Logger
 	}
 )
 
@@ -21,9 +21,10 @@ const (
 	selectCurrencies = `SELECT name, value FROM currencies WHERE name IN (` + inValues + `);`
 )
 
-func NewSQLite(db *sql.DB) *sqlite {
+func NewSQLite(db *sql.DB, logger log.Logger) *sqlite {
 	return &sqlite{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -34,7 +35,7 @@ func (s *sqlite) List(currencies ...currency.Currency) (map[currency.Currency]fl
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Error("error close db rows", "error", err.Error())
+			s.logger.Error("error close db rows", "error", err.Error())
 		}
 	}()
 

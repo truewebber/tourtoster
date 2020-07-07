@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/tour"
@@ -58,7 +57,7 @@ func (h *Handlers) ConsoleGTEditPage(w http.ResponseWriter, r *http.Request) {
 	editTourStr := r.URL.Query().Get("id")
 	editTour, editUserErr := h.editGroupTour(editTourStr)
 	if editUserErr != nil {
-		log.Warn("Error get group tour to edit", "value", editTourStr, "error", editUserErr.Error())
+		h.logger.Warn("Error get group tour to edit", "value", editTourStr, "error", editUserErr.Error())
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -66,7 +65,7 @@ func (h *Handlers) ConsoleGTEditPage(w http.ResponseWriter, r *http.Request) {
 
 	tours, err := h.tour.List(tour.NewOrder("title", "asc"), tour.FilterTourType(tour.GroupType))
 	if err != nil {
-		log.Error("Error get group tours list", "error", err.Error())
+		h.logger.Error("Error get group tours list", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -101,7 +100,7 @@ func (h *Handlers) ConsoleGTEditFAQPage(w http.ResponseWriter, r *http.Request) 
 
 func (h *Handlers) renderGT(w http.ResponseWriter, gtPage *GTPage) {
 	if err := h.templates[ConsoleGTTemplateName].Execute(w, *gtPage); err != nil {
-		log.Error("Error execute template", "template", ConsoleGTTemplateName, "error", err.Error())
+		h.logger.Error("Error execute template", "template", ConsoleGTTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return

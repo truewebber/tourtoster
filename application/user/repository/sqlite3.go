@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	log "github.com/mgutz/logxi/v1"
 	"strconv"
 	"strings"
 
@@ -11,12 +10,14 @@ import (
 	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
+	"tourtoster/log"
 	"tourtoster/user"
 )
 
 type (
 	sqlite struct {
-		db *sql.DB
+		db     *sql.DB
+		logger log.Logger
 	}
 )
 
@@ -39,17 +40,18 @@ const (
 	deleteUser         = `DELETE FROM users WHERE id=$1;`
 )
 
-func NewSQLite(db *sql.DB) *sqlite {
+func NewSQLite(db *sql.DB, logger log.Logger) *sqlite {
 	return &sqlite{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
-func (p *sqlite) User(ID int64) (*user.User, error) {
+func (s *sqlite) User(ID int64) (*user.User, error) {
 	u := new(user.User)
 	u.Hotel = new(hotel.Hotel)
 
-	if err := p.db.QueryRow(selectUserByID, ID).Scan(
+	if err := s.db.QueryRow(selectUserByID, ID).Scan(
 		&u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
 		&u.Note, &u.Email, &u.Phone, &u.PasswordHash, &u.Status, &u.Permissions,
 	); err != nil {
@@ -64,10 +66,10 @@ func (p *sqlite) User(ID int64) (*user.User, error) {
 	return u, nil
 }
 
-func (p *sqlite) UserWithEmail(email string) (*user.User, error) {
+func (s *sqlite) UserWithEmail(email string) (*user.User, error) {
 	u := new(user.User)
 	u.Hotel = new(hotel.Hotel)
-	if err := p.db.QueryRow(selectUserByEmail, email).Scan(
+	if err := s.db.QueryRow(selectUserByEmail, email).Scan(
 		&u.ID, &u.FirstName, &u.SecondName, &u.LastName, &u.Hotel.Name, &u.Hotel.ID,
 		&u.Note, &u.Phone, &u.PasswordHash, &u.Status, &u.Permissions,
 	); err != nil {
@@ -82,16 +84,16 @@ func (p *sqlite) UserWithEmail(email string) (*user.User, error) {
 	return u, nil
 }
 
-func (p *sqlite) List(filters map[string]interface{}) ([]user.User, error) {
+func (s *sqlite) List(filters map[string]interface{}) ([]user.User, error) {
 	query, params := buildListQueryParams(selectUsers, filters)
 
-	rows, err := p.db.Query(query, params...)
+	rows, err := s.db.Query(query, params...)
 	if err != nil {
 		return nil, err
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Error("error close db rows", "error", err.Error())
+			s.logger.Error("error close db rows", "error", err.Error())
 		}
 	}()
 
@@ -146,8 +148,8 @@ func buildListQueryParams(query string, filters map[string]interface{}) (string,
 	return query, params
 }
 
-func (p *sqlite) Password(ID int64, passwordHash string) error {
-	_, err := p.db.Exec(updatePasswordUser, passwordHash, ID)
+func (s *sqlite) Password(ID int64, passwordHash string) error {
+	_, err := s.db.Exec(updatePasswordUser, passwordHash, ID)
 	if err != nil {
 		return errors.Wrap(err, "error update user")
 	}
@@ -155,16 +157,16 @@ func (p *sqlite) Password(ID int64, passwordHash string) error {
 	return nil
 }
 
-func (p *sqlite) Save(u *user.User) error {
+func (s *sqlite) Save(u *user.User) error {
 	if u.ID == 0 {
-		return p.insert(u)
+		return s.insert(u)
 	}
 
-	return p.update(u)
+	return s.update(u)
 }
 
-func (p *sqlite) Delete(ID int64) error {
-	_, err := p.db.Exec(deleteUser, ID)
+func (s *sqlite) Delete(ID int64) error {
+	_, err := s.db.Exec(deleteUser, ID)
 	if err != nil {
 		return errors.Wrap(err, "error delete user")
 	}
@@ -172,14 +174,14 @@ func (p *sqlite) Delete(ID int64) error {
 	return nil
 }
 
-func (p *sqlite) insert(u *user.User) error {
-	tx, txErr := p.db.Begin()
+func (s *sqlite) insert(u *user.User) error {
+	tx, txErr := s.db.Begin()
 	if txErr != nil {
 		return errors.Wrap(txErr, "error create tx insert user")
 	}
 	defer func() {
 		if err := tx.Rollback(); err != nil {
-			log.Error("error rollback tx", "error", err.Error())
+			s.logger.Error("error rollback tx", "error", err.Error())
 		}
 	}()
 
@@ -207,11 +209,11 @@ func (p *sqlite) insert(u *user.User) error {
 	return nil
 }
 
-func (p *sqlite) update(u *user.User) error {
+func (s *sqlite) update(u *user.User) error {
 	q := buildUpdateQuery(u.PasswordHash != "")
 	params := buildUpdateParams(u)
 
-	if _, err := p.db.Exec(q, params...); err != nil {
+	if _, err := s.db.Exec(q, params...); err != nil {
 		return errors.Wrap(err, "error update user")
 	}
 

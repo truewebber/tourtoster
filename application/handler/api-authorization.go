@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/mgutz/logxi/v1"
 	"golang.org/x/crypto/bcrypt"
 
 	"tourtoster/token"
@@ -37,9 +36,9 @@ const (
 
 func (h *Handlers) AuthorizationApi(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		log.Error("Error read form", "error", err.Error())
+		h.logger.Error("Error read form", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -47,16 +46,16 @@ func (h *Handlers) AuthorizationApi(w http.ResponseWriter, r *http.Request) {
 
 	u, uErr := h.user.UserWithEmail(values.Get("email"))
 	if uErr != nil {
-		log.Error("Error find user", "error", uErr.Error())
+		h.logger.Error("Error find user", "error", uErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
 
 	if u == nil || !checkPasswordHash(values.Get("password"), u.PasswordHash) {
 		w.WriteHeader(http.StatusUnauthorized)
-		write(w, authError)
+		h.write(w, authError)
 
 		return
 	}
@@ -64,29 +63,29 @@ func (h *Handlers) AuthorizationApi(w http.ResponseWriter, r *http.Request) {
 	switch u.Status {
 	case user.StatusNew:
 		w.WriteHeader(http.StatusUnauthorized)
-		write(w, unconfirmedError)
+		h.write(w, unconfirmedError)
 
 		return
 	case user.StatusDisabled:
 		w.WriteHeader(http.StatusUnauthorized)
-		write(w, disabledError)
+		h.write(w, disabledError)
 
 		return
 	}
 
 	newToken, hashErr := HashPassword(u.Email + u.PasswordHash + time.Now().String())
 	if hashErr != nil {
-		log.Error("Error generate auth token", "error", hashErr.Error())
+		h.logger.Error("Error generate auth token", "error", hashErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
 
 	if err := h.token.Save(&token.Token{UserID: u.ID, Token: newToken}); err != nil {
-		log.Error("Error insert new token", "error", err.Error())
+		h.logger.Error("Error insert new token", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -95,7 +94,7 @@ func (h *Handlers) AuthorizationApi(w http.ResponseWriter, r *http.Request) {
 		Token: newToken,
 	}
 
-	write(w, resp)
+	h.write(w, resp)
 }
 
 func checkPasswordHash(password, hash string) bool {

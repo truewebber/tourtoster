@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
+	"tourtoster/log"
 	"tourtoster/tour"
 	"tourtoster/user"
 )
@@ -15,6 +15,7 @@ type (
 	sqlite struct {
 		db       *sql.DB
 		userRepo user.Repository
+		logger   log.Logger
 	}
 )
 
@@ -29,10 +30,11 @@ const (
 	selectTours = `SELECT id,tour_type_id,creator_id,status,recurrence_rule,title,image,description,map,max_persons,price_per_children_3_6,price_per_children_0_6,price_per_children_7_17,price_per_adults,updated_at,created_at FROM tours` + whereField + orderField + `;`
 )
 
-func NewSQLite(db *sql.DB, userRepo user.Repository) *sqlite {
+func NewSQLite(db *sql.DB, userRepo user.Repository, logger log.Logger) *sqlite {
 	return &sqlite{
 		db:       db,
 		userRepo: userRepo,
+		logger:   logger,
 	}
 }
 
@@ -82,7 +84,7 @@ func (s *sqlite) List(o *tour.Order, ff ...tour.Filter) ([]tour.Tour, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Error("error close db rows", "error", err.Error())
+			s.logger.Error("error close db rows", "error", err.Error())
 		}
 	}()
 
@@ -162,7 +164,7 @@ func (s *sqlite) Features() ([]tour.Feature, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Error("error close db rows", "error", err.Error())
+			s.logger.Error("error close db rows", "error", err.Error())
 		}
 	}()
 

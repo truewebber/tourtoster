@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/user"
@@ -33,9 +32,9 @@ var (
 
 func (h *Handlers) ApiForget(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		log.Error("Error read form", "error", err.Error())
+		h.logger.Error("Error read form", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -44,22 +43,22 @@ func (h *Handlers) ApiForget(w http.ResponseWriter, r *http.Request) {
 	email := html.EscapeString(strings.TrimSpace(values.Get("email")))
 	if email == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userEmailInvalidError)
+		h.write(w, userEmailInvalidError)
 		return
 	}
 
 	u, uErr := h.user.UserWithEmail(email)
 	if uErr != nil {
-		log.Error("Error get user", "email", email, "error", uErr.Error())
+		h.logger.Error("Error get user", "email", email, "error", uErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, inputInvalidError)
+		h.write(w, inputInvalidError)
 
 		return
 	}
 	if u == nil {
-		log.Warn("User not found", "email", email)
+		h.logger.Warn("User not found", "email", email)
 		w.WriteHeader(http.StatusNotFound)
-		write(w, unknownUserError)
+		h.write(w, unknownUserError)
 
 		return
 	}
@@ -68,18 +67,18 @@ func (h *Handlers) ApiForget(w http.ResponseWriter, r *http.Request) {
 	password := RandString(10)
 	passwordHash, hashErr := HashPassword(password)
 	if hashErr != nil {
-		log.Error("Error hash password", "error", hashErr.Error())
+		h.logger.Error("Error hash password", "error", hashErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
 	// password:end
 
 	if err := h.user.Password(u.ID, passwordHash); err != nil {
-		log.Error("Error set new password", "error", err.Error(), "id", u.ID)
+		h.logger.Error("Error set new password", "error", err.Error(), "id", u.ID)
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -89,19 +88,19 @@ func (h *Handlers) ApiForget(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		if err := h.mailer.Send(email, title, body); err != nil {
-			log.Error("Error send email", "error", err.Error())
+			h.logger.Error("Error send email", "error", err.Error())
 		}
 	}()
 
 	w.WriteHeader(http.StatusOK)
-	write(w, respOK{Message: "success"})
+	h.write(w, respOK{Message: "success"})
 }
 
 func (h *Handlers) ApiRegistration(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		log.Error("Error read form", "error", err.Error())
+		h.logger.Error("Error read form", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -110,27 +109,27 @@ func (h *Handlers) ApiRegistration(w http.ResponseWriter, r *http.Request) {
 	firstName := html.EscapeString(strings.TrimSpace(values.Get("first_name")))
 	if firstName == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userFNameInvalidError)
+		h.write(w, userFNameInvalidError)
 		return
 	}
 	secondName := html.EscapeString(strings.TrimSpace(values.Get("second_name")))
 	lastName := html.EscapeString(strings.TrimSpace(values.Get("last_name")))
 	if lastName == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userLNameInvalidError)
+		h.write(w, userLNameInvalidError)
 		return
 	}
 
 	email := html.EscapeString(strings.TrimSpace(values.Get("email")))
 	if email == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userEmailInvalidError)
+		h.write(w, userEmailInvalidError)
 		return
 	}
 	phone := html.EscapeString(strings.TrimSpace(values.Get("phone")))
 	if phone == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, userPhoneInvalidError)
+		h.write(w, userPhoneInvalidError)
 		return
 	}
 
@@ -138,7 +137,7 @@ func (h *Handlers) ApiRegistration(w http.ResponseWriter, r *http.Request) {
 	htl, htlErr := h.newHotel(0, hotelName, false)
 	if htlErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 		return
 	}
 
@@ -146,28 +145,28 @@ func (h *Handlers) ApiRegistration(w http.ResponseWriter, r *http.Request) {
 	password := html.EscapeString(strings.TrimSpace(values.Get("password")))
 	if password == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, passwordEmptyError)
+		h.write(w, passwordEmptyError)
 		return
 	}
 
 	passwordRepeat := html.EscapeString(strings.TrimSpace(values.Get("password_repeat")))
 	if passwordRepeat == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, passwordEmptyError)
+		h.write(w, passwordEmptyError)
 		return
 	}
 
 	if password != passwordRepeat {
 		w.WriteHeader(http.StatusBadRequest)
-		write(w, passwordInvalidError)
+		h.write(w, passwordInvalidError)
 		return
 	}
 
 	passwordHash, hashErr := HashPassword(password)
 	if hashErr != nil {
-		log.Error("Error hash password", "error", hashErr.Error())
+		h.logger.Error("Error hash password", "error", hashErr.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, internalError)
+		h.write(w, internalError)
 
 		return
 	}
@@ -191,16 +190,16 @@ func (h *Handlers) ApiRegistration(w http.ResponseWriter, r *http.Request) {
 		e := userEmailPhoneUniqueError
 
 		if errors.Cause(err) != user.PhoneEmailUniqueError {
-			log.Error("Error create/save user", "error", err.Error())
+			h.logger.Error("Error create/save user", "error", err.Error())
 			code = http.StatusInternalServerError
 			e = internalError
 		}
 
 		w.WriteHeader(code)
-		write(w, e)
+		h.write(w, e)
 
 		return
 	}
 
-	write(w, respOK{"success"})
+	h.write(w, respOK{"success"})
 }

@@ -4,15 +4,16 @@ import (
 	"database/sql"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
+	"tourtoster/log"
 )
 
 type (
 	sqlite struct {
-		db *sql.DB
+		db     *sql.DB
+		logger log.Logger
 	}
 )
 
@@ -27,9 +28,10 @@ const (
 	selectHotels      = "SELECT id,name FROM hotel ORDER BY name COLLATE NOCASE;"
 )
 
-func NewSQLite(db *sql.DB) *sqlite {
+func NewSQLite(db *sql.DB, logger log.Logger) *sqlite {
 	return &sqlite{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -70,7 +72,7 @@ func (p *sqlite) List() ([]hotel.Hotel, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			log.Error("error close db rows", "error", err.Error())
+			p.logger.Error("error close db rows", "error", err.Error())
 		}
 	}()
 
@@ -102,7 +104,7 @@ func (p *sqlite) Delete(ID int64) error {
 	}
 	defer func() {
 		if err := tx.Rollback(); err != nil {
-			log.Error("error rollback tx", "error", err.Error())
+			p.logger.Error("error rollback tx", "error", err.Error())
 		}
 	}()
 
@@ -128,7 +130,7 @@ func (p *sqlite) insert(h *hotel.Hotel) error {
 	}
 	defer func() {
 		if err := tx.Rollback(); err != nil {
-			log.Error("error rollback tx", "error", err.Error())
+			p.logger.Error("error rollback tx", "error", err.Error())
 		}
 	}()
 

@@ -18,12 +18,14 @@ func Test_postgres_Save(t *testing.T) {
 		return
 	}
 
-	type fields struct {
-		db *sql.DB
-	}
-	type args struct {
-		u *user.User
-	}
+	type (
+		fields struct {
+			db *sql.DB
+		}
+		args struct {
+			u *user.User
+		}
+	)
 	tests := []struct {
 		name    string
 		fields  fields

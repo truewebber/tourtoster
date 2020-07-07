@@ -3,8 +3,6 @@ package handler
 import (
 	"net/http"
 	"time"
-
-	"github.com/mgutz/logxi/v1"
 )
 
 type (
@@ -24,7 +22,7 @@ func (h *Handlers) ConsoleRegistrationPage(w http.ResponseWriter, _ *http.Reques
 	}
 
 	if err := h.templates[ConsoleRegistrationTemplateName].Execute(w, data); err != nil {
-		log.Error("Error execute template", "template", ConsoleRegistrationTemplateName,
+		h.logger.Error("Error execute template", "template", ConsoleRegistrationTemplateName,
 			"error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 

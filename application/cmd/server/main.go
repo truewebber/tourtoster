@@ -8,13 +8,13 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/mgutz/logxi/v1"
 
 	"tourtoster/conn"
 	"tourtoster/currency"
 	currencyRepo "tourtoster/currency/repository"
 	"tourtoster/handler"
 	hotelRepo "tourtoster/hotel/repository"
+	"tourtoster/log"
 	"tourtoster/mail"
 	mailRepo "tourtoster/mail/repository"
 	"tourtoster/middleware"
@@ -47,18 +47,25 @@ func main() {
 		println("error create db connection")
 		panic(err)
 	}
-	log.Debug("connection to db established", "db", dbFilePath)
+	logger := log.NewZap()
+	defer func() {
+		if err := logger.Close(); err != nil {
+			println("error close logger", err.Error())
+		}
+	}()
+
+	logger.Info("connection to db established", "db", dbFilePath)
 	// -----------------------------------------------------------------------------------------------------------------
 	tokenR := tokenRepo.NewMemory()
 	_ = tokenR.Save(&token.Token{
 		Token:  "blah",
 		UserID: 1,
 	})
-	userR := userRepo.NewSQLite(db)
-	hotelR := hotelRepo.NewSQLite(db)
-	tourR := tourRepo.NewSQLite(db, userR)
+	userR := userRepo.NewSQLite(db, logger)
+	hotelR := hotelRepo.NewSQLite(db, logger)
+	tourR := tourRepo.NewSQLite(db, userR, logger)
 
-	if err := initCurrencies(db); err != nil {
+	if err := initCurrencies(db, logger); err != nil {
 		println("error init currencies")
 		panic(err)
 	}
@@ -67,8 +74,8 @@ func main() {
 		panic(err)
 	}
 	// -----------------------------------------------------------------------------------------------------------------
-	mailer := newMailer()
-	log.Debug("Init mailer", "_", mailer.Name())
+	mailer := newMailer(logger)
+	logger.Info("Init mailer", "_", mailer.Name())
 	// -----------------------------------------------------------------------------------------------------------------
 	handlers, handlersErr := handler.New(&handler.Config{
 		User:          userR,
@@ -82,9 +89,9 @@ func main() {
 		println("error init handlers")
 		panic(handlersErr)
 	}
-	log.Debug("templates init", "path", templatePath)
+	logger.Info("templates init", "path", templatePath)
 	// -----------------------------------------------------------------------------------------------------------------
-	middlewares := middleware.New(tokenR, userR, hotelR)
+	middlewares := middleware.New(tokenR, userR, hotelR, logger)
 	// -----------------------------------------------------------------------------------------------------------------
 
 	// ---------------------------------------------------- ROUTER -----------------------------------------------------
@@ -132,9 +139,9 @@ func main() {
 	rca.Use(middlewares.APIAuthMiddleware)
 	// -----------------------------------------------------------------------------------------------------------------
 	// ---------------------------------------------------- SERVER -----------------------------------------------------
-	log.Debug("Starting server", host, port)
+	logger.Info("Starting server", host, port)
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%s", host, port), r); err != nil {
-		log.Error("Error start http server", "error", err.Error())
+		logger.Error("Error start http server", "error", err.Error())
 	}
 	// -----------------------------------------------------------------------------------------------------------------
 }
@@ -156,8 +163,8 @@ func initFeatures(repo tour.Repository) error {
 	return nil
 }
 
-func initCurrencies(db *sql.DB) error {
-	repo := currencyRepo.NewSQLite(db)
+func initCurrencies(db *sql.DB, logger log.Logger) error {
+	repo := currencyRepo.NewSQLite(db, logger)
 	values, err := repo.List(currency.USDName, currency.EURName)
 	if err != nil {
 		return err
@@ -174,7 +181,7 @@ func initCurrencies(db *sql.DB) error {
 	return nil
 }
 
-func newMailer() mail.Mailer {
+func newMailer(logger log.Logger) mail.Mailer {
 	u := os.Getenv("MAIL_USER")
 	pass := os.Getenv("MAIL_PASSWORD")
 
@@ -184,6 +191,6 @@ func newMailer() mail.Mailer {
 	case mailRepo.YandexName:
 		return mailRepo.NewYandex(u, pass)
 	default:
-		return mailRepo.NewNull()
+		return mailRepo.NewNull(logger)
 	}
 }

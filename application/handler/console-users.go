@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/hotel"
@@ -62,7 +61,7 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 	editUserStr := r.URL.Query().Get("edit_id")
 	editUser, editUserErr := h.editUser(editUserStr)
 	if editUserErr != nil {
-		log.Warn("Error get user to edit", "value", editUserStr, "error", editUserErr.Error())
+		h.logger.Warn("Error get user to edit", "value", editUserStr, "error", editUserErr.Error())
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -118,7 +117,7 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(errs) != 0 {
-		log.Error("Error validate input params", "query", r.URL.Query(),
+		h.logger.Error("Error validate input params", "query", r.URL.Query(),
 			"errors", fmt.Sprintf("%#v", errs))
 		w.WriteHeader(http.StatusBadRequest)
 
@@ -127,7 +126,7 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 
 	users, errUsers := h.user.List(queryFilters)
 	if errUsers != nil {
-		log.Error("Error get user list", "error", errUsers.Error())
+		h.logger.Error("Error get user list", "error", errUsers.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -135,7 +134,7 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 
 	hotels, errHotels := h.hotel.List()
 	if errHotels != nil {
-		log.Error("Error get hotel list", "error", errHotels.Error())
+		h.logger.Error("Error get hotel list", "error", errHotels.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -152,7 +151,7 @@ func (h *Handlers) ConsoleUserPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.templates[ConsoleUserTemplateName].Execute(w, data); err != nil {
-		log.Error("Error execute template", "template", ConsoleUserTemplateName, "error", err.Error())
+		h.logger.Error("Error execute template", "template", ConsoleUserTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return

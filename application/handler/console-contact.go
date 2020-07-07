@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 
 	"tourtoster/user"
 )
@@ -33,7 +32,7 @@ func (h *Handlers) ConsoleContactPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.templates[ConsoleContactTemplateName].Execute(w, data); err != nil {
-		log.Error("Error execute template", "template", ConsoleContactTemplateName, "error", err.Error())
+		h.logger.Error("Error execute template", "template", ConsoleContactTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/handler"
@@ -15,7 +14,7 @@ func (m *Middleware) PageAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		u, err := m.authUser(r)
 		if err != nil {
-			log.Error("auth error", "error", err.Error())
+			m.logger.Warn("auth error", "error", err.Error())
 		}
 
 		path1 := handler.ConsolePathPrefix + handler.ConsoleAuthorizationPath
@@ -45,7 +44,7 @@ func (m *Middleware) APIAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		u, err := m.authUser(r)
 		if err != nil {
-			log.Error("auth error", "error", err.Error())
+			m.logger.Warn("auth error", "error", err.Error())
 		}
 
 		path1 := handler.ApiPathPrefix + handler.AuthorizationApiPath

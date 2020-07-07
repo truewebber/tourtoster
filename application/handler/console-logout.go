@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 
 	"tourtoster/user"
 )
@@ -18,9 +17,9 @@ func (h *Handlers) ConsoleSignoutPage(w http.ResponseWriter, r *http.Request) {
 	u := context.Get(r, user.ContextKey).(*user.User)
 
 	if err := h.token.Delete(u.Token.Token); err != nil {
-		log.Error("Error delete token", "error", err.Error())
+		h.logger.Error("Error delete token", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		write(w, "internal error")
+		h.write(w, "internal error")
 
 		return
 	}

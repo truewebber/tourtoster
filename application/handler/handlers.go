@@ -5,11 +5,11 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 
 	"tourtoster/hotel"
+	"tourtoster/log"
 	"tourtoster/mail"
 	"tourtoster/token"
 	"tourtoster/tour"
@@ -24,6 +24,7 @@ type (
 		tour      tour.Repository
 		templates map[string]*template.Template
 		mailer    mail.Mailer
+		logger    log.Logger
 	}
 
 	Config struct {
@@ -33,6 +34,7 @@ type (
 		Hotel         hotel.Repository
 		Mailer        mail.Mailer
 		TemplatesPath string
+		Logger        log.Logger
 	}
 )
 
@@ -78,6 +80,7 @@ func New(cfg *Config) (*Handlers, error) {
 		hotel:     cfg.Hotel,
 		templates: templates,
 		mailer:    cfg.Mailer,
+		logger:    cfg.Logger,
 	}, nil
 }
 
@@ -158,10 +161,10 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func write(w http.ResponseWriter, obj interface{}) {
+func (h *Handlers) write(w http.ResponseWriter, obj interface{}) {
 	encoder := json.NewEncoder(w)
 	err := encoder.Encode(obj)
 	if err != nil {
-		log.Error("Error write response", "error", err.Error())
+		h.logger.Error("Error write response", "error", err.Error())
 	}
 }

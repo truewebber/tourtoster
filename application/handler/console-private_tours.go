@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 	"github.com/pkg/errors"
 
 	"tourtoster/tour"
@@ -58,7 +57,7 @@ func (h *Handlers) ConsolePTEditPage(w http.ResponseWriter, r *http.Request) {
 	editTourStr := r.URL.Query().Get("id")
 	editTour, editUserErr := h.editPrivateTour(editTourStr)
 	if editUserErr != nil {
-		log.Warn("Error get private tour to edit", "value", editTourStr, "error", editUserErr.Error())
+		h.logger.Warn("Error get private tour to edit", "value", editTourStr, "error", editUserErr.Error())
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -66,7 +65,7 @@ func (h *Handlers) ConsolePTEditPage(w http.ResponseWriter, r *http.Request) {
 
 	tours, err := h.tour.List(tour.NewOrder("title", "asc"), tour.FilterTourType(tour.PrivateType))
 	if err != nil {
-		log.Error("Error get private tours list", "error", err.Error())
+		h.logger.Error("Error get private tours list", "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -101,7 +100,7 @@ func (h *Handlers) ConsolePTEditFAQPage(w http.ResponseWriter, r *http.Request) 
 
 func (h *Handlers) renderPT(w http.ResponseWriter, ptPage *PTPage) {
 	if err := h.templates[ConsolePTTemplateName].Execute(w, *ptPage); err != nil {
-		log.Error("Error execute template", "template", ConsolePTTemplateName, "error", err.Error())
+		h.logger.Error("Error execute template", "template", ConsolePTTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return

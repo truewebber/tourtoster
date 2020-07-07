@@ -1,19 +1,23 @@
 package repository
 
 import (
-	"github.com/mgutz/logxi/v1"
+	"tourtoster/log"
 )
 
 type (
-	null struct{}
+	null struct {
+		logger log.Logger
+	}
 )
 
 const (
 	NullName = "Null"
 )
 
-func NewNull() *null {
-	return &null{}
+func NewNull(logger log.Logger) *null {
+	return &null{
+		logger: logger,
+	}
 }
 
 func (n *null) Name() string {
@@ -21,6 +25,6 @@ func (n *null) Name() string {
 }
 
 func (n *null) Send(to string, title, body string) error {
-	log.Debug("Null mailer send email", "to", to, title, "title", "body", body)
+	n.logger.Info("Null mailer send email", "to", to, title, "title", "body", body)
 	return nil
 }

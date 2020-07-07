@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/mgutz/logxi/v1"
 
 	"tourtoster/user"
 )
@@ -31,7 +30,7 @@ func (h *Handlers) LandingIndexPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.templates[LandingIndexTemplateName].Execute(w, data); err != nil {
-		log.Error("Error execute template", "template", LandingIndexTemplateName, "error", err.Error())
+		h.logger.Error("Error execute template", "template", LandingIndexTemplateName, "error", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
