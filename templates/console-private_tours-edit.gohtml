@@ -15,16 +15,19 @@
             </div>
         </div>
         <form class="new-tour edit-container">
-            <label><input type="text" name="title" placeholder="Tour title"></label>
+            <input type="text" name="title" placeholder="Tour title">
             <div class="line"></div>
 
             <h2>Recurrence rule</h2>
-
             <div class="recurrence-rules">No rules here yet.</div>
             <div class="line"></div>
 
-            <div class="recurrence-rule-set-toogle">Add new rule</div>
+            <span class="recurrence-rule-set-toogle">Add new rule</span>
             <div class="recurrence-rule-set">
+                <div class="field type">
+                    <label><input type="radio" name="rrule_type" value="1">Include</label>
+                    <label><input type="radio" name="rrule_type" value="2">Exclude</label>
+                </div>
                 <div class="field freq">
                     <h3>Frequency</h3>
                     <label><input type="radio" name="rrule_freq" value="0">Yearly</label>
@@ -32,24 +35,20 @@
                     <label><input type="radio" name="rrule_freq" value="2">Weekly</label>
                     <label><input type="radio" name="rrule_freq" value="3">Daily</label>
                 </div>
-
                 <div class="field box">
                     <div class="elem">
                         <h3>Until date</h3>
-                        <label><input type="datetime-local" name="rrule_until" placeholder=""></label>
+                        <label><input type="date" name="rrule_until" placeholder=""></label>
                     </div>
-
                     <div class="elem">
                         <h3>Count</h3>
                         <label><input type="number" name="rrule_count" placeholder=""></label>
                     </div>
-
                     <div class="elem">
                         <h3>Interval</h3>
                         <label><input type="number" name="rrule_interval" placeholder=""></label>
                     </div>
                 </div>
-
                 <div class="field byweekday">
                     <h3>By week day</h3>
                     <label><input type="checkbox" name="rrule_byweekday" value="0">Monday</label>
@@ -60,7 +59,6 @@
                     <label><input type="checkbox" name="rrule_byweekday" value="5">Saturday</label>
                     <label><input type="checkbox" name="rrule_byweekday" value="6">Sunday</label>
                 </div>
-
                 <div class="field bymonth">
                     <h3>By month</h3>
                     <label><input type="checkbox" name="rrule_bymonth" value="1">January</label>
@@ -69,35 +67,37 @@
                     <label><input type="checkbox" name="rrule_bymonth" value="4">April</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="5">May</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="6">June</label>
-                    <label><input type="checkbox" name="rrule_bymonth" value="7">July</label><br>
+                    <label><input type="checkbox" name="rrule_bymonth" value="7">July</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="8">August</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="9">September</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="10">October</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="11">November</label>
                     <label><input type="checkbox" name="rrule_bymonth" value="12">December</label>
                 </div>
-
                 <div class="field box">
                     <div class="elem">
                         <h3>By month day</h3>
-                        <label><input type="number" name="rrule_bymonthday" placeholder=""></label>
+                        <label><input type="text" name="rrule_bymonthday" placeholder=""></label>
                     </div>
-
                     <div class="elem">
                         <h3>By year day</h3>
-                        <label><input type="number" name="rrule_byyearday" placeholder=""></label>
+                        <label><input type="text" name="rrule_byyearday" placeholder=""></label>
                     </div>
-
                     <div class="elem">
                         <h3>By week №</h3>
-                        <label><input type="number" name="rrule_byweekno" placeholder=""></label>
+                        <label><input type="text" name="rrule_byweekno" placeholder=""></label>
                     </div>
+                </div>
+                <div>
+                    <button>Add Rule</button>
                 </div>
             </div>
             <div class="line"></div>
 
             <h2>Description</h2>
-            <textarea name="description" placeholder="write here about tour"></textarea>
+            <div class="redactor">
+                <textarea name="description" placeholder="write here about tour"></textarea>
+            </div>
             <div class="line"></div>
 
             <input type="submit" value="SAVE">

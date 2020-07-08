@@ -25,7 +25,8 @@ $desktop: 1024px;
     .list {
       display: flex;
       flex-direction: column;
-      flex: 3 0 0;
+      //flex: 3 0 0;
+      width: 30%;
       padding-right: 10px;
 
       .list-new-elem {
@@ -73,7 +74,9 @@ $desktop: 1024px;
     .edit-container {
       display: flex;
       flex-direction: column;
-      flex: 7 0 0;
+      //flex: 7 0 0;
+      width: 70%;
+      align-items: flex-start;
       padding-left: 10px;
       border-left: 1px solid #eeeeee;
 
@@ -86,12 +89,25 @@ $desktop: 1024px;
       }
 
       .recurrence-rules {
+      }
 
+      .recurrence-rule-set-toogle {
+        color: #0a6aa1;
+        cursor: pointer;
+        font-size: 1.2em;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
 
       .recurrence-rule-set {
-        padding-left: 20px;
         display: none;
+        padding: 1.5em;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
 
         h3 {
           font-size: 1.35em;
@@ -114,7 +130,7 @@ $desktop: 1024px;
           }
         }
 
-        .freq, .byweekday, .bymonth {
+        .type, .freq, .byweekday, .bymonth {
           label {
             white-space: nowrap;
             display: inline-block;
@@ -130,6 +146,10 @@ $desktop: 1024px;
             }
           }
         }
+      }
+
+      .redactor {
+        width: 100%;
       }
 
       input[type=text] {

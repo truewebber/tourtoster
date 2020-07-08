@@ -202,14 +202,6 @@ const mainConfig = function () {
                     },
                 },
                 {
-                    // copy rrule
-                    from: srcPath + "/plugins/rrule",
-                    to: assetDistPath + "/plugins/custom/rrule",
-                    transform: function (content, path) {
-                        return UglifyJS.minify(content.toString()).code;
-                    },
-                },
-                {
                     // copy tinymce skins
                     from: configPath + "/node_modules/tinymce/skins",
                     to: assetDistPath + "/plugins/custom/tinymce/skins",
