@@ -4,6 +4,7 @@ import RRule, {RRuleSet} from "rrule";
 
 let PrivateTourEdit = function () {
     let tourFormEl;
+    let rrEl;
     let rrFormEl;
     let rrFormToogle;
     let rruleSet;
@@ -32,6 +33,72 @@ let PrivateTourEdit = function () {
     let openRRuleForm = function () {
         rrFormToogle.text('Cancel').attr({'data-action': 'open'});
         rrFormEl.show();
+    }
+
+    let drawRules = function () {
+        let rrules = rruleSet.rrules();
+        let exrules = rruleSet.exrules();
+
+        if (rrules.length === 0 && exrules.length === 0) {
+            rrEl.html('No rules here yet.');
+            return;
+        }
+
+        rrEl.empty();
+
+        if (rrules.length !== 0) {
+            rrEl.append('<h3>rrules</h3>');
+            for (let i = 0; i < rrules.length; i++) {
+                let close = $('<span>').html('x');
+                let r = rrules[i].toString().replace('RRULE:', '');
+                let elem = $('<p>').attr({'data-type': '1', 'data-index': i}).html(r).append(close);
+
+                rrEl.append(elem);
+            }
+        }
+
+        if (exrules.length !== 0) {
+            rrEl.append('<h3>exrules</h3>');
+            for (let i = 0; i < exrules.length; i++) {
+                let close = $('<span>').html('x');
+                let r = exrules[i].toString().replace('RRULE:', '');
+                let elem = $('<p>').attr({'data-type': '2', 'data-index': i}).html(r).append(close);
+
+                rrEl.append(elem);
+            }
+        }
+
+        initDeleteRules();
+    }
+
+    let initDeleteRules = function () {
+        let buttons = rrEl.find('p > span');
+
+        $(buttons).on('click', function () {
+            let elem = $(this).parent();
+            let index = parseInt($(elem).attr('data-index'));
+
+            switch ($(elem).attr('data-type')) {
+                case '1':
+                    if (index < 0 || index > rruleSet._rrule.length - 1) {
+                        return;
+                    }
+
+                    delete rruleSet._rrule[index];
+                    rruleSet._rrule.length--;
+                    break;
+                case '2':
+                    if (index < 0 || index > rruleSet._exrule.length - 1) {
+                        return;
+                    }
+
+                    delete rruleSet._exrule[index];
+                    rruleSet._exrule.length--;
+                    break;
+            }
+
+            drawRules();
+        });
     }
 
     let initToggleRRuleForm = function () {
@@ -121,8 +188,8 @@ let PrivateTourEdit = function () {
                     break;
             }
 
-            // delete set._exrule[0];
-            // set._exrule.length--;
+            clearRRuleForm();
+            drawRules();
         });
     }
 
@@ -194,12 +261,13 @@ let PrivateTourEdit = function () {
                 }
             })
         });
-    };
+    }
 
     return {
         // public functions
         init: function () {
             tourFormEl = $('form.new-tour');
+            rrEl = $('div.recurrence-rules');
             rrFormEl = $('div.recurrence-rule-set');
             rrFormToogle = $('.recurrence-rule-set-toogle');
             rruleSet = new RRuleSet();

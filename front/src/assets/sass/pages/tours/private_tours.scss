@@ -89,6 +89,37 @@ $desktop: 1024px;
       }
 
       .recurrence-rules {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 1.2em;
+
+        h3 {
+          font-size: 1.4em;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        p {
+          background-color: #eee;
+          font-size: 1em;
+          margin: 0 0 .4em 0;
+          text-indent: .8em;
+          line-height: 2em;
+          font-weight: 400;
+
+          span {
+            //&:hover:after {
+            cursor: pointer;
+            color: red;
+            font-weight: 400;
+            font-family: Arial, sans-serif;
+            font-size: 1.4em;
+            margin-right: .8em;
+            float: right;
+          }
+        }
       }
 
       .recurrence-rule-set-toogle {
@@ -105,7 +136,7 @@ $desktop: 1024px;
         display: none;
         padding: 1.5em;
         background-color: #fff;
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         border-radius: 5px;
         width: 100%;
 
