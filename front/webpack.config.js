@@ -44,10 +44,10 @@ const js = args["--js"] || true;
 // theme name
 const themeName = "metronic";
 // global variables
-const rootPath = path.resolve(__dirname, "..");
-const frameworkPath = path.resolve(__dirname, "..");
+const rootPath = path.resolve(__dirname);
+const frameworkPath = path.resolve(__dirname);
 const distPath = rootPath + "/dist";
-const configPath = rootPath + "/tools";
+const configPath = rootPath;
 const assetDistPath = distPath + "/assets";
 const srcPath = rootPath + "/src/assets";
 

@@ -81,43 +81,51 @@ $desktop: 1024px;
       border-left: 1px solid #eeeeee;
 
       .line {
-        margin-bottom: 20px;
+        margin-bottom: 2.5em;
 
         &:last-child {
           margin-bottom: 0;
         }
       }
 
-      .recurrence-rules {
-        width: 100%;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 1.2em;
-
-        h3 {
-          font-size: 1.4em;
-          font-weight: 600;
-          text-transform: uppercase;
+      .recurrence-rule-view {
+        .recurrence-rule-calendar-box {
         }
 
-        p {
-          background-color: #eee;
-          font-size: 1em;
-          margin: 0 0 .4em 0;
-          text-indent: .8em;
-          line-height: 2em;
-          font-weight: 400;
+        .recurrence-rules-box {
+          margin-bottom: 2em;
 
-          span {
-            //&:hover:after {
-            cursor: pointer;
-            color: red;
-            font-weight: 400;
-            font-family: Arial, sans-serif;
-            font-size: 1.4em;
-            margin-right: .8em;
-            float: right;
+          .recurrence-rules {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1.2em;
+
+            h3 {
+              font-size: 1.4em;
+              font-weight: 600;
+              text-transform: uppercase;
+            }
+
+            p {
+              background-color: #eee;
+              font-size: 1em;
+              margin: 0 0 .4em 0;
+              text-indent: .8em;
+              line-height: 2em;
+              font-weight: 400;
+
+              span {
+                //&:hover:after {
+                cursor: pointer;
+                color: red;
+                font-weight: 400;
+                font-family: Arial, sans-serif;
+                font-size: 1.4em;
+                margin-right: .8em;
+                float: right;
+              }
+            }
           }
         }
       }

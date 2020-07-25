@@ -7,7 +7,7 @@
  */
 
 // Fullcalendar
-require("@fullcalendar/core/main.css");
+require("@fullcalendar/common/main.css");
 require("@fullcalendar/daygrid/main.css");
 require("@fullcalendar/list/main.css");
 require("@fullcalendar/timegrid/main.css");

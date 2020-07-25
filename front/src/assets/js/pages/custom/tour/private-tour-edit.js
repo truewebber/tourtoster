@@ -1,6 +1,9 @@
 "use strict";
 
-import RRule, {RRuleSet} from "rrule";
+import {RRule, RRuleSet} from 'rrule';
+import {Calendar} from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import rrulePlugin from '@fullcalendar/rrule';
 
 let PrivateTourEdit = function () {
     let tourFormEl;
@@ -8,6 +11,8 @@ let PrivateTourEdit = function () {
     let rrFormEl;
     let rrFormToogle;
     let rruleSet;
+    let calendarEl;
+    let calendar;
 
     let parseIntArray = function (str) {
         let intArr = [];
@@ -41,6 +46,8 @@ let PrivateTourEdit = function () {
 
         if (rrules.length === 0 && exrules.length === 0) {
             rrEl.html('No rules here yet.');
+            renderCalendar();
+
             return;
         }
 
@@ -69,6 +76,7 @@ let PrivateTourEdit = function () {
         }
 
         initDeleteRules();
+        renderCalendar();
     }
 
     let initDeleteRules = function () {
@@ -156,9 +164,6 @@ let PrivateTourEdit = function () {
                 freq: freq,
                 byweekday: byweekday,
                 bymonth: bymonth,
-                // until: until,
-                // count: count,
-                // interval: interval,
                 bymonthday: bymonthday,
                 byyearday: byyearday,
                 byweekno: byweekno,
@@ -191,6 +196,28 @@ let PrivateTourEdit = function () {
             clearRRuleForm();
             drawRules();
         });
+    }
+
+    let renderCalendar = function () {
+        let events = []
+
+        if (rruleSet.toString() !== '') {
+            events.push({
+                id: 'onlyEvent',
+                allDay: true,
+                rrule: rruleSet.toString(),
+                display: 'background'
+            })
+        }
+
+        calendar = new Calendar(calendarEl, {
+            plugins: [dayGridPlugin, rrulePlugin],
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            events: events
+        });
+
+        calendar.render();
     }
 
     let initSubmitTour = function () {
@@ -270,11 +297,13 @@ let PrivateTourEdit = function () {
             rrEl = $('div.recurrence-rules');
             rrFormEl = $('div.recurrence-rule-set');
             rrFormToogle = $('.recurrence-rule-set-toogle');
+            calendarEl = $('div.recurrence-rule-calendar')[0];
             rruleSet = new RRuleSet();
 
             initSubmitTour();
             initToggleRRuleForm();
             initAddRule();
+            renderCalendar();
         },
     };
 }();

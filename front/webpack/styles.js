@@ -7,4 +7,4 @@
  */
 
 // Main Stylesheet
-require("../../src/assets/sass/style.scss");
+require("../src/assets/sass/style.scss");

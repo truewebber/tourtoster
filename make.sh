@@ -17,15 +17,15 @@ function build_backend() {
 #}
 
 function front_watcher() {
-  cd front/tools || exit 1
+  cd front || exit 1
   yarn watch
 }
 
 function build_frontend_local() {
-  cd front/tools || exit 1
+  cd front || exit 1
   yarn install || exit 1
   yarn build || exit 1
-  cd ../../ || exit 1
+  cd ../ || exit 1
 }
 
 function move_static() {
