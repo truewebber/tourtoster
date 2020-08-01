@@ -8,10 +8,7 @@ require (
 	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.7.3
-	github.com/mattn/go-colorable v0.1.4 // indirect
-	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
-	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/onsi/ginkgo v1.12.0 // indirect
 	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/pkg/errors v0.9.0

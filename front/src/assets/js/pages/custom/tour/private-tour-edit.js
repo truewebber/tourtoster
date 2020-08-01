@@ -12,6 +12,7 @@ let PrivateTourEdit = function () {
     let rrFormToogle;
     let rruleSet;
     let calendarEl;
+    let textRRuleSetEl;
     let calendar;
 
     let parseIntArray = function (str) {
@@ -47,6 +48,7 @@ let PrivateTourEdit = function () {
         if (rrules.length === 0 && exrules.length === 0) {
             rrEl.html('No rules here yet.');
             renderCalendar();
+            textRRuleSet();
 
             return;
         }
@@ -77,6 +79,7 @@ let PrivateTourEdit = function () {
 
         initDeleteRules();
         renderCalendar();
+        textRRuleSet();
     }
 
     let initDeleteRules = function () {
@@ -198,14 +201,26 @@ let PrivateTourEdit = function () {
         });
     }
 
+    let textRRuleSet = function () {
+        $(textRRuleSetEl).val(rruleSet.toString());
+    }
+
     let renderCalendar = function () {
         let events = []
 
         if (rruleSet.toString() !== '') {
+            let currentDate = new Date();
+            let tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+            let tmpRS = rruleSet.clone();
+            tmpRS.exdate(currentDate);
+            tmpRS.exdate(tomorrowDate);
+
             events.push({
                 id: 'onlyEvent',
                 allDay: true,
-                rrule: rruleSet.toString(),
+                rrule: tmpRS.toString(),
                 display: 'background'
             })
         }
@@ -298,12 +313,14 @@ let PrivateTourEdit = function () {
             rrFormEl = $('div.recurrence-rule-set');
             rrFormToogle = $('.recurrence-rule-set-toogle');
             calendarEl = $('div.recurrence-rule-calendar')[0];
+            textRRuleSetEl = $('input[name=rrule_set]')[0];
             rruleSet = new RRuleSet();
 
             initSubmitTour();
             initToggleRRuleForm();
             initAddRule();
             renderCalendar();
+            textRRuleSet();
         },
     };
 }();
