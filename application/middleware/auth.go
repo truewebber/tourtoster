@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/context"
 	"github.com/pkg/errors"
 
-	"tourtoster/handler"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/handler"
+	"github.com/truewebber/tourtoster/user"
 )
 
 func (m *Middleware) PageAuthMiddleware(next http.Handler) http.Handler {

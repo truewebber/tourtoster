@@ -6,9 +6,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"tourtoster/log"
-	"tourtoster/tour"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/log"
+	"github.com/truewebber/tourtoster/tour"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (
@@ -27,7 +27,22 @@ const (
 const (
 	selectFeatures = `SELECT id, tour_type_id, icon, title FROM features;`
 
-	selectTours = `SELECT id,tour_type_id,creator_id,status,recurrence_rule,title,image,description,map,max_persons,price_per_children_3_6,price_per_children_0_6,price_per_children_7_17,price_per_adults,updated_at,created_at FROM tours` + whereField + orderField + `;`
+	selectTours = `SELECT id,tour_type_id,creator_id,status,recurrence_rule,title,image,description,map,max_persons,
+					price_per_children_3_6,price_per_children_0_6,price_per_children_7_17,price_per_adults,
+					updated_at,created_at
+				FROM tours` + whereField + orderField + `;`
+
+	insertTour = `INSERT INTO tours (tour_type_id,creator_id,status,recurrence_rule,title,image,description,
+									map,max_persons,price_per_children_3_6,price_per_children_0_6,
+									price_per_children_7_17,price_per_adults,updated_at,created_at)
+				VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,current_timestamp,current_timestamp);`
+
+	updateTour = `UPDATE tours SET status=$1,recurrence_rule=$2,title=$3,image=$4,description=$5,map=$6,max_persons=$7,
+								price_per_children_3_6=$8,price_per_children_0_6=$9,price_per_children_7_17=$10,
+								price_per_adults=$11,updated_at=current_timestamp
+					WHERE id=$12;`
+
+	deleteTour = `DELETE FROM tours WHERE id=$1;`
 )
 
 func NewSQLite(db *sql.DB, userRepo user.Repository, logger log.Logger) *sqlite {
@@ -95,13 +110,11 @@ func (s *sqlite) List(o *tour.Order, ff ...tour.Filter) ([]tour.Tour, error) {
 			Creator: &user.User{},
 		}
 
-		if err := rows.Scan(&t.ID, &t.Creator.ID, &t.Title, &t.Image, &t.Description,
-			&t.Map, &t.MaxPersons, &t.PricePerAdults, &t.PricePerChildrenSevenSeventeen); err != nil {
+		if err := rows.Scan(&t.ID, &t.Type, &t.Creator.ID, &t.Status, &t.Recurrence, &t.Title, &t.Image, &t.Description,
+			&t.Map, &t.MaxPersons, &t.PricePerChildrenThreeSix, &t.PricePerChildrenZeroSix,
+			&t.PricePerChildrenSevenSeventeen, &t.PricePerAdults, &t.UpdatedAt, &t.CreatedAt); err != nil {
 			return nil, err
 		}
-
-		t.Status = tour.Enabled
-		t.Type = tour.GroupType
 
 		var err error
 		t.Creator, err = s.userRepo.User(t.Creator.ID)
@@ -122,17 +135,15 @@ func (s *sqlite) Tour(ID int64) (*tour.Tour, error) {
 
 	query, args := s.buildListQuery(nil, []tour.Filter{tour.FilterTourID(ID)})
 
-	if err := s.db.QueryRow(query, args...).Scan(&t.Creator.ID, &t.Title, &t.Image, &t.Description,
-		&t.Map, &t.MaxPersons, &t.PricePerAdults, &t.PricePerChildrenSevenSeventeen, &t.Status); err != nil {
+	if err := s.db.QueryRow(query, args...).Scan(&t.ID, &t.Type, &t.Creator.ID, &t.Status, &t.Recurrence, &t.Title,
+		&t.Image, &t.Description, &t.Map, &t.MaxPersons, &t.PricePerChildrenThreeSix, &t.PricePerChildrenZeroSix,
+		&t.PricePerChildrenSevenSeventeen, &t.PricePerAdults, &t.UpdatedAt, &t.CreatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 
 		return nil, err
 	}
-
-	t.ID = ID
-	t.Type = tour.GroupType
 
 	var err error
 	t.Creator, err = s.userRepo.User(t.Creator.ID)
@@ -148,11 +159,49 @@ func (s *sqlite) Tour(ID int64) (*tour.Tour, error) {
 }
 
 func (s *sqlite) Save(t *tour.Tour) error {
-	return nil
+	if t.ID == 0 {
+		return s.insert(t)
+	}
+
+	return s.update(t)
 }
 
-func (s *sqlite) Delete(ID int64) error {
-	return nil
+func (s *sqlite) insert(t *tour.Tour) error {
+	tx, txErr := s.db.Begin()
+	if txErr != nil {
+		return errors.Wrap(txErr, "error create `insert tour` transaction")
+	}
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
+	if _, err := tx.Exec(insertTour, t.Type, t.Creator.ID, t.Status, t.Recurrence.String(), t.Title, t.Image,
+		t.Description, t.Map, t.MaxPersons, t.PricePerChildrenThreeSix, t.PricePerChildrenZeroSix,
+		t.PricePerChildrenSevenSeventeen, t.PricePerAdults); err != nil {
+		return errors.Wrapf(err, "error insert tour: %#v\n", t)
+	}
+
+	if err := tx.QueryRow("SELECT last_insert_rowid();").Scan(&t.ID); err != nil {
+		return errors.Wrap(err, "error scan tour last_insert_rowid()")
+	}
+
+	err := tx.Commit()
+
+	return errors.Wrap(err, "error commit tour insert transaction")
+}
+
+func (s *sqlite) update(t *tour.Tour) error {
+	_, err := s.db.Exec(updateTour, t.Status, t.Recurrence.String(), t.Title, t.Image,
+		t.Description, t.Map, t.MaxPersons, t.PricePerChildrenThreeSix, t.PricePerChildrenZeroSix,
+		t.PricePerChildrenSevenSeventeen, t.PricePerAdults, t.ID)
+
+	return errors.Wrapf(err, "error update tour: %#v\n", t)
+}
+
+func (s *sqlite) Delete(t *tour.Tour) error {
+	_, err := s.db.Exec(deleteTour, t.ID)
+
+	return errors.Wrapf(err, "error delete tour: %#v\n", t)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

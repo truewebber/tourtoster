@@ -10,8 +10,8 @@ import (
 
 	"github.com/gorilla/context"
 
-	"tourtoster/hotel"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/user"
 )
 
 const (

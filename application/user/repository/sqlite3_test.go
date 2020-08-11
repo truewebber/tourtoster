@@ -6,8 +6,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"tourtoster/hotel"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/user"
 )
 
 func Test_postgres_Save(t *testing.T) {

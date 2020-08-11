@@ -1,8 +1,8 @@
 package user
 
 import (
-	"tourtoster/hotel"
-	"tourtoster/token"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/token"
 )
 
 type (

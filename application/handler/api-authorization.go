@@ -6,8 +6,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"tourtoster/token"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/token"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

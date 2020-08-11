@@ -5,7 +5,7 @@ import (
 
 	"github.com/teambition/rrule-go"
 
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (
@@ -28,6 +28,8 @@ type (
 		Features                       []Feature      `json:"features"`
 		Highlights                     []Highlight    `json:"highlights"`
 		FAQs                           []FAQ          `json:"faqs"`
+		CreatedAt                      time.Time      `json:"created_at"`
+		UpdatedAt                      time.Time      `json:"updated_at"`
 	}
 
 	Highlight struct {

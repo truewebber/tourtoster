@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"tourtoster/currency"
-	"tourtoster/log"
+	"github.com/truewebber/tourtoster/currency"
+	"github.com/truewebber/tourtoster/log"
 )
 
 type (

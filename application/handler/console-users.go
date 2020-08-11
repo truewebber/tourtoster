@@ -11,8 +11,8 @@ import (
 	"github.com/gorilla/context"
 	"github.com/pkg/errors"
 
-	"tourtoster/hotel"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

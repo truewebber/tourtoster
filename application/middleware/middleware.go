@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"tourtoster/hotel"
-	"tourtoster/log"
-	"tourtoster/token"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/log"
+	"github.com/truewebber/tourtoster/token"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

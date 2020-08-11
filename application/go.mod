@@ -1,4 +1,4 @@
-module tourtoster
+module github.com/truewebber/tourtoster
 
 go 1.14
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"tourtoster/hotel"
+	"github.com/truewebber/tourtoster/hotel"
 )
 
 func Test_postgres_Save(t *testing.T) {

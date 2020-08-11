@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/user"
 )
 
 const (

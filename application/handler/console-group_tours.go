@@ -7,8 +7,8 @@ import (
 	"github.com/gorilla/context"
 	"github.com/pkg/errors"
 
-	"tourtoster/tour"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/tour"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

@@ -8,12 +8,12 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 
-	"tourtoster/hotel"
-	"tourtoster/log"
-	"tourtoster/mail"
-	"tourtoster/token"
-	"tourtoster/tour"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/log"
+	"github.com/truewebber/tourtoster/mail"
+	"github.com/truewebber/tourtoster/token"
+	"github.com/truewebber/tourtoster/tour"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

@@ -3,10 +3,11 @@ package repository
 import (
 	"database/sql"
 	"reflect"
+	"strings"
 	"testing"
 
-	"tourtoster/tour"
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/tour"
+	"github.com/truewebber/tourtoster/user"
 )
 
 func Test_sqlite_buildListQuery(t *testing.T) {
@@ -87,7 +88,8 @@ func Test_sqlite_buildListQuery(t *testing.T) {
 				userRepo: tt.fields.userRepo,
 			}
 			got, got1 := s.buildListQuery(tt.args.o, tt.args.ff)
-			if got != tt.want {
+
+			if trimQuery(got) != trimQuery(tt.want) {
 				t.Errorf("buildListQuery() got = %v, want %v", got, tt.want)
 			}
 			if !reflect.DeepEqual(got1, tt.want1) {
@@ -95,4 +97,12 @@ func Test_sqlite_buildListQuery(t *testing.T) {
 			}
 		})
 	}
+}
+
+func trimQuery(s string) string {
+	s = strings.ReplaceAll(s, "\n", "")
+	s = strings.ReplaceAll(s, "\t", " ")
+	s = strings.ReplaceAll(s, " ", "")
+
+	return s
 }

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"tourtoster/log"
+	"github.com/truewebber/tourtoster/log"
 )
 
 type (

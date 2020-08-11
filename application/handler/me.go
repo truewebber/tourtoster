@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

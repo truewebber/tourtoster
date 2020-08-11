@@ -3,16 +3,16 @@ package tour
 import (
 	"testing"
 
-	"tourtoster/currency"
+	"github.com/truewebber/tourtoster/currency"
 )
 
-func TestPrice_ToUSD(t *testing.T) {
+func TestPrice_USD(t *testing.T) {
 	currency.USD = 61.5
 
 	tests := []struct {
 		name string
 		p    Price
-		want int64
+		want int
 	}{
 		{
 			name: "test1",
@@ -37,8 +37,8 @@ func TestPrice_ToUSD(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.p.ToUSD(); got != tt.want {
-				t.Errorf("ToUSD() = %v, want %v", got, tt.want)
+			if got := tt.p.USD(); got != tt.want {
+				t.Errorf("USD() = %v, want %v", got, tt.want)
 			}
 		})
 	}

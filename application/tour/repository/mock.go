@@ -6,8 +6,8 @@ package repository
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	tour "github.com/truewebber/tourtoster/tour"
 	reflect "reflect"
-	tour "tourtoster/tour"
 )
 
 // MockRepository is a mock of Repository interface
@@ -98,15 +98,15 @@ func (mr *MockRepositoryMockRecorder) Save(t interface{}) *gomock.Call {
 }
 
 // Delete mocks base method
-func (m *MockRepository) Delete(ID int64) error {
+func (m *MockRepository) Delete(t *tour.Tour) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", ID)
+	ret := m.ctrl.Call(m, "Delete", t)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete
-func (mr *MockRepositoryMockRecorder) Delete(ID interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) Delete(t interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockRepository)(nil).Delete), ID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockRepository)(nil).Delete), t)
 }

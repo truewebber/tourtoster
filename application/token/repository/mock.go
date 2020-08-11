@@ -6,8 +6,8 @@ package repository
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	token "github.com/truewebber/tourtoster/token"
 	reflect "reflect"
-	token "tourtoster/token"
 )
 
 // MockRepository is a mock of Repository interface

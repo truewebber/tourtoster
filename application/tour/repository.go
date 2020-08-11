@@ -8,6 +8,6 @@ type (
 		List(*Order, ...Filter) ([]Tour, error)
 		Tour(ID int64) (*Tour, error)
 		Save(t *Tour) error
-		Delete(ID int64) error
+		Delete(t *Tour) error
 	}
 )

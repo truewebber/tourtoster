@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"tourtoster/handler"
+	"github.com/truewebber/tourtoster/handler"
 )
 
 func main() {

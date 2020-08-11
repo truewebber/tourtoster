@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

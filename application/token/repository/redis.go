@@ -3,7 +3,7 @@ package repository
 import (
 	"github.com/go-redis/redis"
 
-	"tourtoster/token"
+	"github.com/truewebber/tourtoster/token"
 )
 
 type (

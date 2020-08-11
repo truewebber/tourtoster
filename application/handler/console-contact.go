@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/context"
 
-	"tourtoster/user"
+	"github.com/truewebber/tourtoster/user"
 )
 
 type (

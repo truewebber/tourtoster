@@ -6,8 +6,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 
-	"tourtoster/hotel"
-	"tourtoster/log"
+	"github.com/truewebber/tourtoster/hotel"
+	"github.com/truewebber/tourtoster/log"
 )
 
 type (

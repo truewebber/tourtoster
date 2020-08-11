@@ -211,7 +211,7 @@ let PrivateTourEdit = function () {
         if (rruleSet.toString() !== '') {
             let currentDate = new Date();
             let tomorrowDate = new Date();
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            tomorrowDate.setDate(tomorrowDate.getDate());
 
             let tmpRS = rruleSet.clone();
             tmpRS.exdate(currentDate);

@@ -6,8 +6,8 @@ package repository
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	currency "github.com/truewebber/tourtoster/currency"
 	reflect "reflect"
-	currency "tourtoster/currency"
 )
 
 // MockRepository is a mock of Repository interface

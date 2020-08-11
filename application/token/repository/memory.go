@@ -3,7 +3,7 @@ package repository
 import (
 	"sync"
 
-	"tourtoster/token"
+	"github.com/truewebber/tourtoster/token"
 )
 
 type (

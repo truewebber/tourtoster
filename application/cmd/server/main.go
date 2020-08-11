@@ -9,20 +9,20 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"tourtoster/conn"
-	"tourtoster/currency"
-	currencyRepo "tourtoster/currency/repository"
-	"tourtoster/handler"
-	hotelRepo "tourtoster/hotel/repository"
-	"tourtoster/log"
-	"tourtoster/mail"
-	mailRepo "tourtoster/mail/repository"
-	"tourtoster/middleware"
-	"tourtoster/token"
-	tokenRepo "tourtoster/token/repository"
-	"tourtoster/tour"
-	tourRepo "tourtoster/tour/repository"
-	userRepo "tourtoster/user/repository"
+	"github.com/truewebber/tourtoster/conn"
+	"github.com/truewebber/tourtoster/currency"
+	currencyRepo "github.com/truewebber/tourtoster/currency/repository"
+	"github.com/truewebber/tourtoster/handler"
+	hotelRepo "github.com/truewebber/tourtoster/hotel/repository"
+	"github.com/truewebber/tourtoster/log"
+	"github.com/truewebber/tourtoster/mail"
+	mailRepo "github.com/truewebber/tourtoster/mail/repository"
+	"github.com/truewebber/tourtoster/middleware"
+	"github.com/truewebber/tourtoster/token"
+	tokenRepo "github.com/truewebber/tourtoster/token/repository"
+	"github.com/truewebber/tourtoster/tour"
+	tourRepo "github.com/truewebber/tourtoster/tour/repository"
+	userRepo "github.com/truewebber/tourtoster/user/repository"
 )
 
 var (
@@ -84,6 +84,7 @@ func main() {
 		Hotel:         hotelR,
 		Mailer:        mailer,
 		TemplatesPath: templatePath,
+		Logger:        logger.With("module", "handlers"),
 	})
 	if handlersErr != nil {
 		println("error init handlers")
