@@ -42,17 +42,18 @@ func init() {
 }
 
 func main() {
-	db, err := conn.NewConn(dbFilePath)
-	if err != nil {
-		println("error create db connection")
-		panic(err)
-	}
 	logger := log.NewZap()
 	defer func() {
 		if err := logger.Close(); err != nil {
 			println("error close logger", err.Error())
 		}
 	}()
+
+	db, err := conn.NewConn(dbFilePath)
+	if err != nil {
+		println("error create db connection")
+		panic(err)
+	}
 
 	logger.Info("connection to db established", "db", dbFilePath)
 	// -----------------------------------------------------------------------------------------------------------------

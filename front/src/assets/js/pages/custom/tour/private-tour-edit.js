@@ -14,6 +14,8 @@ let PrivateTourEdit = function () {
     let calendarEl;
     let textRRuleSetEl;
     let calendar;
+    let imageUploadEl;
+    let imageTarget;
 
     let parseIntArray = function (str) {
         let intArr = [];
@@ -305,6 +307,21 @@ let PrivateTourEdit = function () {
         });
     }
 
+    let initLoadImage = function () {
+        $(imageUploadEl).on('change', function () {
+            let input = $(this);
+            let files = input.prop('files');
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(imageTarget).css({'background-image': 'url(' + e.target.result + ')'}).removeClass('no-image');
+
+            };
+
+            reader.readAsDataURL(files[0]);
+        });
+    }
+
     return {
         // public functions
         init: function () {
@@ -315,10 +332,13 @@ let PrivateTourEdit = function () {
             calendarEl = $('div.recurrence-rule-calendar')[0];
             textRRuleSetEl = $('input[name=rrule_set]')[0];
             rruleSet = new RRuleSet();
+            imageUploadEl = $('#file_image')[0];
+            imageTarget = $('.tour-image-block > .preview');
 
             initSubmitTour();
             initToggleRRuleForm();
             initAddRule();
+            initLoadImage();
             renderCalendar();
             textRRuleSet();
         },
